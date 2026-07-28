@@ -1,0 +1,781 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shahar & Kyle — from cells to stars" />
+  <title>Shahar & Kyle</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Space+Mono:wght@400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+<!-- ── PASSWORD WALL ─────────────────────────────────── -->
+<div id="pw-wall">
+  <div class="pw-box">
+    <p class="pw-label">SHAHAR &amp; KYLE</p>
+    <p class="pw-sub">site under construction</p>
+    <div class="pw-prompt">
+      <span class="pw-caret">›</span>
+      <input type="password" id="pw-input" autocomplete="off" maxlength="12" spellcheck="false" placeholder="access code" />
+    </div>
+    <p id="pw-error" class="pw-error"></p>
+    <p class="pw-hint">press enter</p>
+  </div>
+</div>
+
+<!-- ── NAV ──────────────────────────────────────────── -->
+<header id="site-header">
+  <nav>
+    <a class="nav-title" href="#hero">s&amp;k</a>
+    <ul>
+      <li><a href="#details">details</a></li>
+      <li><a href="#schedule">schedule</a></li>
+      <li><a href="#travel">travel</a></li>
+      <li><a href="#faq">faq</a></li>
+      <li><a href="#rsvp" class="rsvp-link">rsvp</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<section id="hero">
+
+  <!-- neuron → stars illustration -->
+  <svg class="hero-svg" viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="gw" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="gc" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <linearGradient id="axon-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ff6b35"/>
+        <stop offset="100%" stop-color="#4ecdc4"/>
+      </linearGradient>
+    </defs>
+
+    <!-- SOMA -->
+    <circle cx="240" cy="150" r="22" fill="none" stroke="#ff6b35" stroke-width="1.5" filter="url(#gw)" opacity="0.85" class="soma"/>
+    <ellipse cx="236" cy="147" rx="8" ry="6" fill="#ff6b35" opacity="0.3"/>
+    <ellipse cx="236" cy="147" rx="8" ry="6" fill="none" stroke="#ff6b35" stroke-width="0.8" opacity="0.5"/>
+    <ellipse cx="249" cy="158" rx="5" ry="2.5" fill="none" stroke="#ff6b35" stroke-width="0.7" opacity="0.4" transform="rotate(30,249,158)"/>
+
+    <!-- DENDRITE 1: upper-left -->
+    <path d="M225,133 C197,113 166,107 136,88 C115,76 94,69 66,52" stroke="#ff6b35" stroke-width="1.5" fill="none" opacity="0.75"/>
+    <path d="M136,88 C121,74 111,64 104,49" stroke="#ff6b35" stroke-width="1" fill="none" opacity="0.6"/>
+    <path d="M66,52 C50,42 42,35 36,27" stroke="#ff6b35" stroke-width="0.8" fill="none" opacity="0.5"/>
+    <circle cx="66"  cy="52"  r="3.5" fill="#ff6b35" opacity="0.8" filter="url(#gw)"/>
+    <circle cx="104" cy="49"  r="2.5" fill="#ff6b35" opacity="0.7"/>
+    <circle cx="36"  cy="27"  r="2"   fill="#ff6b35" opacity="0.6"/>
+
+    <!-- DENDRITE 2: horizontal left -->
+    <path d="M218,150 C191,148 161,146 131,149 C107,151 83,149 56,151" stroke="#ff6b35" stroke-width="1.5" fill="none" opacity="0.75"/>
+    <path d="M131,149 C117,162 107,172 92,178" stroke="#ff6b35" stroke-width="1" fill="none" opacity="0.6"/>
+    <circle cx="56" cy="151" r="3"   fill="#ff6b35" opacity="0.8" filter="url(#gw)"/>
+    <circle cx="92" cy="178" r="2.5" fill="#ff6b35" opacity="0.7"/>
+
+    <!-- DENDRITE 3: lower-left -->
+    <path d="M225,166 C199,181 171,189 140,199 C118,207 95,211 68,223" stroke="#ff6b35" stroke-width="1.5" fill="none" opacity="0.75"/>
+    <path d="M140,199 C130,214 124,224 120,239" stroke="#ff6b35" stroke-width="1" fill="none" opacity="0.6"/>
+    <path d="M68,223 C52,233 44,241 38,253"   stroke="#ff6b35" stroke-width="0.8" fill="none" opacity="0.5"/>
+    <circle cx="68"  cy="223" r="3.5" fill="#ff6b35" opacity="0.8" filter="url(#gw)"/>
+    <circle cx="120" cy="239" r="2.5" fill="#ff6b35" opacity="0.7"/>
+    <circle cx="38"  cy="253" r="2"   fill="#ff6b35" opacity="0.6"/>
+
+    <!-- DENDRITE 4: apical up -->
+    <path d="M234,129 C226,109 220,92 216,72" stroke="#ff6b35" stroke-width="1.3" fill="none" opacity="0.65"/>
+    <path d="M216,72 C212,58 210,47 207,36"   stroke="#ff6b35" stroke-width="0.9" fill="none" opacity="0.5"/>
+    <circle cx="207" cy="36" r="2.5" fill="#ff6b35" opacity="0.7"/>
+
+    <!-- DENDRITE 5: apical down -->
+    <path d="M234,170 C226,190 220,208 216,228" stroke="#ff6b35" stroke-width="1.3" fill="none" opacity="0.65"/>
+    <circle cx="216" cy="228" r="2.5" fill="#ff6b35" opacity="0.7"/>
+
+    <!-- AXON -->
+    <path d="M262,150 C300,150 350,150 398,150" stroke="url(#axon-grad)" stroke-width="2" fill="none" opacity="0.9"/>
+    <circle cx="325" cy="150" r="2.5" fill="#4ecdc4" opacity="0.5"/>
+
+    <!-- HUB (synapse → star) -->
+    <circle cx="400" cy="150" r="5.5" fill="#4ecdc4" filter="url(#gc)" opacity="0.9" class="hub-pulse"/>
+    <circle cx="400" cy="150" r="10"  fill="none" stroke="#4ecdc4" stroke-width="0.8" opacity="0.4" class="hub-ring"/>
+    <circle cx="400" cy="150" r="16"  fill="none" stroke="#4ecdc4" stroke-width="0.5" opacity="0.15"/>
+
+    <!-- CONSTELLATION LINES -->
+    <g stroke="#c8dff0" stroke-width="0.6" fill="none" opacity="0.35">
+      <line x1="400" y1="150" x2="460" y2="100"/>
+      <line x1="460" y1="100" x2="535" y2="74"/>
+      <line x1="535" y1="74"  x2="598" y2="107"/>
+      <line x1="598" y1="107" x2="646" y2="64"/>
+      <line x1="646" y1="64"  x2="706" y2="94"/>
+      <line x1="706" y1="94"  x2="756" y2="77"/>
+      <line x1="756" y1="77"  x2="783" y2="119"/>
+      <line x1="783" y1="119" x2="733" y2="149"/>
+      <line x1="733" y1="149" x2="679" y2="179"/>
+      <line x1="679" y1="179" x2="619" y2="163"/>
+      <line x1="619" y1="163" x2="559" y2="199"/>
+      <line x1="559" y1="199" x2="501" y2="173"/>
+      <line x1="501" y1="173" x2="460" y2="100"/>
+      <line x1="598" y1="107" x2="619" y2="163" stroke-dasharray="3,4" opacity="0.5"/>
+      <line x1="706" y1="94"  x2="733" y2="149" stroke-dasharray="3,4" opacity="0.5"/>
+    </g>
+
+    <!-- STARS -->
+    <circle cx="460" cy="100" r="4"   fill="#f5c542" class="star-t" style="animation-delay:.3s"  filter="url(#gc)"/>
+    <circle cx="535" cy="74"  r="3"   fill="#e8edf3" class="star-t" style="animation-delay:.9s"/>
+    <circle cx="598" cy="107" r="4.5" fill="#e8edf3" class="star-t" style="animation-delay:.1s"/>
+    <circle cx="646" cy="64"  r="2.5" fill="#e8edf3" class="star-t" style="animation-delay:1.5s"/>
+    <circle cx="706" cy="94"  r="3.5" fill="#f5c542" class="star-t" style="animation-delay:.6s"  filter="url(#gc)"/>
+    <circle cx="756" cy="77"  r="2.5" fill="#e8edf3" class="star-t" style="animation-delay:1.2s"/>
+    <circle cx="783" cy="119" r="3"   fill="#e8edf3" class="star-t" style="animation-delay:.4s"/>
+    <circle cx="733" cy="149" r="5"   fill="#4ecdc4" class="star-t" style="animation-delay:.7s"  filter="url(#gc)"/>
+    <circle cx="679" cy="179" r="2.5" fill="#e8edf3" class="star-t" style="animation-delay:1.0s"/>
+    <circle cx="619" cy="163" r="3"   fill="#e8edf3" class="star-t" style="animation-delay:1.4s"/>
+    <circle cx="559" cy="199" r="3.5" fill="#b57bee" class="star-t" style="animation-delay:.2s"  filter="url(#gc)"/>
+    <circle cx="501" cy="173" r="2.5" fill="#e8edf3" class="star-t" style="animation-delay:.8s"/>
+
+    <!-- MICRO-STARS -->
+    <g fill="#e8edf3">
+      <circle cx="420" cy="62"  r="1"   opacity="0.4"/>
+      <circle cx="482" cy="40"  r="1.2" opacity="0.3"/>
+      <circle cx="553" cy="31"  r="1"   opacity="0.35"/>
+      <circle cx="622" cy="43"  r="0.8" opacity="0.3"/>
+      <circle cx="692" cy="29"  r="1"   opacity="0.4"/>
+      <circle cx="762" cy="46"  r="1.2" opacity="0.3"/>
+      <circle cx="822" cy="83"  r="1"   opacity="0.35"/>
+      <circle cx="842" cy="132" r="0.8" opacity="0.3"/>
+      <circle cx="832" cy="183" r="1"   opacity="0.25"/>
+      <circle cx="802" cy="223" r="1.2" opacity="0.3"/>
+      <circle cx="762" cy="242" r="0.8" opacity="0.2"/>
+      <circle cx="702" cy="252" r="1"   opacity="0.25"/>
+      <circle cx="640" cy="242" r="1.2" opacity="0.3"/>
+      <circle cx="582" cy="262" r="0.8" opacity="0.2"/>
+      <circle cx="452" cy="257" r="0.8" opacity="0.2"/>
+      <circle cx="412" cy="242" r="1"   opacity="0.3"/>
+      <!-- faint left-side stars -->
+      <circle cx="150" cy="30"  r="0.8" opacity="0.14"/>
+      <circle cx="80"  cy="25"  r="1"   opacity="0.11"/>
+      <circle cx="180" cy="270" r="0.8" opacity="0.11"/>
+    </g>
+  </svg>
+
+  <div class="hero-text">
+    <p class="hero-tagline">from cells to stars</p>
+    <h1>Shahar &amp; Kyle</h1>
+    <p class="hero-meta">
+      <span>[MONTH DAY, YEAR]</span>
+      <span class="sep">&nbsp;&bull;&nbsp;</span>
+      <span>[VENUE] &bull; [CITY, STATE]</span>
+    </p>
+    <a href="#rsvp" class="hero-cta">RSVP</a>
+  </div>
+
+</section>
+
+<!-- ── CONTENT ───────────────────────────────────────── -->
+<main>
+
+  <section id="story" class="card fade-in">
+    <h2><span class="pre">//</span> our story</h2>
+    <p class="story-body">
+      <!-- TODO: Write a short paragraph about how you met. -->
+      We met [how you met] and have been [adventuring / building / loving each other] ever since.
+      We can&rsquo;t wait to celebrate with the people we love most.
+    </p>
+  </section>
+
+  <section id="details" class="card fade-in">
+    <h2><span class="pre">//</span> details</h2>
+    <div class="details-grid">
+      <div class="detail-block">
+        <h3>ceremony</h3>
+        <p>
+          [TIME]<br/>
+          <a href="#" target="_blank" rel="noopener">[VENUE NAME]</a><br/>
+          [ADDRESS]<br/>
+          [CITY, STATE ZIP]
+        </p>
+      </div>
+      <div class="detail-rule"></div>
+      <div class="detail-block">
+        <h3>reception</h3>
+        <p>
+          [TIME]<br/>
+          [Same venue / Different venue]<br/>
+          Dinner, dancing, and all the good stuff.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="schedule" class="card fade-in">
+    <h2><span class="pre">//</span> schedule</h2>
+    <ul class="timeline">
+      <li><span class="tt">[4:30 PM]</span><span class="te">Guests arrive &amp; mingle</span></li>
+      <li><span class="tt">[5:00 PM]</span><span class="te">Ceremony</span></li>
+      <li><span class="tt">[5:45 PM]</span><span class="te">Cocktail hour</span></li>
+      <li><span class="tt">[7:00 PM]</span><span class="te">Dinner &amp; toasts</span></li>
+      <li><span class="tt">[8:30 PM]</span><span class="te">Dancing</span></li>
+      <li><span class="tt">[11:00 PM]</span><span class="te">Send-off</span></li>
+    </ul>
+  </section>
+
+  <section id="travel" class="card fade-in">
+    <h2><span class="pre">//</span> travel</h2>
+    <div class="two-col">
+      <div>
+        <h3>getting there</h3>
+        <p>[VENUE] is at [ADDRESS]. [Parking / transit info. Recommend arriving X min early.]</p>
+      </div>
+      <div>
+        <h3>where to stay</h3>
+        <p>Room block at <a href="#" target="_blank" rel="noopener">[HOTEL]</a> ([DISTANCE] from venue). Code: <strong>[CODE]</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="card fade-in">
+    <h2><span class="pre">//</span> faq</h2>
+    <dl class="faq">
+      <dt>What should I wear?</dt>
+      <dd>[DRESS CODE]</dd>
+      <dt>Are children welcome?</dt>
+      <dd>[We love your kids! / Adults-only &mdash; treat yourself to a night out.]</dd>
+      <dt>Can I bring a plus-one?</dt>
+      <dd>Your invitation will say. Questions? Just ask.</dd>
+      <dt>What&rsquo;s the food situation?</dt>
+      <dd>[Describe food &amp; drink. Note any dietary accommodations.]</dd>
+      <dt>Still have questions?</dt>
+      <dd>Email us: <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a></dd>
+    </dl>
+  </section>
+
+  <section id="rsvp" class="card fade-in">
+    <h2><span class="pre">//</span> rsvp</h2>
+    <p class="rsvp-dead">Respond by <strong>[DEADLINE DATE]</strong>.</p>
+
+    <form name="rsvp" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="rsvp-form">
+      <input type="hidden" name="form-name" value="rsvp" />
+      <p style="display:none"><label>Skip: <input name="bot-field" /></label></p>
+
+      <div class="fg">
+        <label for="f-name">name <span class="req">*</span></label>
+        <input type="text" id="f-name" name="name" required autocomplete="name" />
+      </div>
+      <div class="fg">
+        <label for="f-email">email <span class="req">*</span></label>
+        <input type="email" id="f-email" name="email" required autocomplete="email" />
+      </div>
+      <div class="fg">
+        <label>attending? <span class="req">*</span></label>
+        <div class="radios">
+          <label class="rl"><input type="radio" name="attending" value="yes" required /><span>joyfully accepts</span></label>
+          <label class="rl"><input type="radio" name="attending" value="no" /><span>regretfully declines</span></label>
+        </div>
+      </div>
+      <div class="fg" id="r-guests" style="display:none">
+        <label for="f-guests">number of guests (including yourself)</label>
+        <input type="number" id="f-guests" name="guests" min="1" max="6" value="1" />
+      </div>
+      <div class="fg" id="r-diet" style="display:none">
+        <label for="f-diet">dietary restrictions / allergies</label>
+        <input type="text" id="f-diet" name="dietary" placeholder="none / vegetarian / gluten-free / etc." />
+      </div>
+      <div class="fg" id="r-song" style="display:none">
+        <label for="f-song">song request</label>
+        <input type="text" id="f-song" name="song" placeholder="the one that gets you on the floor" />
+      </div>
+      <div class="fg">
+        <label for="f-msg">message for shahar &amp; kyle</label>
+        <textarea id="f-msg" name="message" rows="3" placeholder="words of wisdom, predictions for the future, or your karaoke go-to..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">send it &rarr;</button>
+    </form>
+  </section>
+
+</main>
+
+<footer>
+  <span class="foot-hex">⬡</span>
+  shahar &amp; kyle &nbsp;&bull;&nbsp; [YEAR]
+  <span class="foot-hex">⬡</span>
+</footer>
+
+</body>
+</html>
+
+<style is:global>
+/* ── TOKENS ─────────────────────────────────────────── */
+:root {
+  --void:    #090b12;
+  --surface: #0f1219;
+  --border:  rgba(78,205,196,0.18);
+  --text:    #dde4f0;
+  --muted:   #6b7a99;
+  --neuron:  #ff6b35;
+  --axon:    #4ecdc4;
+  --cosmic:  #b57bee;
+  --organic: #95c97a;
+  --gold:    #f5c542;
+}
+
+/* ── RESET ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 18px; }
+
+body {
+  font-family: 'Crimson Text', Georgia, serif;
+  color: var(--text);
+  background-color: var(--void);
+  /* hex-dot grid: two offset layers of dots create a honeycomb pattern */
+  background-image:
+    radial-gradient(circle, rgba(78,205,196,0.11) 1px, transparent 1px),
+    radial-gradient(circle, rgba(78,205,196,0.07) 1px, transparent 1px);
+  background-size: 28px 48px, 28px 48px;
+  background-position: 0 0, 14px 24px;
+  min-height: 100vh;
+}
+
+a { color: var(--axon); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── PASSWORD WALL ───────────────────────────────────── */
+#pw-wall {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--void);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image:
+    radial-gradient(circle, rgba(78,205,196,0.11) 1px, transparent 1px),
+    radial-gradient(circle, rgba(78,205,196,0.07) 1px, transparent 1px);
+  background-size: 28px 48px, 28px 48px;
+  background-position: 0 0, 14px 24px;
+}
+.pw-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--axon);
+  padding: 2.5rem 3rem;
+  max-width: 340px;
+  width: 90%;
+}
+.pw-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--axon);
+}
+.pw-sub {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+.pw-prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+  margin-top: 0.75rem;
+}
+.pw-caret {
+  font-family: 'Space Mono', monospace;
+  color: var(--axon);
+  font-size: 1.1rem;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+#pw-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  caret-color: var(--axon);
+  width: 100%;
+  letter-spacing: 0.2em;
+}
+.pw-error {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--neuron);
+  letter-spacing: 0.15em;
+  min-height: 1.2em;
+}
+.pw-hint {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* ── NAV ─────────────────────────────────────────────── */
+#site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0.7rem 2rem;
+  transition: background 0.3s, backdrop-filter 0.3s;
+}
+#site-header.scrolled {
+  background: rgba(9,11,18,0.88);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.nav-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  color: var(--axon);
+}
+.nav-title:hover { text-decoration: none; opacity: 0.75; }
+nav ul { list-style: none; display: flex; gap: 0.1rem; flex-wrap: wrap; }
+nav ul li a {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  padding: 0.35rem 0.65rem;
+  transition: color 0.15s;
+}
+nav ul li a:hover { color: var(--text); text-decoration: none; }
+.rsvp-link {
+  border: 1px solid var(--axon) !important;
+  color: var(--axon) !important;
+}
+.rsvp-link:hover { background: var(--axon) !important; color: var(--void) !important; }
+
+/* ── HERO ────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1.5rem 3rem;
+  gap: 2.5rem;
+}
+.hero-svg {
+  width: min(100%, 880px);
+  height: auto;
+}
+/* SVG animations */
+.soma    { animation: soma-pulse 3s ease-in-out infinite; }
+@keyframes soma-pulse { 0%,100%{opacity:.85} 50%{opacity:1} }
+
+.hub-pulse {
+  animation: hub-p 2.5s ease-in-out infinite;
+  transform-box: fill-box; transform-origin: center;
+}
+@keyframes hub-p { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.2);opacity:1} }
+
+.hub-ring {
+  animation: hub-r 3s ease-out infinite;
+  transform-box: fill-box; transform-origin: center;
+}
+@keyframes hub-r { 0%{transform:scale(1);opacity:.4} 100%{transform:scale(2.4);opacity:0} }
+
+.star-t { animation: twinkle 4s ease-in-out infinite; }
+@keyframes twinkle { 0%,100%{opacity:1} 50%{opacity:.45} }
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+}
+.hero-tagline {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--axon);
+  letter-spacing: 0.12em;
+}
+#hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.8rem, 9vw, 5.5rem);
+  color: #fff;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.hero-meta {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.sep { color: var(--border); }
+.hero-cta {
+  margin-top: 0.75rem;
+  display: inline-block;
+  padding: 0.6rem 1.8rem;
+  border: 1.5px solid var(--axon);
+  color: var(--axon);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background 0.15s, color 0.15s;
+}
+.hero-cta:hover { background: var(--axon); color: var(--void); text-decoration: none; }
+
+/* ── MAIN / CARDS ────────────────────────────────────── */
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--axon);
+  padding: 2rem 2.25rem;
+}
+.card h2 {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--axon);
+  margin-bottom: 1.4rem;
+}
+.pre { color: var(--muted); margin-right: 0.4rem; }
+.card p, .card dd { font-size: 1rem; line-height: 1.7; }
+.card h3 {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Story */
+.story-body {
+  font-style: italic;
+  font-size: 1.1rem;
+  max-width: 540px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--text);
+}
+
+/* Details */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0 2rem;
+}
+.detail-rule { background: var(--border); }
+.detail-block p { line-height: 1.8; }
+
+/* Timeline */
+.timeline { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+.timeline li { display: flex; align-items: baseline; gap: 1rem; }
+.tt {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  min-width: 6.5rem;
+  text-align: right;
+}
+.te {
+  flex: 1;
+  padding-left: 0.85rem;
+  border-left: 1px solid var(--border);
+  font-size: 1rem;
+}
+
+/* Two-col (travel) */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 2rem; }
+
+/* FAQ */
+.faq { display: flex; flex-direction: column; gap: 1rem; }
+.faq dt {
+  font-family: 'Crimson Text', serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin-bottom: 0.1rem;
+}
+.faq dd {
+  margin: 0;
+  color: var(--muted);
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.faq dd:last-child { border-bottom: none; padding-bottom: 0; }
+
+/* RSVP form */
+.rsvp-dead {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+.rsvp-form { display: flex; flex-direction: column; gap: 1.1rem; }
+.fg { display: flex; flex-direction: column; gap: 0.3rem; }
+.fg label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.req { color: var(--neuron); }
+.fg input[type="text"],
+.fg input[type="email"],
+.fg input[type="number"],
+.fg textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  background: rgba(78,205,196,0.04);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  caret-color: var(--axon);
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+.fg input:focus, .fg textarea:focus {
+  outline: none;
+  border-color: var(--axon);
+  background: rgba(78,205,196,0.07);
+}
+.fg textarea { resize: vertical; }
+.fg input[type="number"] { max-width: 7rem; }
+.radios { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.rl {
+  display: flex; align-items: center; gap: 0.4rem;
+  cursor: pointer;
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  color: var(--text);
+}
+.rl input[type="radio"] { accent-color: var(--axon); }
+.submit-btn {
+  align-self: flex-start;
+  padding: 0.6rem 1.8rem;
+  background: transparent;
+  border: 1.5px solid var(--axon);
+  color: var(--axon);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.submit-btn:hover { background: var(--axon); color: var(--void); }
+
+/* ── FOOTER ──────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.foot-hex { color: var(--border); margin: 0 0.75rem; }
+
+/* ── FADE-IN ─────────────────────────────────────────── */
+.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+.fade-in.visible { opacity: 1; transform: none; }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 600px) {
+  .card { padding: 1.5rem 1.1rem; }
+  .details-grid { grid-template-columns: 1fr; }
+  .detail-rule { display: none; }
+  .two-col { grid-template-columns: 1fr; }
+  .radios { flex-direction: column; gap: 0.5rem; }
+  .pw-box { padding: 2rem 1.5rem; }
+}
+</style>
+
+<script>
+// ── PASSWORD WALL ──────────────────────────────────────
+const KEY  = 'sk-auth-v1';
+const PASS = '010125';
+const wall = document.getElementById('pw-wall');
+const inp  = document.getElementById('pw-input');
+const err  = document.getElementById('pw-error');
+
+function unlock() { wall.style.display = 'none'; }
+if (localStorage.getItem(KEY) === '1') unlock();
+
+inp.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (inp.value === PASS) {
+    localStorage.setItem(KEY, '1');
+    unlock();
+  } else {
+    err.textContent = '[ incorrect ]';
+    inp.value = '';
+    setTimeout(() => { err.textContent = ''; }, 2000);
+  }
+});
+
+// Focus input when wall is visible
+if (wall.style.display !== 'none') inp.focus();
+
+// ── NAV SCROLL ────────────────────────────────────────
+const hdr = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+  hdr.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// ── FADE-IN ───────────────────────────────────────────
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+// ── RSVP CONDITIONAL FIELDS ───────────────────────────
+const extra = ['r-guests','r-diet','r-song'].map(id => document.getElementById(id));
+document.querySelectorAll('input[name="attending"]').forEach(r =>
+  r.addEventListener('change', () => {
+    const yes = document.querySelector('input[name="attending"]:checked')?.value === 'yes';
+    extra.forEach(el => { el.style.display = yes ? 'flex' : 'none'; });
+  })
+);
+</script>
