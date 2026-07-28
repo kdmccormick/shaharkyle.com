@@ -307,6 +307,7 @@
   <span class="foot-hex">⬡</span>
   shahar &amp; kyle &nbsp;&bull;&nbsp; [YEAR]
   <span class="foot-hex">⬡</span>
+  <a class="foot-src" href="https://github.com/kdmccormick/shaharkyle.com" target="_blank" rel="noopener">source code on github</a>
 </footer>
 
 </body>
@@ -716,6 +717,15 @@ footer {
   text-transform: uppercase;
 }
 .foot-hex { color: var(--border); margin: 0 0.75rem; }
+.foot-src {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.6rem;
+  color: var(--muted);
+  opacity: 0.5;
+  letter-spacing: 0.15em;
+}
+.foot-src:hover { opacity: 1; text-decoration: none; color: var(--axon); }
 
 /* ── FADE-IN ─────────────────────────────────────────── */
 .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
