@@ -15,6 +15,8 @@ const photos = [
   { src: '/images/ornament.jpg', alt: 'The two of us reflected in a silver ornament' },
   { src: '/images/yurt.jpg',     alt: 'Bundled up outside a yurt in the snow' },
 ];
+
+const MAPS = 'https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+Somerville,+MA+02143';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -34,9 +36,8 @@ const photos = [
 <!-- ═══ PASSWORD WALL ═══════════════════════════════════ -->
 <div id="pw-wall">
   <div class="pw-box">
-    <p class="pw-plate">specimen no. 001</p>
     <h2 class="pw-title">Shahar &amp; Kyle</h2>
-    <p class="pw-sub">this page is still being drawn</p>
+    <p class="pw-sub">still under construction</p>
     <div class="pw-prompt">
       <span class="pw-caret">&rsaquo;</span>
       <input type="password" id="pw-input" autocomplete="off" maxlength="12" spellcheck="false" placeholder="access code" />
@@ -46,25 +47,16 @@ const photos = [
   </div>
 </div>
 
-<!-- ═══ NAV ═════════════════════════════════════════════ -->
-<header id="site-header">
-  <nav>
-    <a class="nav-title" href="#hero">S &amp; K</a>
-    <ul>
-      <li><a href="#details">when &amp; where</a></li>
-      <li><a href="#timeline">the story</a></li>
-      <li><a href="#rsvp" class="rsvp-link">rsvp</a></li>
-    </ul>
-  </nav>
-</header>
+<!-- ═══ PHOTOS, LIT ═════════════════════════════════════ -->
+<div class="strip-wrap">
+  <div class="marquee" id="marquee">
+    <div class="marquee-track" id="marquee-track">
+      {photos.map(p => <img src={p.src} alt={p.alt} />)}
+      {photos.map(p => <img src={p.src} alt="" aria-hidden="true" />)}
+    </div>
+  </div>
 
-<!-- ═══ HERO ════════════════════════════════════════════ -->
-<section id="hero">
-
-  <!-- dusk band: nav backdrop, and something for the lights to hang against -->
-  <div class="skyband" aria-hidden="true"></div>
-
-  <!-- festoon lights, borrowed from the Armory ceiling -->
+  <!-- festoon lights, borrowed from the Armory ceiling, hung over the photos -->
   <svg class="festoon" viewBox="0 0 1200 58" preserveAspectRatio="none" aria-hidden="true">
     <path class="wire"
       d="M0,6 Q100,44 200,10 Q300,44 400,10 Q500,44 600,10 Q700,44 800,10 Q900,44 1000,10 Q1100,44 1200,6"/>
@@ -89,522 +81,65 @@ const photos = [
       <g class="bulb" style="animation-delay:0.4s"><line x1="1150" y1="23" x2="1150" y2="28"/><circle cx="1150" cy="32" r="4.5"/></g>
     </g>
   </svg>
-
-  <!-- ── the photo strip ── -->
-  <div class="marquee" id="marquee">
-    <div class="marquee-track" id="marquee-track">
-      {photos.map(p => <img src={p.src} alt={p.alt} />)}
-      {photos.map(p => <img src={p.src} alt="" aria-hidden="true" />)}
-    </div>
-  </div>
-
-  <div class="hero-text">
-    <p class="hero-eyebrow">we are getting married</p>
-    <h1>Shahar <span class="amp">&amp;</span> Kyle</h1>
-    <p class="hero-meta">
-      <span>5 June 2027</span>
-      <span class="dot">&middot;</span>
-      <span>Arts at the Armory</span>
-      <span class="dot">&middot;</span>
-      <span>Somerville, Massachusetts</span>
-    </p>
-  </div>
-
-  <!-- ── specimen plate ── -->
-  <figure class="plate">
-    <svg viewBox="0 0 900 262" class="plate-svg" role="img"
-         aria-label="A naturalist specimen plate: a cortical neuron, an amanita mushroom, a moth, a fern frond, and a star chart.">
-      <g class="ink" fill="none" stroke="currentColor" stroke-width="1.4"
-         stroke-linecap="round" stroke-linejoin="round">
-
-        <!-- ── i. CORTICAL NEURON ── -->
-        <g class="spec">
-          <path d="M76,132 C73,117 80,101 90,101 C100,101 107,117 104,132 C98,137 82,137 76,132 Z"/>
-          <circle cx="90" cy="118" r="4.5" stroke-width="1"/>
-          <circle cx="90" cy="118" r="1.4" fill="currentColor" stroke="none"/>
-          <path d="M81,127 L86,131" stroke-width="0.8" opacity="0.55"/>
-          <path d="M86,123 L92,129" stroke-width="0.8" opacity="0.55"/>
-          <path d="M91,119 L98,127" stroke-width="0.8" opacity="0.55"/>
-          <!-- apical -->
-          <path d="M90,101 C89,88 90,78 90,68"/>
-          <path d="M90,68 C85,57 77,49 68,40"/>
-          <path d="M90,68 C95,57 103,49 112,40"/>
-          <path d="M68,40 C63,34 58,30 52,26" stroke-width="1"/>
-          <path d="M112,40 C117,34 122,30 128,26" stroke-width="1"/>
-          <path d="M79,54 C74,47 70,43 64,38" stroke-width="1"/>
-          <path d="M101,54 C106,47 110,43 116,38" stroke-width="1"/>
-          <!-- basal -->
-          <path d="M80,135 C70,143 60,148 49,155"/>
-          <path d="M100,135 C110,143 120,148 131,155"/>
-          <path d="M88,137 C84,150 80,160 74,172" stroke-width="1.1"/>
-          <path d="M60,150 C55,155 52,159 47,164" stroke-width="0.9"/>
-          <path d="M120,150 C125,155 128,159 133,164" stroke-width="0.9"/>
-          <!-- axon -->
-          <path d="M93,137 C94,152 94,172 92,198"/>
-          <path d="M93,170 C85,176 79,182 73,190" stroke-width="1"/>
-          <!-- boutons -->
-          <circle cx="52" cy="26"  r="2.2" fill="currentColor" stroke="none"/>
-          <circle cx="128" cy="26" r="2.2" fill="currentColor" stroke="none"/>
-          <circle cx="49" cy="155" r="2"   fill="currentColor" stroke="none"/>
-          <circle cx="131" cy="155" r="2"  fill="currentColor" stroke="none"/>
-          <circle cx="74" cy="172" r="1.8" fill="currentColor" stroke="none"/>
-          <circle cx="92" cy="199" r="2.6" fill="currentColor" stroke="none"/>
-          <circle cx="73" cy="191" r="1.8" fill="currentColor" stroke="none"/>
-        </g>
-
-        <!-- ── ii. AMANITA ── -->
-        <g class="spec">
-          <path d="M238,121 C238,92 252,72 270,72 C288,72 302,92 302,121 C288,128 252,128 238,121 Z"/>
-          <path d="M248,113 C252,97 260,85 269,80"  stroke-width="0.9" opacity="0.6"/>
-          <path d="M262,117 C264,101 268,89 273,80"  stroke-width="0.9" opacity="0.6"/>
-          <path d="M279,117 C279,101 277,89 272,80"  stroke-width="0.9" opacity="0.6"/>
-          <path d="M292,113 C288,97 280,85 271,80"  stroke-width="0.9" opacity="0.6"/>
-          <ellipse cx="256" cy="95"  rx="5"   ry="3.4" stroke-width="1"/>
-          <ellipse cx="278" cy="88"  rx="4"   ry="2.8" stroke-width="1"/>
-          <ellipse cx="289" cy="105" rx="3.4" ry="2.4" stroke-width="1"/>
-          <ellipse cx="249" cy="110" rx="3"   ry="2.2" stroke-width="1"/>
-          <!-- gills -->
-          <path d="M247,123 L247,128" stroke-width="0.8" opacity="0.7"/>
-          <path d="M253,124 L253,129" stroke-width="0.8" opacity="0.7"/>
-          <path d="M259,125 L259,130" stroke-width="0.8" opacity="0.7"/>
-          <path d="M281,125 L281,130" stroke-width="0.8" opacity="0.7"/>
-          <path d="M287,124 L287,129" stroke-width="0.8" opacity="0.7"/>
-          <path d="M293,123 L293,128" stroke-width="0.8" opacity="0.7"/>
-          <!-- stem -->
-          <path d="M261,126 C258,146 257,166 260,182"/>
-          <path d="M279,126 C282,146 283,166 280,182"/>
-          <path d="M259,142 C266,147 274,147 281,142" stroke-width="1.1"/>
-          <path d="M256,182 C262,188 278,188 284,182"/>
-          <!-- companion -->
-          <path d="M226,165 C226,153 232,144 240,144 C248,144 254,153 254,165 C246,169 234,169 226,165 Z" stroke-width="1.2"/>
-          <path d="M236,167 C235,176 235,183 236,188" stroke-width="1.1"/>
-          <path d="M244,167 C245,176 245,183 244,188" stroke-width="1.1"/>
-          <!-- ground -->
-          <path d="M218,192 C240,197 288,197 306,192" stroke-width="1" opacity="0.65"/>
-        </g>
-
-        <!-- ── iii. MOTH ── -->
-        <g class="spec">
-          <!-- forewings -->
-          <path d="M444,104 C424,90 398,88 384,98 C370,108 372,128 388,138 C404,148 434,140 444,126 Z"/>
-          <path d="M456,104 C476,90 502,88 516,98 C530,108 528,128 512,138 C496,148 466,140 456,126 Z"/>
-          <!-- hindwings -->
-          <path d="M444,128 C428,130 410,138 404,150 C399,161 410,170 424,166 C436,162 444,148 446,138 Z"/>
-          <path d="M456,128 C472,130 490,138 496,150 C501,161 490,170 476,166 C464,162 456,148 454,138 Z"/>
-          <!-- eyespots -->
-          <circle cx="404" cy="114" r="7" stroke-width="1.1"/>
-          <circle cx="404" cy="114" r="2.6" fill="currentColor" stroke="none"/>
-          <circle cx="496" cy="114" r="7" stroke-width="1.1"/>
-          <circle cx="496" cy="114" r="2.6" fill="currentColor" stroke="none"/>
-          <!-- wing markings -->
-          <path d="M386,125 C402,129 421,131 438,129" stroke-width="0.9" opacity="0.6"/>
-          <path d="M514,125 C498,129 479,131 462,129" stroke-width="0.9" opacity="0.6"/>
-          <path d="M392,103 C400,111 406,120 410,130"  stroke-width="0.9" opacity="0.55"/>
-          <path d="M508,103 C500,111 494,120 490,130"  stroke-width="0.9" opacity="0.55"/>
-          <path d="M418,143 C424,149 430,155 434,161"  stroke-width="0.9" opacity="0.5"/>
-          <path d="M482,143 C476,149 470,155 466,161"  stroke-width="0.9" opacity="0.5"/>
-          <!-- body -->
-          <path d="M450,96 C445,96 442,104 442,118 C442,136 446,152 450,158 C454,152 458,136 458,118 C458,104 455,96 450,96 Z"/>
-          <path d="M443,120 C447,122 453,122 457,120" stroke-width="0.8" opacity="0.6"/>
-          <path d="M444,131 C448,133 452,133 456,131" stroke-width="0.8" opacity="0.6"/>
-          <path d="M446,142 C449,144 451,144 454,142" stroke-width="0.8" opacity="0.6"/>
-          <circle cx="450" cy="94" r="6"/>
-          <!-- antennae -->
-          <path d="M446,90 C438,80 426,74 414,70"/>
-          <path d="M454,90 C462,80 474,74 486,70"/>
-          <path d="M440,84 L436,79" stroke-width="0.8"/>
-          <path d="M434,80 L430,75" stroke-width="0.8"/>
-          <path d="M428,77 L424,72" stroke-width="0.8"/>
-          <path d="M421,73 L418,68" stroke-width="0.8"/>
-          <path d="M460,84 L464,79" stroke-width="0.8"/>
-          <path d="M466,80 L470,75" stroke-width="0.8"/>
-          <path d="M472,77 L476,72" stroke-width="0.8"/>
-          <path d="M479,73 L482,68" stroke-width="0.8"/>
-        </g>
-
-        <!-- ── iv. FERN ── -->
-        <g class="spec">
-          <path d="M628,200 C626,176 624,150 628,124 C631,104 636,84 644,66"/>
-          <!-- fiddlehead -->
-          <path d="M644,66 C648,55 661,51 667,60 C673,69 664,79 656,75 C650,72 650,63 657,62"/>
-          <!-- pinnae -->
-          <path d="M627,191 C616,192 604,186 596,176 C606,176 618,180 627,186 Z" stroke-width="1.1"/>
-          <path d="M629,187 C640,188 652,182 660,172 C650,172 638,176 629,182 Z" stroke-width="1.1"/>
-          <path d="M626,177 C616,178 605,172 598,163 C607,163 618,167 626,172 Z" stroke-width="1.1"/>
-          <path d="M627,172 C637,173 648,167 655,158 C646,158 635,162 627,167 Z" stroke-width="1.1"/>
-          <path d="M625,162 C616,163 607,158 601,150 C609,150 618,153 625,157 Z" stroke-width="1.1"/>
-          <path d="M626,157 C635,158 644,153 650,145 C642,145 633,148 626,152 Z" stroke-width="1.1"/>
-          <path d="M625,147 C617,148 609,144 604,137 C611,137 619,140 625,143 Z" stroke-width="1"/>
-          <path d="M626,142 C634,143 642,139 647,132 C640,132 632,135 626,138 Z" stroke-width="1"/>
-          <path d="M626,132 C619,133 612,129 608,123 C614,123 621,126 626,128 Z" stroke-width="1"/>
-          <path d="M627,127 C634,128 641,124 645,118 C639,118 632,121 627,123 Z" stroke-width="1"/>
-          <path d="M628,117 C622,118 616,115 612,110 C617,110 623,112 628,114 Z" stroke-width="0.9"/>
-          <path d="M629,112 C635,113 641,110 645,105 C640,105 634,107 629,109 Z" stroke-width="0.9"/>
-          <path d="M631,102 C626,103 621,100 618,96 C622,96 627,98 631,99 Z" stroke-width="0.9"/>
-          <path d="M632,97 C637,98 642,95 645,91 C641,91 636,93 632,94 Z" stroke-width="0.9"/>
-          <path d="M635,87 C631,88 627,86 624,83 C628,83 632,84 635,85 Z" stroke-width="0.8"/>
-          <path d="M636,83 C640,84 644,82 647,79 C643,79 639,80 636,81 Z" stroke-width="0.8"/>
-          <path d="M604,204 C618,209 644,209 656,204" stroke-width="1" opacity="0.65"/>
-        </g>
-
-        <!-- ── v. THE SKY ── -->
-        <g class="spec">
-          <circle cx="810" cy="128" r="56" stroke-width="1.2"/>
-          <circle cx="810" cy="128" r="51" stroke-width="0.7" opacity="0.4"/>
-          <!-- rim ticks -->
-          <path d="M810,72 L810,79"   stroke-width="0.9" opacity="0.6"/>
-          <path d="M810,177 L810,184" stroke-width="0.9" opacity="0.6"/>
-          <path d="M754,128 L761,128" stroke-width="0.9" opacity="0.6"/>
-          <path d="M859,128 L866,128" stroke-width="0.9" opacity="0.6"/>
-          <path d="M770,88  L775,93"  stroke-width="0.9" opacity="0.4"/>
-          <path d="M850,88  L845,93"  stroke-width="0.9" opacity="0.4"/>
-          <path d="M770,168 L775,163" stroke-width="0.9" opacity="0.4"/>
-          <path d="M850,168 L845,163" stroke-width="0.9" opacity="0.4"/>
-          <!-- constellation -->
-          <g stroke-width="0.8" opacity="0.65">
-            <path d="M786,104 L804,92"/>
-            <path d="M804,92  L826,106"/>
-            <path d="M826,106 L840,128"/>
-            <path d="M840,128 L822,146"/>
-            <path d="M822,146 L798,150"/>
-            <path d="M798,150 L786,104"/>
-            <path d="M804,92  L812,124" stroke-dasharray="2,3"/>
-            <path d="M812,124 L822,146" stroke-dasharray="2,3"/>
-          </g>
-          <circle cx="786" cy="104" r="3"   fill="currentColor" stroke="none"/>
-          <circle cx="826" cy="106" r="2.4" fill="currentColor" stroke="none"/>
-          <circle cx="840" cy="128" r="2"   fill="currentColor" stroke="none"/>
-          <circle cx="822" cy="146" r="2.8" fill="currentColor" stroke="none"/>
-          <circle cx="798" cy="150" r="2.2" fill="currentColor" stroke="none"/>
-          <circle cx="812" cy="124" r="1.8" fill="currentColor" stroke="none"/>
-          <!-- brightest: a drawn star -->
-          <path d="M804,84 L806.5,90 L812,92.5 L806.5,95 L804,101 L801.5,95 L796,92.5 L801.5,90 Z"
-                fill="currentColor" stroke="none"/>
-          <!-- field stars -->
-          <circle cx="772" cy="126" r="1"   fill="currentColor" stroke="none" opacity="0.5"/>
-          <circle cx="844" cy="100" r="1"   fill="currentColor" stroke="none" opacity="0.5"/>
-          <circle cx="790" cy="168" r="1.2" fill="currentColor" stroke="none" opacity="0.45"/>
-          <circle cx="836" cy="160" r="0.9" fill="currentColor" stroke="none" opacity="0.4"/>
-          <circle cx="818" cy="82"  r="1"   fill="currentColor" stroke="none" opacity="0.4"/>
-          <!-- horizon -->
-          <path d="M762,152 C782,161 838,161 858,152" stroke-width="1" opacity="0.5"/>
-        </g>
-
-      </g>
-
-      <!-- labels -->
-      <g class="plate-num" text-anchor="middle">
-        <text x="90"  y="230">i</text>
-        <text x="270" y="230">ii</text>
-        <text x="450" y="230">iii</text>
-        <text x="630" y="230">iv</text>
-        <text x="810" y="230">v</text>
-      </g>
-      <g class="plate-name" text-anchor="middle">
-        <text x="90"  y="248">cortical neuron</text>
-        <text x="270" y="248">amanita</text>
-        <text x="450" y="248">moth</text>
-        <text x="630" y="248">fern</text>
-        <text x="810" y="248">the sky</text>
-      </g>
-    </svg>
-    <figcaption>things we think about, more or less constantly</figcaption>
-  </figure>
-
-  <a href="#rsvp" class="hero-cta">rsvp</a>
-</section>
-
-<!-- ═══ MARGINALIA STRIP ════════════════════════════════ -->
-<div class="strip" aria-hidden="true">
-  <svg viewBox="0 0 620 92" class="strip-svg">
-    <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-
-      <path d="M8,78 C70,74 110,82 168,77 C226,72 250,84 310,78 C370,72 402,84 462,78 C520,72 566,80 612,75"
-            stroke-width="0.9" opacity="0.3" stroke-dasharray="1,5"/>
-
-      <!-- ── coffee ── -->
-      <g>
-        <path class="steam" style="animation-delay:0s"   d="M54,32 C49,25 59,20 54,12" stroke-width="1.2" opacity="0.45"/>
-        <path class="steam" style="animation-delay:.9s"  d="M67,34 C62,27 72,22 67,15" stroke-width="1.2" opacity="0.35"/>
-        <path d="M40,42 L44,70 C44,75 48,78 53,78 L67,78 C72,78 76,75 76,70 L80,42 Z"/>
-        <path d="M42,49 C51,52 69,52 78,49" stroke-width="0.9" opacity="0.6"/>
-        <path d="M79,49 C90,48 92,57 91,61 C90,66 83,68 77,67"/>
-        <path d="M31,82 C47,86 73,86 89,82" stroke-width="1.1" opacity="0.75"/>
-        <path d="M36,86 C50,89 70,89 84,86" stroke-width="0.7" opacity="0.4"/>
-      </g>
-
-      <!-- ── books ── -->
-      <g>
-        <path d="M168,82 L232,80 L231,70 L167,72 Z"/>
-        <path d="M173,81 L172,71" stroke-width="0.8" opacity="0.5"/>
-        <path d="M171,70 L228,68 L227,58 L170,60 Z"/>
-        <path d="M176,69 L175,59" stroke-width="0.8" opacity="0.5"/>
-        <path d="M176,58 L224,53 L223,44 L175,49 Z"/>
-        <path d="M181,57 L180,48" stroke-width="0.8" opacity="0.5"/>
-        <path d="M212,54 L212,64 L208,60 L204,65 L205,54" stroke-width="1" opacity="0.8"/>
-        <path d="M186,66 L218,63" stroke-width="0.6" opacity="0.35"/>
-        <path d="M188,78 L222,76" stroke-width="0.6" opacity="0.35"/>
-      </g>
-
-      <!-- ── marcy, with her banana ── -->
-      <g class="marcy">
-        <!-- plume tail, curling round the right -->
-        <path d="M405,82 C420,85 433,79 436,68 C438,58 431,51 424,54 C418,56 418,64 423,66 C427,67 430,63 428,59" stroke-width="2.2"/>
-        <path d="M424,83 C425,86 427,88 430,90" stroke-width="0.8" opacity="0.5"/>
-        <path d="M434,73 C438,74 440,76 441,79" stroke-width="0.8" opacity="0.45"/>
-
-        <!-- floofy sitting loaf -->
-        <path class="cat-fill"
-              d="M347,83
-                 C342,71 346,57 354,49
-                 C352,43 350,36 351,28
-                 C356,31 361,35 365,39
-                 C371,36 383,36 389,39
-                 C393,35 398,31 403,28
-                 C404,36 402,43 400,49
-                 C408,57 412,71 407,83
-                 C391,86 363,86 347,83 Z"
-              stroke-width="1.4"/>
-
-        <!-- ear tufts -->
-        <path d="M355,35 C356,32 356,29 355,27" stroke-width="0.8" opacity="0.6"/>
-        <path d="M399,35 C398,32 398,29 399,27" stroke-width="0.8" opacity="0.6"/>
-        <path d="M360,33 C359,30 358,28 357,26" stroke-width="0.7" opacity="0.45"/>
-        <path d="M394,33 C395,30 396,28 397,26" stroke-width="0.7" opacity="0.45"/>
-
-        <!-- side floof -->
-        <path d="M348,58 C344,56 341,57 338,59" stroke-width="0.8" opacity="0.5"/>
-        <path d="M406,58 C410,56 413,57 416,59" stroke-width="0.8" opacity="0.5"/>
-        <path d="M345,69 C341,69 338,71 336,74" stroke-width="0.8" opacity="0.45"/>
-        <path d="M409,69 C413,69 416,71 418,74" stroke-width="0.8" opacity="0.45"/>
-
-        <!-- neck ruff -->
-        <path d="M355,56 C363,63 391,63 399,56" stroke-width="0.9" opacity="0.45"/>
-
-        <!-- white chest bib -->
-        <path class="cat-bib" d="M377,56 C371,60 368,67 369,76 C373,79 382,79 386,76 C387,67 383,60 377,56 Z"/>
-        <path class="cat-bib-tuft" d="M369,71 C366,72 364,74 363,77" stroke-width="0.8"/>
-        <path class="cat-bib-tuft" d="M386,71 C389,72 391,74 392,77" stroke-width="0.8"/>
-
-        <!-- green eyes -->
-        <ellipse class="cat-eye"   cx="366" cy="46" rx="4.3" ry="4.7" stroke="none"/>
-        <ellipse class="cat-eye"   cx="388" cy="46" rx="4.3" ry="4.7" stroke="none"/>
-        <ellipse class="cat-pupil" cx="366" cy="46" rx="1.3" ry="3.7" stroke="none"/>
-        <ellipse class="cat-pupil" cx="388" cy="46" rx="1.3" ry="3.7" stroke="none"/>
-
-        <!-- nose and muzzle -->
-        <path d="M374,54 L377,57 L380,54" stroke-width="1"/>
-        <path d="M377,57 C377,59 376,60 374,61" stroke-width="0.8" opacity="0.65"/>
-        <path d="M377,57 C377,59 378,60 380,61" stroke-width="0.8" opacity="0.65"/>
-
-        <!-- whiskers -->
-        <path class="cat-whisker" d="M362,55 C352,53 344,54 337,56" stroke-width="0.7"/>
-        <path class="cat-whisker" d="M362,58 C352,59 344,61 338,64" stroke-width="0.7"/>
-        <path class="cat-whisker" d="M392,55 C402,53 410,54 417,56" stroke-width="0.7"/>
-        <path class="cat-whisker" d="M392,58 C402,59 410,61 416,64" stroke-width="0.7"/>
-
-        <!-- the banana -->
-        <path class="banana" d="M357,87 Q376,72 395,83 Q377,80 357,87 Z" stroke-width="1"/>
-        <path class="banana-line" d="M363,84 Q377,77 389,82" stroke-width="0.7"/>
-        <path class="banana-stem" d="M395,83 L399,80" stroke-width="1.2"/>
-      </g>
-
-      <!-- ── stars ── -->
-      <g>
-        <path d="M520,54 L522.5,62 L530,64.5 L522.5,67 L520,75 L517.5,67 L510,64.5 L517.5,62 Z"
-              fill="currentColor" stroke="none" opacity="0.75"/>
-        <path d="M556,40 L557.5,46 L563,47.5 L557.5,49 L556,55 L554.5,49 L549,47.5 L554.5,46 Z"
-              fill="currentColor" stroke="none" opacity="0.55"/>
-        <path d="M588,66 L589,70 L593,71 L589,72 L588,76 L587,72 L583,71 L587,70 Z"
-              fill="currentColor" stroke="none" opacity="0.6"/>
-        <circle cx="540" cy="32" r="1.2" fill="currentColor" stroke="none" opacity="0.35"/>
-        <circle cx="576" cy="78" r="1"   fill="currentColor" stroke="none" opacity="0.3"/>
-        <circle cx="604" cy="46" r="1.4" fill="currentColor" stroke="none" opacity="0.3"/>
-      </g>
-
-    </g>
-  </svg>
 </div>
 
-<!-- ═══ CONTENT ═════════════════════════════════════════ -->
+<!-- ═══ SAVE THE DATE ═══════════════════════════════════ -->
 <main>
 
-  <section id="details" class="card fade-in">
-    <h2><span class="plate-tag">plate i</span> when &amp; where</h2>
+  <header class="titles">
+    <h1>Shahar <span class="amp">&amp;</span> Kyle</h1>
+    <p class="save">save the date</p>
+  </header>
 
-    <div class="details-grid">
-      <div class="detail-block">
-        <h3>when</h3>
-        <p class="detail-big">Saturday, 5 June</p>
-        <p class="detail-year">2027</p>
-        <p class="detail-sub">doors at 5:00 pm</p>
+  <section class="card fade-in">
+    <figure class="venue">
+      <img src="/images/armory.jpg" alt="The main hall at Arts at the Armory, strung with lights" />
+    </figure>
+
+    <div class="facts">
+      <div class="fact">
+        <h2>when</h2>
+        <p class="big">Saturday, 5 June 2027</p>
+        <p class="sub">doors at 5:00 pm</p>
       </div>
 
-      <div class="detail-rule"></div>
+      <div class="rule"></div>
 
-      <div class="detail-block">
-        <!-- the Armory's arched window, drawn from memory -->
-        <svg viewBox="0 0 120 92" class="arch" aria-hidden="true">
-          <g fill="none" stroke="currentColor" stroke-linecap="round">
-            <path d="M28,88 L28,44 C28,26 42,14 60,14 C78,14 92,26 92,44 L92,88" stroke-width="1.4"/>
-            <path d="M60,14 L60,88" stroke-width="0.9" opacity="0.55"/>
-            <path d="M28,44 C40,38 80,38 92,44" stroke-width="0.9" opacity="0.55"/>
-            <path d="M34,62 L86,62" stroke-width="0.9" opacity="0.4"/>
-            <path d="M20,88 L100,88" stroke-width="1.4"/>
-            <path d="M22,30 L28,30 M92,30 L98,30" stroke-width="0.8" opacity="0.4"/>
-            <path d="M18,78 L28,78 M92,78 L102,78" stroke-width="0.8" opacity="0.4"/>
-          </g>
-        </svg>
-        <h3>where</h3>
-        <p class="detail-big">
-          <a href="https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+Somerville,+MA+02143"
-             target="_blank" rel="noopener">Arts at the Armory</a>
-        </p>
-        <p class="detail-sub">191 Highland Ave<br/>Somerville, MA 02143</p>
+      <div class="fact">
+        <h2>where</h2>
+        <p class="big"><a href={MAPS} target="_blank" rel="noopener">Arts at the Armory</a></p>
+        <p class="sub">191 Highland Ave<br/>Somerville, MA 02143</p>
       </div>
     </div>
-
-    <p class="details-note">
-      That&rsquo;s the shape of it &mdash; enough to start planning.
-      Schedule, travel, and the rest will appear here as we work it out.
-    </p>
-  </section>
-
-  <section id="timeline" class="card fade-in">
-    <h2><span class="plate-tag">plate ii</span> the story so far</h2>
-    <ol class="story-timeline">
-      <!-- TODO: replace with your real milestones. add or remove <li> freely. -->
-      <li>
-        <span class="st-date">[year]</span>
-        <div class="st-body">
-          <h3 class="st-title">we met</h3>
-          <p>[Where, how, and who made the first move.]</p>
-        </div>
-      </li>
-      <li>
-        <span class="st-date">[year]</span>
-        <div class="st-body">
-          <h3 class="st-title">first date</h3>
-          <p>[The one that made it obvious.]</p>
-        </div>
-      </li>
-      <li>
-        <span class="st-date">[year]</span>
-        <div class="st-body">
-          <h3 class="st-title">first big trip</h3>
-          <p>[Where you went and what went gloriously wrong.]</p>
-        </div>
-      </li>
-      <li>
-        <span class="st-date">[year]</span>
-        <div class="st-body">
-          <h3 class="st-title">moved in together</h3>
-          <p>[The apartment, the plants, the arguments about shelving.]</p>
-        </div>
-      </li>
-      <li>
-        <span class="st-date">[year]</span>
-        <div class="st-body">
-          <h3 class="st-title">marcy</h3>
-          <p>[How a small black cat took over.]</p>
-        </div>
-      </li>
-      <li>
-        <span class="st-date">[year]</span>
-        <div class="st-body">
-          <h3 class="st-title">the proposal</h3>
-          <p>[How it happened.]</p>
-        </div>
-      </li>
-      <li class="st-future">
-        <span class="st-date">2027</span>
-        <div class="st-body">
-          <h3 class="st-title">we get married</h3>
-          <p>You&rsquo;re invited to this one.</p>
-        </div>
-      </li>
-    </ol>
-  </section>
-
-  <section id="rsvp" class="card fade-in">
-    <h2><span class="plate-tag">plate iii</span> rsvp</h2>
-    <p class="rsvp-dead">kindly respond by <strong>[deadline date]</strong></p>
-
-    <form name="rsvp" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="rsvp-form">
-      <input type="hidden" name="form-name" value="rsvp" />
-      <p style="display:none"><label>Skip: <input name="bot-field" /></label></p>
-
-      <div class="fg">
-        <label for="f-name">name <span class="req">*</span></label>
-        <input type="text" id="f-name" name="name" required autocomplete="name" />
-      </div>
-      <div class="fg">
-        <label for="f-email">email <span class="req">*</span></label>
-        <input type="email" id="f-email" name="email" required autocomplete="email" />
-      </div>
-      <div class="fg">
-        <label>attending? <span class="req">*</span></label>
-        <div class="radios">
-          <label class="rl"><input type="radio" name="attending" value="yes" required /><span>joyfully accepts</span></label>
-          <label class="rl"><input type="radio" name="attending" value="no" /><span>regretfully declines</span></label>
-        </div>
-      </div>
-      <div class="fg" id="r-guests" style="display:none">
-        <label for="f-guests">number of guests (including yourself)</label>
-        <input type="number" id="f-guests" name="guests" min="1" max="6" value="1" />
-      </div>
-      <div class="fg" id="r-diet" style="display:none">
-        <label for="f-diet">dietary restrictions / allergies</label>
-        <input type="text" id="f-diet" name="dietary" placeholder="none / vegetarian / gluten-free / etc." />
-      </div>
-      <div class="fg" id="r-song" style="display:none">
-        <label for="f-song">song request</label>
-        <input type="text" id="f-song" name="song" placeholder="the one that gets you on the floor" />
-      </div>
-      <div class="fg">
-        <label for="f-msg">a message for us</label>
-        <textarea id="f-msg" name="message" rows="3" placeholder="words of wisdom, predictions for the future, or your karaoke go-to..."></textarea>
-      </div>
-      <button type="submit" class="submit-btn">send it &rarr;</button>
-    </form>
   </section>
 
 </main>
 
-<!-- ═══ FOOTER ══════════════════════════════════════════ -->
 <footer>
   <svg viewBox="0 0 168 78" class="marcy-sleep" aria-hidden="true">
     <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-      <!-- curled body -->
       <path class="cat-fill"
             d="M22,60 C10,46 18,26 40,21 C60,16 84,18 102,24 C120,30 130,44 124,56 C118,66 96,64 74,62 C54,60 32,66 22,60 Z"/>
-      <!-- plume tail wrapped round the front -->
       <path d="M124,56 C137,54 146,46 142,37 C139,31 130,32 129,39 C128,45 134,47 137,42" stroke-width="1.9"/>
       <path d="M139,49 C142,51 144,53 145,56" stroke-width="0.7" opacity="0.45"/>
-      <!-- head, tucked left -->
       <path class="cat-fill"
             d="M44,46 C34,46 27,40 27,33 C27,29 29,26 32,24
                C31,20 30,17 31,14 C34,16 37,18 39,20
                C43,18 49,18 53,20 C55,18 58,16 61,14
                C62,17 61,20 60,24 C63,26 65,29 65,33 C65,40 56,46 44,46 Z"/>
-      <!-- ear tufts -->
       <path d="M34,20 C33,17 33,15 32,13" stroke-width="0.7" opacity="0.55"/>
       <path d="M58,20 C59,17 59,15 60,13" stroke-width="0.7" opacity="0.55"/>
-      <!-- closed eyes -->
       <path d="M35,31 C37,33 40,33 42,31" stroke-width="1.2" class="cat-lash"/>
       <path d="M50,31 C52,33 55,33 57,31" stroke-width="1.2" class="cat-lash"/>
       <path d="M44,37 L46,39 L48,37" stroke-width="1"/>
       <path class="cat-whisker" d="M32,38 C26,39 22,41 19,43" stroke-width="0.7"/>
       <path class="cat-whisker" d="M60,38 C66,39 70,41 73,43" stroke-width="0.7"/>
-      <!-- white bib, just showing at the chest -->
       <path class="cat-bib" d="M72,45 C66,48 64,54 66,59 C70,62 79,61 81,57 C82,51 78,46 72,45 Z"/>
-      <!-- floof along the back and underside -->
       <path d="M62,22 C70,19 82,19 92,22"   stroke-width="0.8" opacity="0.45"/>
       <path d="M96,26 C106,28 114,34 118,40" stroke-width="0.8" opacity="0.35"/>
       <path d="M26,62 C23,64 21,67 21,70"   stroke-width="0.8" opacity="0.4"/>
       <path d="M48,64 C47,67 47,70 48,73"   stroke-width="0.8" opacity="0.35"/>
       <path d="M92,62 C93,65 95,68 97,70"   stroke-width="0.8" opacity="0.3"/>
-      <!-- the banana, within reach -->
       <path class="banana" d="M86,73 Q106,60 126,70 Q107,68 86,73 Z" stroke-width="0.9"/>
       <path class="banana-line" d="M92,71 Q107,64 119,69" stroke-width="0.6"/>
       <path class="banana-stem" d="M126,70 L130,67" stroke-width="1.1"/>
@@ -616,7 +151,6 @@ const photos = [
   </svg>
 
   <p class="foot-line">Shahar &amp; Kyle <span class="dot">&middot;</span> 5 June 2027</p>
-  <p class="foot-marcy">marcy supervised the construction of this website</p>
   <a class="foot-src" href="https://github.com/kdmccormick/shaharkyle.com" target="_blank" rel="noopener">source code on github</a>
 </footer>
 
@@ -625,33 +159,24 @@ const photos = [
 
 <style is:global>
 /* ══ TOKENS ═══════════════════════════════════════════════
-   Sampled from a sunset on the Seine and the Armory's
-   brick, string lights, and greenery.
+   Warm and low-lit: the Armory's brick, string lights, and
+   the last of the sun off the Seine.
    ═════════════════════════════════════════════════════════ */
 :root {
-  --ink:        #23201b;
-  --ink-soft:   #4e473d;
-  --ink-faint:  #8a8071;
+  --ink:        #2b1f15;
+  --ink-soft:   #5c4630;
+  --ink-faint:  #8b7250;
 
-  --paper:      #f4eee2;
-  --paper-2:    #ece3d2;
-  --paper-edge: #d9cdb6;
+  --paper:      #e7d8bd;
+  --paper-2:    #dccbaa;
+  --paper-edge: #c2ac83;
 
-  --dusk:       #4e5d70;
-  --dusk-2:     #7b8b9c;
-  --haze:       #a9b0b3;
+  --amber:      #b8761f;
+  --gold:       #dda94f;
+  --rust:       #964223;
 
-  --amber:      #cf8f37;
-  --gold:       #e8bd6d;
-  --peach:      #e6b48c;
-
-  --rust:       #a9563a;
-  --terra:      #c07a54;
-  --sage:       #7d8f6b;
-  --plum:       #6d4c5d;
-
-  --rule:       rgba(35,32,27,0.16);
-  --rule-soft:  rgba(35,32,27,0.09);
+  --rule:       rgba(43,31,21,0.22);
+  --rule-soft:  rgba(43,31,21,0.12);
 
   /* marcy: black semi-longhair, white chest bib, green eyes, one banana */
   --marcy-fur:  #26231e;
@@ -662,18 +187,16 @@ const photos = [
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; font-size: 18px; }
+html { font-size: 18px; }
 
 body {
   font-family: 'Newsreader', Georgia, serif;
-  font-size: 1rem;
-  line-height: 1.65;
+  line-height: 1.6;
   color: var(--ink);
   background-color: var(--paper);
-  /* faint laid-paper tooth */
   background-image:
-    repeating-linear-gradient(0deg,  rgba(35,32,27,0.014) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgba(35,32,27,0.010) 0 1px, transparent 1px 4px);
+    repeating-linear-gradient(0deg,  rgba(43,31,21,0.016) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(43,31,21,0.012) 0 1px, transparent 1px 4px);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
@@ -681,7 +204,7 @@ body {
 a { color: var(--rust); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-.dot { color: var(--ink-faint); margin: 0 0.5rem; }
+.dot { color: var(--ink-faint); margin: 0 0.4rem; }
 
 /* ══ PASSWORD WALL ════════════════════════════════════════ */
 #pw-wall {
@@ -693,31 +216,21 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   justify-content: center;
   padding: 1.5rem;
   background: var(--paper);
-  background-image:
-    linear-gradient(to bottom, rgba(78,93,112,0.16), transparent 45%),
-    repeating-linear-gradient(0deg, rgba(35,32,27,0.014) 0 1px, transparent 1px 3px);
 }
 .pw-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
   width: 100%;
-  max-width: 350px;
+  max-width: 340px;
   padding: 2.5rem 2.25rem;
   background: var(--paper);
   border: 1px solid var(--paper-edge);
   outline: 3px double var(--paper-edge);
   outline-offset: 5px;
-  box-shadow: 6px 7px 0 rgba(35,32,27,0.10);
-}
-.pw-plate {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
+  box-shadow: 6px 7px 0 rgba(43,31,21,0.13);
 }
 .pw-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -725,14 +238,12 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   font-size: 1.85rem;
   letter-spacing: 0.03em;
   line-height: 1.15;
-  color: var(--ink);
-  margin-top: 0.4rem;
 }
 .pw-sub {
   font-style: italic;
   color: var(--ink-soft);
-  font-size: 0.92rem;
-  margin-bottom: 0.9rem;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 .pw-prompt {
   display: flex;
@@ -769,123 +280,25 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   min-height: 1.3em;
   margin-top: 0.5rem;
 }
-.pw-hint {
-  font-style: italic;
-  font-size: 0.78rem;
-  color: var(--ink-faint);
-}
+.pw-hint { font-style: italic; font-size: 0.78rem; color: var(--ink-faint); }
 
-/* ══ NAV ══════════════════════════════════════════════════ */
-#site-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  padding: 0.7rem 1.75rem;
-  transition: background 0.35s, box-shadow 0.35s;
-}
-#site-header.scrolled {
-  background: rgba(244,238,226,0.93);
-  backdrop-filter: blur(9px);
-  box-shadow: 0 1px 0 var(--rule);
-}
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem 1rem;
-}
-.nav-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-weight: 400;
-  font-size: 1.15rem;
-  letter-spacing: 0.22em;
-  color: var(--ink);
-}
-.nav-title:hover { text-decoration: none; color: var(--rust); }
-nav ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.1rem; }
-nav ul li a {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  padding: 0.35rem 0.6rem;
-  transition: color 0.15s;
-}
-nav ul li a:hover { color: var(--rust); text-decoration: none; }
-.rsvp-link {
-  border: 1px solid var(--ink);
-  color: var(--ink) !important;
-}
-.rsvp-link:hover { background: var(--ink); color: var(--paper) !important; }
-
-/* nav sits over the dusk sky until you scroll */
-#site-header:not(.scrolled) .nav-title { color: #f6efe3; }
-#site-header:not(.scrolled) nav ul li a { color: rgba(246,239,227,0.82); }
-#site-header:not(.scrolled) nav ul li a:hover { color: #fff; }
-#site-header:not(.scrolled) .rsvp-link {
-  border-color: rgba(246,239,227,0.6);
-  color: #f6efe3 !important;
-}
-#site-header:not(.scrolled) .rsvp-link:hover {
-  background: rgba(246,239,227,0.92);
-  color: var(--ink) !important;
-}
-
-/* ══ HERO ═════════════════════════════════════════════════ */
-#hero {
-  --band-h: 190px;
-  position: relative;
-  margin-top: -3.6rem;   /* pull the dusk band up behind the sticky nav */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.4rem;
-  padding-bottom: 3rem;
-}
-
-/* ── dusk band behind the nav and the lights ── */
-.skyband {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: var(--band-h);
-  background: linear-gradient(
-    to bottom,
-    #46536580  0%,
-    #6a7684cc 30%,
-    #a89a8ae6 58%,
-    #d9b58c 78%,
-    var(--paper) 100%
-  );
-  background-color: var(--paper);
-  z-index: 0;
-}
-.festoon {
-  position: absolute;
-  top: 3.4rem;
-  left: 0;
-  z-index: 3;
-  width: 100%;
-  height: 54px;
-}
-
-/* ── the photo strip ──
- * Every photo is rendered at the same height, tiled flush, drifting left.
+/* ══ PHOTO STRIP, WITH THE LIGHTS OVER IT ═════════════════
+ * Every photo renders at the same height, tiled flush, drifting left.
  * The list is duplicated in the markup so the loop is seamless: the track
  * animates to -50%, which lands exactly on the start of the second copy.
- */
+ * ═════════════════════════════════════════════════════════ */
+.strip-wrap {
+  position: relative;
+  width: 100%;
+}
 .marquee {
   position: relative;
-  z-index: 1;
   width: 100%;
-  height: clamp(220px, 32vh, 330px);
+  height: clamp(230px, 34vh, 360px);
   overflow: hidden;
-  margin-top: var(--band-h);
   background: var(--paper-2);
-  /* soften both ends so photos don't hard-cut at the viewport edge */
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-          mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
 .marquee-track {
   display: flex;
@@ -911,496 +324,166 @@ nav ul li a:hover { color: var(--rust); text-decoration: none; }
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(-50%, 0, 0); }
 }
-/* let people stop and look */
-.marquee:hover .marquee-track,
-.marquee:focus-within .marquee-track { animation-play-state: paused; }
-.festoon .wire {
-  fill: none;
-  stroke: rgba(30,26,22,0.45);
-  stroke-width: 1.2;
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+/* the lights hang in front of the photos */
+.festoon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 100%;
+  height: 58px;
+  pointer-events: none;
 }
-.bulb line   { stroke: rgba(30,26,22,0.4); stroke-width: 1.1; }
+.festoon .wire { fill: none; stroke: rgba(22,18,14,0.55); stroke-width: 1.2; }
+.bulb line   { stroke: rgba(22,18,14,0.5); stroke-width: 1.1; }
 .bulb circle {
   fill: var(--gold);
-  stroke: rgba(120,80,30,0.35);
+  stroke: rgba(90,58,16,0.4);
   stroke-width: 0.8;
-  filter: drop-shadow(0 0 5px rgba(232,189,109,0.85));
+  filter: drop-shadow(0 0 6px rgba(221,169,79,0.95));
   animation: bulb-glow 4.5s ease-in-out infinite;
 }
-@keyframes bulb-glow {
-  0%, 100% { opacity: 0.82; }
-  50%      { opacity: 1; }
-}
+@keyframes bulb-glow { 0%,100% { opacity: 0.85 } 50% { opacity: 1 } }
 
-/* names sit on the paper below the photo — quiet, not shouting over it */
-.hero-text {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.7rem;
-  margin-top: -1.5rem;
-  padding: 0 1.5rem;
+/* ══ TITLES ═══════════════════════════════════════════════ */
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
 }
-.hero-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-#hero h1 {
+.titles { text-align: center; margin-bottom: 2.5rem; }
+.titles h1 {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 300;
-  font-size: clamp(2.6rem, 8vw, 4.6rem);
+  font-size: clamp(2.6rem, 8vw, 4.2rem);
   line-height: 1.1;
   letter-spacing: 0.02em;
-  color: var(--ink);
 }
-#hero h1 .amp {
-  font-style: italic;
-  font-weight: 300;
-  color: var(--amber);
-  padding: 0 0.12em;
-}
-.hero-meta {
+.titles .amp { font-style: italic; color: var(--amber); padding: 0 0.1em; }
+.save {
   font-family: 'Space Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.16em;
+  font-size: 0.66rem;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: var(--ink-soft);
-  max-width: 34rem;
-  line-height: 2.1;
-}
-.hero-meta .dot { color: var(--ink-faint); }
-
-/* ── specimen plate ── */
-.plate {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 900px;
-  margin: 0;
-  text-align: center;
-  color: var(--ink);
-}
-.plate-svg { width: 100%; height: auto; display: block; }
-.plate-svg .ink { color: var(--ink); }
-.plate-num {
-  font-family: 'Space Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  fill: var(--ink-soft);
-}
-.plate-name {
-  font-family: 'Newsreader', serif;
-  font-style: italic;
-  font-size: 12.5px;
-  fill: var(--ink-faint);
-}
-.plate figcaption {
-  font-style: italic;
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-  margin-top: 0.5rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--rule-soft);
-  display: inline-block;
+  color: var(--ink-faint);
+  margin-top: 0.9rem;
 }
 
-.hero-cta {
-  position: relative;
-  z-index: 2;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink);
-  border: 1px solid var(--ink);
-  padding: 0.65rem 2.1rem;
-  transition: background 0.18s, color 0.18s;
-}
-.hero-cta:hover { background: var(--ink); color: var(--paper); text-decoration: none; }
-
-/* ══ MARGINALIA STRIP ═════════════════════════════════════ */
-.strip {
-  max-width: 640px;
-  margin: 1rem auto 0;
-  padding: 0 1.5rem;
-  color: var(--ink-soft);
-}
-.strip-svg { width: 100%; height: auto; display: block; }
-.cat-fill    { fill: var(--marcy-fur); }
-.cat-eye     { fill: var(--marcy-eye); animation: cat-blink 7s step-end infinite; }
-.cat-pupil   { fill: var(--marcy-fur); }
-.cat-lash    { stroke: var(--marcy-eye); }
-.cat-bib     { fill: var(--marcy-bib); stroke: none; }
-.cat-bib-tuft{ stroke: var(--marcy-bib); opacity: 0.75; }
-.cat-whisker { stroke: var(--marcy-bib); opacity: 0.55; }
-
-.banana      { fill: var(--banana); stroke: #8a7420; }
-.banana-line { stroke: #8a7420; opacity: 0.5; }
-.banana-stem { stroke: #6f5c1c; }
-@keyframes cat-blink { 0%, 96% { opacity: 1 } 97%, 99% { opacity: 0.06 } 100% { opacity: 1 } }
-.steam { animation: steam-rise 3.4s ease-in-out infinite; }
-@keyframes steam-rise {
-  0%, 100% { opacity: 0.15; transform: translateY(2px); }
-  50%      { opacity: 0.55; transform: translateY(-3px); }
-}
-.zzz { animation: zzz-float 4.2s ease-in-out infinite; }
-@keyframes zzz-float {
-  0%, 100% { opacity: 0.25; transform: translateY(2px); }
-  50%      { opacity: 0.65; transform: translateY(-3px); }
-}
-
-/* ══ CARDS ════════════════════════════════════════════════ */
-main {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 1.5rem 1.5rem 4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2.6rem;
-}
-
-/* field notes, tacked to the wall a hair off-square */
+/* ══ THE CARD ═════════════════════════════════════════════ */
 .card {
-  position: relative;
   background: var(--paper);
   border: 1px solid var(--paper-edge);
-  padding: 2.1rem 2.3rem;
-  box-shadow: 5px 6px 0 rgba(35,32,27,0.09);
+  box-shadow: 5px 6px 0 rgba(43,31,21,0.13);
+  transform: rotate(-0.35deg);
 }
-/* a second hairline inside, like a printed plate border */
-.card::before {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 1px solid var(--rule-soft);
-  pointer-events: none;
+.venue { margin: 0; }
+.venue img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid var(--paper-edge);
+  filter: saturate(0.96);
 }
-
-#details  { --rot: -0.4deg;  --accent: var(--rust);  }
-#us       { --rot:  0.3deg;  --accent: var(--amber); }
-#timeline { --rot: -0.22deg; --accent: var(--sage);  }
-#rsvp     { --rot:  0.35deg; --accent: var(--plum);  }
-
-.card h2 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-weight: 400;
-  font-size: 1.7rem;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
-  color: var(--ink);
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.7rem;
-  border-bottom: 1px solid var(--rule);
-  display: flex;
-  align-items: baseline;
-  gap: 0.85rem;
-  flex-wrap: wrap;
-}
-.plate-tag {
-  font-family: 'Space Mono', monospace;
-  font-weight: 400;
-  font-size: 0.55rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  white-space: nowrap;
-}
-.card h3 {
-  font-family: 'Space Mono', monospace;
-  font-weight: 400;
-  font-size: 0.62rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-bottom: 0.55rem;
-}
-
-/* ══ WHEN & WHERE ═════════════════════════════════════════ */
-/* the coffee ring is not decorative, it is documentary */
-#details::after {
-  content: '';
-  position: absolute;
-  top: -20px;
-  right: 30px;
-  width: 78px;
-  height: 78px;
-  border: 2.5px solid var(--rust);
-  border-radius: 50%;
-  opacity: 0.10;
-  pointer-events: none;
-}
-.details-grid {
+.facts {
   display: grid;
   grid-template-columns: 1fr 1px 1fr;
-  gap: 0 2.2rem;
+  gap: 0 2rem;
+  padding: 2rem 2.25rem;
   text-align: center;
   align-items: start;
 }
-.detail-rule {
+.rule {
   align-self: stretch;
-  background: repeating-linear-gradient(
-    to bottom,
-    var(--rule) 0 5px,
-    transparent 5px 10px
-  );
+  background: repeating-linear-gradient(to bottom, var(--rule) 0 5px, transparent 5px 10px);
 }
-.detail-big {
+.fact h2 {
+  font-family: 'Space Mono', monospace;
+  font-weight: 400;
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.6rem;
+}
+.big {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-weight: 400;
   font-size: 1.5rem;
-  line-height: 1.3;
-  letter-spacing: 0.01em;
-  color: var(--ink);
+  line-height: 1.25;
 }
-.detail-big a { color: inherit; border-bottom: 1px solid rgba(169,86,58,0.45); }
-.detail-big a:hover { color: var(--rust); text-decoration: none; }
-.detail-year {
-  font-family: 'Space Mono', monospace;
-  font-size: 1.05rem;
-  letter-spacing: 0.28em;
-  color: var(--amber);
-  margin-top: 0.15rem;
-}
-.detail-sub {
-  margin-top: 0.6rem;
+.big a { color: inherit; border-bottom: 1px solid rgba(150,66,35,0.45); }
+.big a:hover { color: var(--rust); text-decoration: none; }
+.sub {
+  margin-top: 0.5rem;
   font-size: 0.92rem;
   line-height: 1.55;
   color: var(--ink-soft);
 }
-.arch {
-  width: 74px;
-  height: auto;
-  display: block;
-  margin: 0 auto 0.5rem;
-  color: var(--terra);
-  opacity: 0.75;
-}
-.details-note {
-  margin-top: 1.8rem;
-  padding-top: 1.1rem;
-  border-top: 1px solid var(--rule-soft);
-  font-style: italic;
-  font-size: 0.95rem;
-  color: var(--ink-soft);
-  text-align: center;
-}
-
-/* ══ STORY TIMELINE ═══════════════════════════════════════ */
-.story-timeline {
-  list-style: none;
-  position: relative;
-  padding-left: 1.85rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-.story-timeline::before {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 8px;
-  bottom: 8px;
-  width: 1px;
-  background: var(--rule);
-}
-.story-timeline li { position: relative; }
-.story-timeline li::before {
-  content: '';
-  position: absolute;
-  left: -1.85rem;
-  top: 7px;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 1.5px solid var(--ink-faint);
-}
-.story-timeline li:nth-child(2n)::before { border-color: var(--sage); }
-.story-timeline li:nth-child(3n)::before { border-color: var(--terra); }
-
-/* the wedding gets the filled star */
-.story-timeline li.st-future::before {
-  background: var(--amber);
-  border-color: var(--amber);
-  box-shadow: 0 0 0 3px rgba(207,143,55,0.18);
-}
-.st-date {
-  display: block;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-bottom: 0.15rem;
-}
-.st-title {
-  font-family: 'Cormorant Garamond', Georgia, serif !important;
-  font-weight: 500;
-  font-size: 1.22rem !important;
-  letter-spacing: 0.01em !important;
-  text-transform: none !important;
-  color: var(--ink) !important;
-  margin-bottom: 0.15rem !important;
-}
-.st-body p { color: var(--ink-soft); font-size: 0.96rem; }
-.st-future .st-title { color: var(--rust) !important; }
-
-/* ══ RSVP ═════════════════════════════════════════════════ */
-.rsvp-dead {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-bottom: 1.6rem;
-}
-.rsvp-form { display: flex; flex-direction: column; gap: 1.15rem; }
-.fg { display: flex; flex-direction: column; gap: 0.35rem; }
-.fg label {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-.req { color: var(--rust); }
-.fg input[type="text"],
-.fg input[type="email"],
-.fg input[type="number"],
-.fg textarea {
-  width: 100%;
-  padding: 0.55rem 0.7rem;
-  background: rgba(255,255,255,0.55);
-  border: 1px solid var(--paper-edge);
-  color: var(--ink);
-  font-family: 'Newsreader', serif;
-  font-size: 1rem;
-  caret-color: var(--rust);
-  transition: border-color 0.15s, background 0.15s;
-  -webkit-appearance: none;
-  border-radius: 0;
-}
-.fg input:focus, .fg textarea:focus {
-  outline: none;
-  border-color: var(--rust);
-  background: #fff;
-}
-.fg textarea { resize: vertical; }
-.fg input[type="number"] { max-width: 7rem; }
-.radios { display: flex; gap: 1.6rem; flex-wrap: wrap; }
-.rl {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  cursor: pointer;
-  font-family: 'Newsreader', serif;
-  font-size: 1rem;
-  color: var(--ink);
-}
-.rl input[type="radio"] { accent-color: var(--rust); }
-.submit-btn {
-  align-self: flex-start;
-  padding: 0.65rem 2rem;
-  background: transparent;
-  border: 1px solid var(--ink);
-  color: var(--ink);
-  font-family: 'Space Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  cursor: pointer;
-  border-radius: 0;
-  transition: background 0.18s, color 0.18s;
-}
-.submit-btn:hover { background: var(--ink); color: var(--paper); }
 
 /* ══ FOOTER ═══════════════════════════════════════════════ */
-footer {
-  text-align: center;
-  padding: 1rem 1.5rem 3rem;
-  color: var(--ink-soft);
-}
+footer { text-align: center; padding: 0 1.5rem 3rem; color: var(--ink-soft); }
 .marcy-sleep {
-  width: 156px;
+  width: 150px;
   height: auto;
   display: block;
   margin: 0 auto 1rem;
   color: var(--ink-soft);
 }
+.cat-fill    { fill: var(--marcy-fur); }
+.cat-lash    { stroke: var(--marcy-eye); }
+.cat-bib     { fill: var(--marcy-bib); stroke: none; }
+.cat-whisker { stroke: var(--marcy-bib); opacity: 0.55; }
+.banana      { fill: var(--banana); stroke: #8a7420; }
+.banana-line { stroke: #8a7420; opacity: 0.5; }
+.banana-stem { stroke: #6f5c1c; }
+.zzz { animation: zzz-float 4.2s ease-in-out infinite; }
+@keyframes zzz-float {
+  0%,100% { opacity: 0.25; transform: translateY(2px); }
+  50%     { opacity: 0.65; transform: translateY(-3px); }
+}
 .foot-line {
   font-family: 'Space Mono', monospace;
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.foot-marcy {
-  font-style: italic;
-  font-size: 0.8rem;
-  color: var(--ink-faint);
-  margin-top: 0.4rem;
 }
 .foot-src {
   display: inline-block;
-  margin-top: 1rem;
+  margin-top: 0.9rem;
   font-family: 'Space Mono', monospace;
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-faint);
 }
 .foot-src:hover { color: var(--rust); text-decoration: none; }
 
-/* ══ FADE-IN (keeps each card's tilt) ═════════════════════ */
+/* ══ FADE-IN ══════════════════════════════════════════════ */
 .fade-in {
   opacity: 0;
-  transform: translateY(18px) rotate(var(--rot, 0deg));
+  transform: translateY(16px) rotate(-0.35deg);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0) rotate(var(--rot, 0deg));
-}
+.fade-in.visible { opacity: 1; transform: translateY(0) rotate(-0.35deg); }
 
 /* ══ RESPONSIVE ═══════════════════════════════════════════ */
-@media (max-width: 700px) {
-  #hero { --band-h: 150px; }
-  .marquee { height: clamp(180px, 26vh, 240px); }
-
+@media (max-width: 620px) {
   html { font-size: 17px; }
-  #hero { gap: 1.9rem; padding-bottom: 2.5rem; }
-  .festoon { top: 3rem; height: 44px; }
-  .card { padding: 1.6rem 1.25rem; box-shadow: 3px 4px 0 rgba(35,32,27,0.09); }
-  .card h2 { font-size: 1.25rem; }
-  .details-grid { grid-template-columns: 1fr; gap: 1.6rem 0; }
-  .detail-rule {
-    height: 1px;
-    background: repeating-linear-gradient(to right, var(--rule) 0 5px, transparent 5px 10px);
-  }
-  .radios { flex-direction: column; gap: 0.55rem; }
-  .strip { padding: 0 0.75rem; }
-  .marcy-sleep { width: 120px; }
-  .hero-meta { font-size: 0.6rem; letter-spacing: 0.12em; }
-}
-
-/* the plate gets tight on small screens — let it scroll rather than shrink to nothing */
-@media (max-width: 520px) {
-  .plate { overflow-x: auto; }
-  .plate-svg { min-width: 520px; }
+  .marquee { height: clamp(190px, 28vh, 250px); }
+  .festoon { height: 46px; }
+  main { padding: 2.25rem 1.1rem 3rem; }
+  .facts { grid-template-columns: 1fr; gap: 1.5rem 0; padding: 1.6rem 1.25rem; }
+  .rule { height: 1px; background: repeating-linear-gradient(to right, var(--rule) 0 5px, transparent 5px 10px); }
+  .marcy-sleep { width: 124px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bulb circle, .steam, .zzz, .cat-eye { animation: none; }
+  .bulb circle, .zzz { animation: none; }
   .marquee-track { animation: none; }
-  .marquee { overflow-x: auto; }   /* still scrollable by hand */
+  .marquee { overflow-x: auto; }
   .fade-in { transition: none; }
-  html { scroll-behavior: auto; }
 }
 </style>
 
@@ -1428,13 +511,6 @@ inp.addEventListener('keydown', e => {
 });
 if (wall.style.display !== 'none') inp.focus();
 
-// ── NAV ───────────────────────────────────────────────────
-// Light over the dusk band, ink once you scroll past it.
-const hdr = document.getElementById('site-header');
-const onScroll = () => hdr.classList.toggle('scrolled', window.scrollY > 120);
-onScroll();
-window.addEventListener('scroll', onScroll, { passive: true });
-
 // ── PHOTO MARQUEE ─────────────────────────────────────────
 // Duration is derived from the track width so the strip drifts at a fixed
 // px/sec no matter how many photos are in the list.
@@ -1449,7 +525,6 @@ function setMarqueeSpeed() {
 setMarqueeSpeed();
 window.addEventListener('load', setMarqueeSpeed);
 window.addEventListener('resize', setMarqueeSpeed, { passive: true });
-// images finishing individually can change the width too
 track.querySelectorAll('img').forEach(img => {
   if (!img.complete) img.addEventListener('load', setMarqueeSpeed, { once: true });
 });
@@ -1461,13 +536,4 @@ const io = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.08 });
 document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
-
-// ── RSVP CONDITIONAL FIELDS ───────────────────────────────
-const extra = ['r-guests','r-diet','r-song'].map(id => document.getElementById(id));
-document.querySelectorAll('input[name="attending"]').forEach(r =>
-  r.addEventListener('change', () => {
-    const yes = document.querySelector('input[name="attending"]:checked')?.value === 'yes';
-    extra.forEach(el => { el.style.display = yes ? 'flex' : 'none'; });
-  })
-);
 </script>
