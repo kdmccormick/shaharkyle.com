@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Shahar & Kyle — Our Wedding" />
+  <meta name="description" content="Shahar & Kyle are getting married — June 5, 2027 at Arts at the Armory in Somerville, MA." />
   <title>Shahar & Kyle</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,10 +34,9 @@
   <nav>
     <a class="nav-title" href="#hero">s&amp;k</a>
     <ul>
-      <li><a href="#details">details</a></li>
-      <li><a href="#schedule">schedule</a></li>
-      <li><a href="#travel">travel</a></li>
-      <li><a href="#faq">faq</a></li>
+      <li><a href="#details">when &amp; where</a></li>
+      <li><a href="#us">us</a></li>
+      <li><a href="#timeline">the story</a></li>
       <li><a href="#rsvp" class="rsvp-link">rsvp</a></li>
     </ul>
   </nav>
@@ -171,91 +170,204 @@
     <p class="hero-tagline">we joyfully invite you to celebrate the marriage of</p>
     <h1>Shahar &amp; Kyle</h1>
     <p class="hero-meta">
-      <span>[MONTH DAY, YEAR]</span>
+      <span>June 5, 2027</span>
       <span class="sep">&nbsp;&bull;&nbsp;</span>
-      <span>[VENUE] &bull; [CITY, STATE]</span>
+      <span>Arts at the Armory &bull; Somerville, MA</span>
     </p>
     <a href="#rsvp" class="hero-cta">RSVP</a>
   </div>
 
 </section>
 
+<!-- ── DOODLE STRIP (coffee · books · marcy · stars) ──── -->
+<div class="doodle-strip" aria-hidden="true">
+  <svg viewBox="0 0 620 96" class="doodle-svg">
+    <g class="dood" fill="none" stroke-linecap="round" stroke-linejoin="round">
+
+      <!-- wobbly baseline threading it all together -->
+      <path d="M8,74 C60,71 96,77 140,73 C190,68 214,79 262,74 C310,69 336,80 388,74 C440,68 470,79 528,73 C566,69 590,76 612,72"
+            stroke="currentColor" stroke-width="1" opacity="0.22" stroke-dasharray="1,5"/>
+
+      <!-- ── COFFEE ── -->
+      <g class="dd-coffee">
+        <!-- steam -->
+        <path d="M52,30 C47,24 57,19 52,12" stroke="#95c97a" stroke-width="1.4" opacity="0.5" class="steam" style="animation-delay:0s"/>
+        <path d="M65,32 C60,26 70,21 65,15" stroke="#95c97a" stroke-width="1.4" opacity="0.4" class="steam" style="animation-delay:.8s"/>
+        <!-- cup -->
+        <path d="M39,40 L43,68 C43,73 47,76 52,76 L66,76 C71,76 75,73 75,68 L79,40 Z"
+              stroke="#ff6b35" stroke-width="1.6"/>
+        <!-- coffee surface -->
+        <path d="M41,46 C50,49 68,49 77,46" stroke="#ff6b35" stroke-width="1.1" opacity="0.55"/>
+        <!-- handle -->
+        <path d="M78,47 C89,46 91,55 90,59 C89,64 82,66 76,65" stroke="#ff6b35" stroke-width="1.5"/>
+        <!-- saucer -->
+        <path d="M30,80 C46,83 72,83 88,80" stroke="#ff6b35" stroke-width="1.4" opacity="0.7"/>
+      </g>
+
+      <!-- ── BOOKS ── -->
+      <g class="dd-books">
+        <!-- bottom book -->
+        <path d="M168,80 L232,78 L231,68 L167,70 Z" stroke="#b57bee" stroke-width="1.5"/>
+        <path d="M173,79 L172,69" stroke="#b57bee" stroke-width="1" opacity="0.5"/>
+        <!-- middle book -->
+        <path d="M171,68 L228,66 L227,56 L170,58 Z" stroke="#4ecdc4" stroke-width="1.5"/>
+        <path d="M176,67 L175,57" stroke="#4ecdc4" stroke-width="1" opacity="0.5"/>
+        <!-- top book, askew -->
+        <path d="M176,56 L224,51 L223,42 L175,47 Z" stroke="#f5c542" stroke-width="1.5"/>
+        <path d="M181,55 L180,46" stroke="#f5c542" stroke-width="1" opacity="0.5"/>
+        <!-- bookmark ribbon -->
+        <path d="M212,52 L212,62 L208,58 L204,63 L205,52" stroke="#ff6b35" stroke-width="1.1" opacity="0.75"/>
+      </g>
+
+      <!-- ── MARCY (black floofy cat) ── -->
+      <g class="dd-marcy">
+        <!-- tail, curling right -->
+        <path d="M398,78 C420,82 434,74 432,62 C431,54 423,52 420,58 C418,63 423,66 427,63"
+              stroke="#4a5570" stroke-width="2" fill="none"/>
+        <!-- body: floofy sitting silhouette -->
+        <path d="M352,79
+                 C349,64 353,52 358,44
+                 C356,38 354,32 355,26
+                 C359,29 363,33 366,36
+                 C372,32 382,32 388,36
+                 C391,33 395,29 399,26
+                 C400,32 398,38 396,44
+                 C401,52 405,64 402,79
+                 C392,81 362,81 352,79 Z"
+              fill="#12151f" stroke="#4a5570" stroke-width="1.6"/>
+        <!-- floof tufts on the cheeks -->
+        <path d="M356,50 C352,52 350,55 351,58" stroke="#4a5570" stroke-width="1" opacity="0.6"/>
+        <path d="M398,50 C402,52 404,55 403,58" stroke="#4a5570" stroke-width="1" opacity="0.6"/>
+        <!-- chest floof -->
+        <path d="M371,62 C374,66 380,66 383,62" stroke="#4a5570" stroke-width="1" opacity="0.45"/>
+        <!-- eyes -->
+        <ellipse cx="368" cy="46" rx="3.4" ry="4.2" fill="#f5c542" class="marcy-eye"/>
+        <ellipse cx="386" cy="46" rx="3.4" ry="4.2" fill="#f5c542" class="marcy-eye"/>
+        <ellipse cx="368" cy="46" rx="1"   ry="3.4" fill="#12151f"/>
+        <ellipse cx="386" cy="46" rx="1"   ry="3.4" fill="#12151f"/>
+        <!-- nose + whiskers -->
+        <path d="M375,54 L377,56 L379,54" stroke="#95c97a" stroke-width="1.1" opacity="0.85"/>
+        <path d="M360,54 C354,53 350,54 347,55" stroke="#4a5570" stroke-width="0.9" opacity="0.65"/>
+        <path d="M360,57 C354,58 350,59 347,61" stroke="#4a5570" stroke-width="0.9" opacity="0.5"/>
+        <path d="M394,54 C400,53 404,54 407,55" stroke="#4a5570" stroke-width="0.9" opacity="0.65"/>
+        <path d="M394,57 C400,58 404,59 407,61" stroke="#4a5570" stroke-width="0.9" opacity="0.5"/>
+      </g>
+
+      <!-- ── STARS ── -->
+      <g class="dd-stars">
+        <path d="M520,52 L522,60 L530,62 L522,64 L520,72 L518,64 L510,62 L518,60 Z" fill="#f5c542" stroke="none" opacity="0.85" class="star-t"/>
+        <path d="M556,38 L557.5,44 L563,45.5 L557.5,47 L556,53 L554.5,47 L549,45.5 L554.5,44 Z" fill="#e8edf3" stroke="none" opacity="0.7" class="star-t" style="animation-delay:.9s"/>
+        <path d="M588,64 L589,68 L593,69 L589,70 L588,74 L587,70 L583,69 L587,68 Z" fill="#4ecdc4" stroke="none" opacity="0.8" class="star-t" style="animation-delay:1.6s"/>
+        <circle cx="540" cy="30" r="1.2" fill="#e8edf3" opacity="0.4"/>
+        <circle cx="575" cy="76" r="1"   fill="#e8edf3" opacity="0.3"/>
+        <circle cx="604" cy="44" r="1.4" fill="#e8edf3" opacity="0.35"/>
+      </g>
+
+    </g>
+  </svg>
+</div>
+
 <!-- ── CONTENT ───────────────────────────────────────── -->
 <main>
 
-  <section id="story" class="card fade-in">
-    <h2><span class="pre">//</span> our story</h2>
-    <p class="story-body">
-      <!-- TODO: Write a short paragraph about how you met. -->
-      We met [how you met] and have been [adventuring / building / loving each other] ever since.
-      We can&rsquo;t wait to celebrate with the people we love most.
-    </p>
-  </section>
-
   <section id="details" class="card fade-in">
-    <h2><span class="pre">//</span> details</h2>
+    <h2><span class="pre">//</span> save the date</h2>
     <div class="details-grid">
       <div class="detail-block">
-        <h3>ceremony</h3>
-        <p>
-          [TIME]<br/>
-          <a href="#" target="_blank" rel="noopener">[VENUE NAME]</a><br/>
-          [ADDRESS]<br/>
-          [CITY, STATE ZIP]
+        <h3>when</h3>
+        <p class="detail-big">
+          June 5<br/>
+          <span class="detail-year">2027</span>
         </p>
+        <p class="detail-sub">doors at 5:00 pm</p>
       </div>
       <div class="detail-rule"></div>
       <div class="detail-block">
-        <h3>reception</h3>
-        <p>
-          [TIME]<br/>
-          [Same venue / Different venue]<br/>
-          Dinner, dancing, and all the good stuff.
+        <h3>where</h3>
+        <p class="detail-big">
+          <a href="https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+Somerville,+MA+02143"
+             target="_blank" rel="noopener">Arts at the Armory</a>
         </p>
+        <p class="detail-sub">191 Highland Ave<br/>Somerville, MA 02143</p>
       </div>
     </div>
+    <p class="details-note">
+      That&rsquo;s the shape of it &mdash; enough to start planning.
+      Schedule, travel tips, and everything else will land here as we figure it out.
+    </p>
   </section>
 
-  <section id="schedule" class="card fade-in">
-    <h2><span class="pre">//</span> schedule</h2>
-    <ul class="timeline">
-      <li><span class="tt">[4:30 PM]</span><span class="te">Guests arrive &amp; mingle</span></li>
-      <li><span class="tt">[5:00 PM]</span><span class="te">Ceremony</span></li>
-      <li><span class="tt">[5:45 PM]</span><span class="te">Cocktail hour</span></li>
-      <li><span class="tt">[7:00 PM]</span><span class="te">Dinner &amp; toasts</span></li>
-      <li><span class="tt">[8:30 PM]</span><span class="te">Dancing</span></li>
-      <li><span class="tt">[11:00 PM]</span><span class="te">Send-off</span></li>
-    </ul>
-  </section>
-
-  <section id="travel" class="card fade-in">
-    <h2><span class="pre">//</span> travel</h2>
-    <div class="two-col">
-      <div>
-        <h3>getting there</h3>
-        <p>[VENUE] is at [ADDRESS]. [Parking / transit info. Recommend arriving X min early.]</p>
+  <section id="us" class="card fade-in">
+    <h2><span class="pre">//</span> us</h2>
+    <figure class="photo-figure">
+      <!--
+        TODO: Drop your photo at  public/images/us.jpg
+        Until then, the placeholder below shows instead.
+        Swap the src if you name the file something else.
+      -->
+      <div class="photo-frame">
+        <img src="/images/us.jpg" alt="Shahar and Kyle" class="photo-img" id="us-photo" />
+        <div class="photo-placeholder" id="us-placeholder">
+          <svg viewBox="0 0 100 100" class="ph-svg" aria-hidden="true">
+            <circle cx="34" cy="40" r="13" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="66" cy="40" r="13" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M34,53 C34,72 50,80 50,80 C50,80 66,72 66,53" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="50" cy="46" r="3" fill="currentColor"/>
+          </svg>
+          <p class="ph-text">drop a photo at <code>public/images/us.jpg</code></p>
+        </div>
       </div>
-      <div>
-        <h3>where to stay</h3>
-        <p>Room block at <a href="#" target="_blank" rel="noopener">[HOTEL]</a> ([DISTANCE] from venue). Code: <strong>[CODE]</strong>.</p>
-      </div>
-    </div>
+      <figcaption>[A caption, an inside joke, or a date &amp; place]</figcaption>
+    </figure>
   </section>
 
-  <section id="faq" class="card fade-in">
-    <h2><span class="pre">//</span> faq</h2>
-    <dl class="faq">
-      <dt>What should I wear?</dt>
-      <dd>[DRESS CODE]</dd>
-      <dt>Are children welcome?</dt>
-      <dd>[We love your kids! / Adults-only &mdash; treat yourself to a night out.]</dd>
-      <dt>Can I bring a plus-one?</dt>
-      <dd>Your invitation will say. Questions? Just ask.</dd>
-      <dt>What&rsquo;s the food situation?</dt>
-      <dd>[Describe food &amp; drink. Note any dietary accommodations.]</dd>
-      <dt>Still have questions?</dt>
-      <dd>Email us: <a href="mailto:[YOUR EMAIL]">[YOUR EMAIL]</a></dd>
-    </dl>
+  <section id="timeline" class="card fade-in">
+    <h2><span class="pre">//</span> the story so far</h2>
+    <ol class="story-timeline">
+      <!-- TODO: Replace with your real milestones. Add or remove <li> blocks freely. -->
+      <li>
+        <span class="st-date">[YEAR]</span>
+        <div class="st-body">
+          <h3 class="st-title">we met</h3>
+          <p>[Where, how, and who made the first move.]</p>
+        </div>
+      </li>
+      <li>
+        <span class="st-date">[YEAR]</span>
+        <div class="st-body">
+          <h3 class="st-title">first date</h3>
+          <p>[The one that made it obvious.]</p>
+        </div>
+      </li>
+      <li>
+        <span class="st-date">[YEAR]</span>
+        <div class="st-body">
+          <h3 class="st-title">first big trip</h3>
+          <p>[Where you went and what went wrong / gloriously right.]</p>
+        </div>
+      </li>
+      <li>
+        <span class="st-date">[YEAR]</span>
+        <div class="st-body">
+          <h3 class="st-title">moved in together</h3>
+          <p>[The apartment, the plants, the arguments about shelving.]</p>
+        </div>
+      </li>
+      <li>
+        <span class="st-date">[YEAR]</span>
+        <div class="st-body">
+          <h3 class="st-title">the proposal</h3>
+          <p>[How it happened.]</p>
+        </div>
+      </li>
+      <li class="st-future">
+        <span class="st-date">2027</span>
+        <div class="st-body">
+          <h3 class="st-title">we get married</h3>
+          <p>You&rsquo;re invited to this one.</p>
+        </div>
+      </li>
+    </ol>
   </section>
 
   <section id="rsvp" class="card fade-in">
@@ -304,9 +416,43 @@
 </main>
 
 <footer>
-  <span class="foot-hex">⬡</span>
-  shahar &amp; kyle &nbsp;&bull;&nbsp; [YEAR]
-  <span class="foot-hex">⬡</span>
+  <!-- marcy, asleep, keeping watch over the footer -->
+  <svg viewBox="0 0 160 70" class="marcy-sleep" aria-hidden="true">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <!-- curled body -->
+      <path d="M22,58 C10,44 18,24 40,19 C60,14 84,16 102,22 C120,28 130,42 124,54 C118,64 96,62 74,60 C54,58 32,64 22,58 Z"
+            fill="#12151f" stroke="#3a4358" stroke-width="1.5"/>
+      <!-- tail wrapped around the front -->
+      <path d="M124,54 C136,52 144,44 140,36 C137,30 129,31 128,37 C127,42 133,44 136,40"
+            stroke="#3a4358" stroke-width="1.8" fill="none"/>
+      <!-- head, tucked left -->
+      <path d="M44,44 C34,44 27,38 27,31 C27,27 29,24 32,22
+               C31,18 30,15 31,12 C34,14 37,16 39,18
+               C43,16 49,16 53,18 C55,16 58,14 61,12
+               C62,15 61,18 60,22 C63,24 65,27 65,31 C65,38 56,44 44,44 Z"
+            fill="#12151f" stroke="#3a4358" stroke-width="1.5"/>
+      <!-- closed eyes -->
+      <path d="M35,29 C37,31 40,31 42,29" stroke="#95c97a" stroke-width="1.3" opacity="0.8"/>
+      <path d="M50,29 C52,31 55,31 57,29" stroke="#95c97a" stroke-width="1.3" opacity="0.8"/>
+      <!-- nose -->
+      <path d="M44,35 L46,37 L48,35" stroke="#3a4358" stroke-width="1.1"/>
+      <!-- floof along the back -->
+      <path d="M62,20 C70,17 82,17 92,20"   stroke="#3a4358" stroke-width="0.9" opacity="0.45"/>
+      <path d="M96,24 C106,26 114,32 118,38" stroke="#3a4358" stroke-width="0.9" opacity="0.35"/>
+      <!-- zzz -->
+      <g stroke="#4ecdc4" stroke-width="1.2" opacity="0.55" class="zzz">
+        <path d="M74,14 L82,14 L74,22 L82,22"/>
+        <path d="M88,4 L94,4 L88,10 L94,10"/>
+      </g>
+    </g>
+  </svg>
+
+  <p class="foot-line">
+    <span class="foot-hex">⬡</span>
+    shahar &amp; kyle &nbsp;&bull;&nbsp; june 5, 2027
+    <span class="foot-hex">⬡</span>
+  </p>
+  <p class="foot-marcy">marcy supervised the construction of this website</p>
   <a class="foot-src" href="https://github.com/kdmccormick/shaharkyle.com" target="_blank" rel="noopener">source code on github</a>
 </footer>
 
@@ -550,30 +696,67 @@ nav ul li a:hover { color: var(--text); text-decoration: none; }
 }
 .hero-cta:hover { background: var(--axon); color: var(--void); text-decoration: none; }
 
+/* ── DOODLE STRIP ────────────────────────────────────── */
+.doodle-strip {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  color: var(--muted);
+}
+.doodle-svg { width: 100%; height: auto; display: block; }
+.steam { animation: steam-rise 3.2s ease-in-out infinite; }
+@keyframes steam-rise {
+  0%,100% { opacity: 0.15; transform: translateY(2px); }
+  50%     { opacity: 0.6;  transform: translateY(-3px); }
+}
+.marcy-eye { animation: marcy-blink 6s step-end infinite; transform-origin: center; }
+@keyframes marcy-blink { 0%,96% { opacity: 1; } 97%,99% { opacity: 0.08; } 100% { opacity: 1; } }
+.zzz { animation: zzz-float 4s ease-in-out infinite; }
+@keyframes zzz-float {
+  0%,100% { opacity: 0.25; transform: translateY(2px); }
+  50%     { opacity: 0.7;  transform: translateY(-3px); }
+}
+
 /* ── MAIN / CARDS ────────────────────────────────────── */
 main {
   max-width: 760px;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 6rem;
+  padding: 1.5rem 1.5rem 5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.4rem;
 }
+
+/*
+ * Cards read like photocopied zine pages taped to a wall:
+ * a hair off-axis, hard-edged drop shadow, no soft gradients.
+ */
 .card {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--axon);
+  border-left: 3px solid var(--accent, var(--axon));
   padding: 2rem 2.25rem;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.38);
 }
+
+/* per-card accent + a slightly different tilt each time */
+#details  { --accent: var(--neuron);  --rot: -0.45deg; }
+#us       { --accent: var(--gold);    --rot:  0.35deg; }
+#timeline { --accent: var(--cosmic);  --rot: -0.25deg; }
+#rsvp     { --accent: var(--axon);    --rot:  0.4deg;  }
+
 .card h2 {
   font-family: 'Space Mono', monospace;
   font-size: 0.72rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--axon);
+  color: var(--accent, var(--axon));
   margin-bottom: 1.4rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px dashed rgba(107,122,153,0.28);
 }
-.pre { color: var(--muted); margin-right: 0.4rem; }
+.pre { color: var(--muted); margin-right: 0.4rem; opacity: 0.7; }
 .card p, .card dd { font-size: 1rem; line-height: 1.7; }
 .card h3 {
   font-family: 'Space Mono', monospace;
@@ -584,63 +767,206 @@ main {
   margin-bottom: 0.5rem;
 }
 
-/* Story */
-.story-body {
-  font-style: italic;
-  font-size: 1.1rem;
-  max-width: 540px;
-  margin: 0 auto;
-  text-align: center;
-  color: var(--text);
+/* ── DETAILS / SAVE THE DATE ─────────────────────────── */
+/* faint coffee ring, because there is always a coffee ring */
+#details::after {
+  content: '';
+  position: absolute;
+  top: -18px;
+  right: 26px;
+  width: 74px;
+  height: 74px;
+  border: 2px solid var(--neuron);
+  border-radius: 50%;
+  opacity: 0.07;
+  pointer-events: none;
 }
-
-/* Details */
 .details-grid {
   display: grid;
   grid-template-columns: 1fr 1px 1fr;
   gap: 0 2rem;
+  text-align: center;
 }
-.detail-rule { background: var(--border); }
-.detail-block p { line-height: 1.8; }
-
-/* Timeline */
-.timeline { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-.timeline li { display: flex; align-items: baseline; gap: 1rem; }
-.tt {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--gold);
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  min-width: 6.5rem;
-  text-align: right;
+.detail-rule {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(107,122,153,0.3) 0 4px,
+    transparent 4px 9px
+  );
 }
-.te {
-  flex: 1;
-  padding-left: 0.85rem;
-  border-left: 1px solid var(--border);
-  font-size: 1rem;
-}
-
-/* Two-col (travel) */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 2rem; }
-
-/* FAQ */
-.faq { display: flex; flex-direction: column; gap: 1rem; }
-.faq dt {
-  font-family: 'Crimson Text', serif;
-  font-weight: 600;
-  font-size: 1.05rem;
+.detail-big {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.45rem;
+  line-height: 1.25;
   color: var(--text);
-  margin-bottom: 0.1rem;
+  letter-spacing: -0.01em;
 }
-.faq dd {
-  margin: 0;
+.detail-year {
+  font-family: 'Space Mono', monospace;
+  font-weight: 400;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
   color: var(--muted);
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
 }
-.faq dd:last-child { border-bottom: none; padding-bottom: 0; }
+.detail-big a { color: inherit; border-bottom: 1px dashed rgba(107,122,153,0.5); }
+.detail-big a:hover { color: var(--neuron); text-decoration: none; }
+.detail-sub {
+  margin-top: 0.55rem;
+  font-size: 0.88rem !important;
+  line-height: 1.5 !important;
+  color: var(--muted);
+}
+.details-note {
+  margin-top: 1.6rem;
+  padding-top: 1.1rem;
+  border-top: 1px dashed rgba(107,122,153,0.22);
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* ── PHOTO ───────────────────────────────────────────── */
+.photo-figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 0.9rem; }
+
+/* taped-up print, tilted */
+.photo-frame {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: 12px 12px 46px;
+  background: #e8e4da;
+  transform: rotate(-1.4deg);
+  box-shadow: 6px 7px 0 rgba(0,0,0,0.42);
+}
+/* strips of tape at the top corners */
+.photo-frame::before,
+.photo-frame::after {
+  content: '';
+  position: absolute;
+  top: -13px;
+  width: 66px;
+  height: 26px;
+  background: rgba(200, 224, 220, 0.22);
+  border-left: 1px solid rgba(255,255,255,0.16);
+  border-right: 1px solid rgba(255,255,255,0.16);
+}
+.photo-frame::before { left: -14px;  transform: rotate(-26deg); }
+.photo-frame::after  { right: -14px; transform: rotate(24deg); }
+
+.photo-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: saturate(0.92) contrast(1.04);
+}
+.photo-placeholder {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  aspect-ratio: 4 / 3;
+  color: #7d7566;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0,0,0,0.035) 0 9px,
+    transparent 9px 18px
+  );
+}
+.photo-frame.is-empty .photo-img { display: none; }
+.photo-frame.is-empty .photo-placeholder { display: flex; }
+.ph-svg { width: 74px; height: 74px; opacity: 0.5; }
+.ph-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 0 1rem;
+}
+.ph-text code {
+  background: rgba(0,0,0,0.07);
+  padding: 0.1rem 0.3rem;
+}
+.photo-figure figcaption {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 0.35rem;
+}
+
+/* ── STORY TIMELINE ──────────────────────────────────── */
+.story-timeline {
+  list-style: none;
+  position: relative;
+  padding-left: 1.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+/* the connecting axon */
+.story-timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    var(--neuron) 0%,
+    var(--cosmic) 55%,
+    var(--gold)   100%
+  );
+  opacity: 0.4;
+}
+.story-timeline li { position: relative; }
+/* synapse node */
+.story-timeline li::before {
+  content: '';
+  position: absolute;
+  left: -1.9rem;
+  top: 6px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--void);
+  border: 2px solid var(--cosmic);
+}
+.story-timeline li:nth-child(1)::before { border-color: var(--neuron); }
+.story-timeline li:nth-child(2)::before { border-color: var(--neuron); }
+.story-timeline li:nth-child(3)::before { border-color: var(--axon); }
+.story-timeline li:nth-child(4)::before { border-color: var(--organic); }
+.story-timeline li:nth-child(5)::before { border-color: var(--cosmic); }
+
+/* the wedding: a filled, glowing star instead of a node */
+.story-timeline li.st-future::before {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 10px 2px rgba(245,197,66,0.5);
+}
+.st-date {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+.st-title {
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 800;
+  font-size: 1.02rem !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--text) !important;
+  margin-bottom: 0.15rem !important;
+}
+.st-body p { color: var(--muted); font-size: 0.97rem; }
+.st-future .st-title { color: var(--gold) !important; }
 
 /* RSVP form */
 .rsvp-dead {
@@ -709,36 +1035,67 @@ main {
 /* ── FOOTER ──────────────────────────────────────────── */
 footer {
   text-align: center;
-  padding: 2rem;
+  padding: 0 2rem 2.5rem;
   font-family: 'Space Mono', monospace;
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   color: var(--muted);
   text-transform: uppercase;
 }
-.foot-hex { color: var(--border); margin: 0 0.75rem; }
-.foot-src {
+.marcy-sleep {
+  width: 150px;
+  height: auto;
   display: block;
-  margin-top: 0.5rem;
+  margin: 0 auto 0.75rem;
+  opacity: 0.85;
+}
+.foot-line { margin-bottom: 0.4rem; }
+.foot-hex { color: var(--border); margin: 0 0.75rem; }
+.foot-marcy {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  opacity: 0.4;
+  text-transform: lowercase;
+  font-style: italic;
+}
+.foot-src {
+  display: inline-block;
+  margin-top: 0.8rem;
   font-size: 0.6rem;
   color: var(--muted);
-  opacity: 0.5;
+  opacity: 0.45;
   letter-spacing: 0.15em;
 }
 .foot-src:hover { opacity: 1; text-decoration: none; color: var(--axon); }
 
 /* ── FADE-IN ─────────────────────────────────────────── */
-.fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
-.fade-in.visible { opacity: 1; transform: none; }
+/* keeps each card's tilt (--rot) through the animation */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px) rotate(var(--rot, 0deg));
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--rot, 0deg));
+}
 
 /* ── RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 600px) {
-  .card { padding: 1.5rem 1.1rem; }
-  .details-grid { grid-template-columns: 1fr; }
+  .card { padding: 1.5rem 1.1rem; box-shadow: 3px 3px 0 rgba(0,0,0,0.38); }
+  .details-grid { grid-template-columns: 1fr; gap: 1.25rem 0; }
   .detail-rule { display: none; }
-  .two-col { grid-template-columns: 1fr; }
   .radios { flex-direction: column; gap: 0.5rem; }
   .pw-box { padding: 2rem 1.5rem; }
+  .photo-frame { padding: 9px 9px 34px; }
+  .doodle-strip { padding: 0 0.75rem; }
+  .marcy-sleep { width: 118px; }
+}
+
+/* respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .soma, .hub-pulse, .hub-ring, .star-t, .steam, .zzz, .marcy-eye { animation: none; }
+  .fade-in { transition: none; }
 }
 </style>
 
@@ -779,6 +1136,14 @@ const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
 }, { threshold: 0.08 });
 document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+// ── PHOTO FALLBACK ────────────────────────────────────
+// Shows the placeholder until public/images/us.jpg exists.
+const photo = document.getElementById('us-photo');
+const frame = photo.closest('.photo-frame');
+const markEmpty = () => frame.classList.add('is-empty');
+photo.addEventListener('error', markEmpty);
+if (photo.complete && photo.naturalWidth === 0) markEmpty();
 
 // ── RSVP CONDITIONAL FIELDS ───────────────────────────
 const extra = ['r-guests','r-diet','r-song'].map(id => document.getElementById(id));
