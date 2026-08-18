@@ -804,8 +804,17 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
  * each block reads as floating in it rather than the whole page being lit.
  * The glow pads shrink to match; see paintGlow in woodgrain.js.
  */
+/*
+ * 1026px is where planSky gives up on the side margins: below it the margin
+ * cannot hold a figure 104px across, and it falls back to the bands at the
+ * head and foot of the page. This is what makes those bands exist, so the two
+ * numbers belong together - see planBands in constellations.js.
+ */
+@media (max-width: 1026px) {
+  .page { padding: clamp(8rem, 26vw, 11rem) 0; }
+}
+
 @media (max-width: 760px) {
-  .page { padding: clamp(3rem, 12vw, 5rem) 0; }
   .strip-wrap { margin-top: clamp(4rem, 12vw, 5.5rem); }
   .bubble { margin-top: clamp(4rem, 12vw, 5.5rem); }
   .ask { margin-top: clamp(4.5rem, 14vw, 6rem); }

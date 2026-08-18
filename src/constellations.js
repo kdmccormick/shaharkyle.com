@@ -151,6 +151,43 @@ function dot(ctx, x, y, r) {
 
 const ORDER = ['zebrafish', 'neuron', 'bicycle', 'coffee', 'drum', 'headphones'];
 
+const BAND_MIN = 96;    // a band shallower than this cannot hold a figure
+
+/*
+ * The narrow-screen fallback.
+ *
+ * On a phone the content is the full width of the page, so the side margin
+ * the figures normally live in does not exist - at 900px across it is 70px,
+ * which fits a 55px figure, well under the size one needs to be readable.
+ * There is width to spare above the first block and below the last, though,
+ * so a figure goes in each of those instead, across the middle of the page.
+ *
+ * Those bands are only there because the page is padded top and bottom on
+ * narrow screens. If that padding goes, this returns nothing and the chart is
+ * loose stars only - which is what it was doing before.
+ */
+function planBands(w, h, avoid) {
+  if (!avoid.length) return [];
+
+  const top = Math.min(...avoid.map((a) => a.y));
+  const foot = Math.max(...avoid.map((a) => a.y + a.h));
+
+  const out = [];
+  const put = (name, y0, y1) => {
+    const depth = y1 - y0;
+    if (depth < BAND_MIN) return;
+    // as big as the band is deep, within reason, and well short of the full
+    // width - a figure spanning the page reads as a border, not a figure
+    const size = Math.min(depth * 0.74, w * 0.44, 190);
+    if (size < 76) return;
+    out.push({ name, cx: w / 2, cy: (y0 + y1) / 2, size });
+  };
+
+  put('heart', 0, top);            // the heart opens the page
+  put('drum', foot, h);            // and something with a bit of shape closes it
+  return out;
+}
+
 /*
  * Decide where the figures go, before anything is drawn.
  *
@@ -167,7 +204,10 @@ export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) 
   const rand = mulberry32(seed);
   const margin = (w - contentWidth) / 2;
   const size = Math.min(margin * 0.78, 220);
-  if (size < 104) return [];
+
+  // No usable margin - a phone, where the content is the full width. The
+  // open sky at the head and foot of the page is the only room left.
+  if (size < 104) return planBands(w, h, avoid);
 
   const out = [];
 
