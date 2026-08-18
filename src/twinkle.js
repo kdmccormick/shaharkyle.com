@@ -47,7 +47,8 @@ export function installTwinkle(canvas, opts = {}) {
       const k = reduced.matches ? 0.5 : 0.5 + 0.5 * Math.sin(t * f.rate + f.phase);
       const reach = f.r * (REACH + STRETCH * k);
 
-      ctx.globalAlpha = (BASE + SWING * k) * (opts.alpha ?? 1);
+      // f.a lets the loose stars sparkle more faintly than the figures'
+      ctx.globalAlpha = (BASE + SWING * k) * (opts.alpha ?? 1) * (f.a ?? 1);
       ctx.lineWidth = Math.max(0.6, f.r * 0.32);
       ctx.beginPath();
       ctx.moveTo(f.x - reach, f.y); ctx.lineTo(f.x + reach, f.y);

@@ -320,12 +320,24 @@ export function drawSky(ctx, w, h, placements, opts = {}) {
 
   const flares = [];
 
-  // ── loose stars everywhere ────────────────────────────────────────────
-  ctx.globalAlpha = alpha * 0.5;
+  /*
+   * ── loose stars everywhere ──────────────────────────────────────────
+   * Four sizes, on a long tail: mostly faint pinpricks, a scattering of
+   * brighter ones, and roughly one in forty bright enough to be given a
+   * flare and handed to the twinkle layer along with the figures'. That
+   * comes out at a dozen or so sparkling on a full page - few enough to
+   * catch the eye one at a time rather than reading as static.
+   */
+  ctx.globalAlpha = alpha * 0.72;
   const n = Math.round((w * h) / 6500);
   for (let i = 0; i < n; i++) {
     const u = rand();
-    dot(ctx, rand() * w, rand() * h, u > 0.94 ? 1.7 : u > 0.72 ? 1.1 : 0.7);
+    const x = rand() * w;
+    const y = rand() * h;
+    const r = u > 0.977 ? 2.2 : u > 0.94 ? 1.7 : u > 0.72 ? 1.2 : 0.85;
+    dot(ctx, x, y, r);
+    // dimmer than the figures' flares, so the chart still leads
+    if (u > 0.977) flares.push({ x, y, r, a: 0.62 });
   }
 
   // ── the figures ───────────────────────────────────────────────────────
