@@ -84,7 +84,7 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
         <source
           type="image/webp"
           srcset="/images/flyer-ink-900.webp 900w, /images/flyer-ink-1500.webp 1500w"
-          sizes="(max-width: 760px) 92vw, 700px" />
+          sizes="(max-width: 620px) 88vw, (max-width: 760px) 70vw, 536px" />
         <img
           src="/images/flyer-ink.png"
           width="1500" height="1645"
@@ -249,13 +249,21 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
    the drawing - everything else is tuned to it.
    ═════════════════════════════════════════════════════════ */
 :root {
-  /* Shahar means dawn. The page is the sky just before one: deep overhead,
-     going lighter and warmer down at the horizon. */
-  --sky-top:    #202d40;
-  --sky-mid:    #33455c;
-  --sky-low:    #4d5f75;
-  --sky-edge:   #161f2d;   /* deeper still, right at the margins */
-  --sky-edge-0: rgba(22,31,45,0);   /* the same, no alpha - see below */
+  /*
+   * Shahar means dawn. The page is the sky just before one: deeper overhead,
+   * going lighter down at the horizon.
+   *
+   * How light is a compromise pulling three ways. Too dark and the graphite
+   * grain vanishes into it and the step up to the lit blocks is a wall; too
+   * light and the off-white star chart has nothing to show against. Around
+   * here the grain reads at ~2.8:1, the chart at ~4.7:1, and the sky sits
+   * ~4.5:1 off the lit surface instead of the 8:1 cliff it was.
+   */
+  --sky-top:    #3f5474;
+  --sky-mid:    #536a8a;
+  --sky-low:    #6b809d;
+  --sky-edge:   #33445f;   /* deeper, right at the margins */
+  --sky-edge-0: rgba(51,68,95,0);   /* the same, no alpha - see below */
 
   /* Text sits in a pool of light, never straight on the sky. */
   --ink:        #14110f;
@@ -267,10 +275,12 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
 
   --chart:      #efece1;   /* off-white; the star chart is drawn in this */
 
-  /* The light behind each block. The core is what the text is actually read
-     against, so it is nearly opaque; the halo is the spill around it. */
-  --glow-core:  rgba(246,236,212,0.96);
-  --glow-halo:  rgba(233,196,126,0.36);
+  /* The light behind each block, in three stacked passes so it fades out over
+     a distance rather than in a step. The core is what the text is actually
+     read against, so it stays nearly opaque; the other two are the spill. */
+  --glow-core:  rgba(246,236,212,0.94);
+  --glow-mid:   rgba(242,222,178,0.5);
+  --glow-halo:  rgba(233,196,126,0.26);
 
   --font-hand:  'Permanent Marker', 'Comic Sans MS', cursive;
   --font-type:  'Special Elite', 'Courier New', Courier, monospace;
@@ -664,6 +674,11 @@ main {
 .catch:hover { background: var(--ink); color: var(--sky-mid); }
 
 /* ══ THE FLYER ════════════════════════════════════════════ */
+/* The section carries the width, not the image: it is the [data-clearing] the
+   grain parts around, so if the two disagree the light lands in the wrong
+   place. On a phone it goes back to nearly full width - a quarter off an
+   already narrow column leaves the handwriting too small to read. */
+.flyer { width: 75%; margin-inline: auto; }
 .flyer img { display: block; width: 100%; height: auto; }
 
 /* ══ TITLES ═══════════════════════════════════════════════ */
@@ -865,6 +880,7 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
 @media (max-width: 620px) {
   html { font-size: 17px; }
   main { padding: 1.25rem 1rem 1.5rem; }
+  .flyer { width: 94%; }
   .fact { font-size: 1.2rem; }
   .marcy-sleep { width: 118px; }
 }
@@ -893,8 +909,9 @@ const pick = (name, fallback) =>
 
 const INK   = pick('--ink', '#14110f');
 const CHART = pick('--chart', '#efece1');
-const GLOW  = pick('--glow-core', 'rgba(244,233,206,0.95)');
-const HALO  = pick('--glow-halo', 'rgba(232,201,138,0.38)');
+const GLOW  = pick('--glow-core', '');
+const GMID  = pick('--glow-mid',  '');
+const HALO  = pick('--glow-halo', '');
 
 const twinkle = installTwinkle(document.getElementById('twinkle'), { ink: CHART });
 
@@ -906,6 +923,7 @@ const repaintGrain = installWoodGrain(document.getElementById('grain'), {
   skyAlpha: 1,
   glowCanvas: document.getElementById('glow'),
   glowCore: GLOW,
+  glowMid: GMID,
   glowHalo: HALO,
   onSky: (flares, geom) => twinkle.set(flares, geom),
 });

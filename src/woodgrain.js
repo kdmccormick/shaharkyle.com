@@ -35,17 +35,20 @@ const MAX_DPR = 2;
 /*
  * The pool of dawn light behind each block of content.
  *
- * Two passes. The core has to cover its clearing outright - the text above it
- * is near-black and the page behind it is night, so any corner the light misses
- * is a corner you cannot read. It is inflated well past the clearing and then
- * blurred, so the blur's soft edge falls outside the clearing rather than
- * across it: GLOW_CORE_PAD is comfortably more than GLOW_CORE_BLUR. The halo is
- * only atmosphere - it spills onto the surrounding grain and carries no text.
+ * Three passes, widening and thinning as they go, so the light falls off over
+ * a couple of hundred pixels instead of ending at an edge. The core has to
+ * cover its clearing outright - the text above it is near-black and the page
+ * behind it is night sky, so any corner the light misses is a corner you cannot
+ * read. It is inflated well past the clearing and then blurred, so the blur's
+ * soft edge lands outside the clearing rather than across it: each PAD is
+ * comfortably larger than its BLUR. The outer two carry no text and exist only
+ * to get the sky and the lit paper to meet somewhere in the middle.
  */
-const GLOW_CORE_PAD = 42;
-const GLOW_CORE_BLUR = 22;
-const GLOW_HALO_PAD = 108;
-const GLOW_HALO_BLUR = 62;
+const GLOW_PASSES = [
+  { pad: 168, blur: 92, key: 'glowHalo', fallback: 'rgba(233,196,126,0.26)' },
+  { pad: 88,  blur: 46, key: 'glowMid',  fallback: 'rgba(242,222,178,0.50)' },
+  { pad: 42,  blur: 22, key: 'glowCore', fallback: 'rgba(246,236,212,0.94)' },
+];
 
 /* ── a small seeded RNG, so the grain is the same on every reload ─────── */
 function mulberry32(a) {
@@ -359,15 +362,8 @@ function paintGlow(canvas, w, h, dpr, clearings, opts = {}) {
     ...c, x: c.x - pad, y: c.y - pad, w: c.w + pad * 2, h: c.h + pad * 2,
   });
 
-  const passes = [
-    { pad: GLOW_HALO_PAD, blur: GLOW_HALO_BLUR,
-      fill: opts.glowHalo ?? 'rgba(232,201,138,0.38)' },
-    { pad: GLOW_CORE_PAD, blur: GLOW_CORE_BLUR,
-      fill: opts.glowCore ?? 'rgba(244,233,206,0.95)' },
-  ];
-
-  for (const pass of passes) {
-    ctx.fillStyle = pass.fill;
+  for (const pass of GLOW_PASSES) {
+    ctx.fillStyle = opts[pass.key] || pass.fallback;
     // Without filter support the shape is drawn hard-edged; it still lights
     // the text, it just does not feather.
     if (soft) ctx.filter = `blur(${pass.blur}px)`;
