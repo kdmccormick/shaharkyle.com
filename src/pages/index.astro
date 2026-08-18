@@ -805,20 +805,31 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
  * The glow pads shrink to match; see paintGlow in woodgrain.js.
  */
 /*
- * 1026px is where planSky gives up on the side margins: below it the margin
- * cannot hold a figure 104px across, and it falls back to the bands at the
- * head and foot of the page. This is what makes those bands exist, so the two
- * numbers belong together - see planBands in constellations.js.
+ * This is what makes the bands planSky falls back to exist, so it has to be
+ * set above the width where planSky gives up on the side margins - around
+ * 1060px, depending on where the content actually lands. Too low and there is
+ * a range asking for bands that were never made, and the chart comes out
+ * empty; too high only costs a little extra sky. See planBands in
+ * constellations.js.
  */
-@media (max-width: 1026px) {
-  .page { padding: clamp(8rem, 26vw, 11rem) 0; }
+@media (max-width: 1100px) {
+  /* The head holds the heart; the foot holds a row of three, so it is
+     deeper. */
+  .page { padding: clamp(7rem, 22vw, 9rem) 0 clamp(9rem, 28vw, 12rem); }
+
+  /*
+   * Margin, not padding. The footer is a [data-clearing], so padding-top
+   * would be inside its own clearing and the gap between it and the form
+   * would stay shut. A margin is real space between the two clearings,
+   * which is what the middle row of figures sits in.
+   */
+  footer { margin-top: clamp(9rem, 30vw, 12rem); }
 }
 
 @media (max-width: 760px) {
   .strip-wrap { margin-top: clamp(4rem, 12vw, 5.5rem); }
   .bubble { margin-top: clamp(4rem, 12vw, 5.5rem); }
   .ask { margin-top: clamp(4.5rem, 14vw, 6rem); }
-  footer { padding-top: clamp(4rem, 12vw, 5.5rem); }
 }
 
 @media (max-width: 620px) {

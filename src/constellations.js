@@ -159,32 +159,53 @@ const BAND_MIN = 96;    // a band shallower than this cannot hold a figure
  * On a phone the content is the full width of the page, so the side margin
  * the figures normally live in does not exist - at 900px across it is 70px,
  * which fits a 55px figure, well under the size one needs to be readable.
- * There is width to spare above the first block and below the last, though,
- * so a figure goes in each of those instead, across the middle of the page.
+ * The width above and below the content is free, though, so the whole set
+ * goes into three horizontal bands instead: the heart alone at the head of
+ * the page, then three between the form and the credits, then three below.
  *
- * Those bands are only there because the page is padded top and bottom on
- * narrow screens. If that padding goes, this returns nothing and the chart is
- * loose stars only - which is what it was doing before.
+ * The middle band is found rather than named - it is simply the deepest gap
+ * between consecutive blocks - so nothing here knows the order of the page.
+ *
+ * All three bands are only there because the page is padded and the credits
+ * are pushed down on narrow screens. If that spacing goes, the bands come out
+ * too shallow, this returns nothing, and the chart is loose stars only.
  */
 function planBands(w, h, avoid) {
   if (!avoid.length) return [];
 
-  const top = Math.min(...avoid.map((a) => a.y));
-  const foot = Math.max(...avoid.map((a) => a.y + a.h));
+  const boxes = [...avoid].sort((a, b) => a.y - b.y);
+  const head = boxes[0].y;
+  const foot = boxes.reduce((m, b) => Math.max(m, b.y + b.h), 0);
+
+  let mid = { y0: 0, y1: 0 };
+  let seen = boxes[0].y + boxes[0].h;
+  for (let i = 1; i < boxes.length; i++) {
+    if (boxes[i].y - seen > mid.y1 - mid.y0) mid = { y0: seen, y1: boxes[i].y };
+    seen = Math.max(seen, boxes[i].y + boxes[i].h);
+  }
 
   const out = [];
-  const put = (name, y0, y1) => {
+  const row = (names, y0, y1) => {
     const depth = y1 - y0;
     if (depth < BAND_MIN) return;
-    // as big as the band is deep, within reason, and well short of the full
-    // width - a figure spanning the page reads as a border, not a figure
-    const size = Math.min(depth * 0.74, w * 0.44, 190);
-    if (size < 76) return;
-    out.push({ name, cx: w / 2, cy: (y0 + y1) / 2, size });
+    // Deep enough to be worth drawing, and narrow enough that a row of them
+    // still has air between - a figure spanning its whole share reads as a
+    // border rather than a figure.
+    const size = Math.min(depth * 0.74, (w / names.length) * 0.86, 190);
+    if (size < 70) return;
+    names.forEach((name, i) => {
+      out.push({
+        name,
+        cx: (w * (i + 0.5)) / names.length,
+        cy: (y0 + y1) / 2,
+        size,
+      });
+    });
   };
 
-  put('heart', 0, top);            // the heart opens the page
-  put('drum', foot, h);            // and something with a bit of shape closes it
+  row(['heart'], 0, head);
+  row(ORDER.slice(0, 3), mid.y0, mid.y1);
+  row(ORDER.slice(3), foot, h);
   return out;
 }
 
@@ -202,11 +223,28 @@ function planBands(w, h, avoid) {
  */
 export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) {
   const rand = mulberry32(seed);
-  const margin = (w - contentWidth) / 2;
-  const size = Math.min(margin * 0.78, 220);
 
-  // No usable margin - a phone, where the content is the full width. The
-  // open sky at the head and foot of the page is the only room left.
+  /*
+   * The lane is the clear strip beside the content - measured from the
+   * clearings rather than from contentWidth, because the clearings are what a
+   * figure actually has to keep out of, and they are wider than the content by
+   * however much padding the grain leaves round it. The full-bleed blocks reach
+   * both edges, so the most inset left edge is the one that matters.
+   *
+   * Sizing off the content width instead is what made figures collide with it:
+   * at 1100px the margin is 170px, but a figure sized margin * 0.78 has a
+   * bounding radius of 82px sitting at x = 85, so it reached 167px into a
+   * clearing that began at 166px - overlapping by a pixel at every height, and
+   * so failing at all of them. Nothing appeared between 1026 and about 1362px.
+   */
+  const lane = avoid.length
+    ? Math.max(0, ...avoid.map((a) => a.x))
+    : Math.max(0, (w - contentWidth) / 2);
+
+  const size = Math.min(lane * 0.742, 220);   // 0.742 leaves 8% either side
+
+  // Too thin to hold one - a phone, or near enough. The open sky above and
+  // below the content is the only room left.
   if (size < 104) return planBands(w, h, avoid);
 
   const out = [];
@@ -238,13 +276,18 @@ export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) 
     }
   };
 
+  // Centred in the lane, so the slack is shared between the page edge and the
+  // content rather than all landing on one side.
+  const left = lane * 0.5;
+  const right = w - lane * 0.5;
+
   // The heart is pinned to the top right; the rest fall in around it.
-  place('heart', w - margin * 0.5, size * 0.75);
+  place('heart', right, size * 0.75);
 
   const span = 0.86 / ORDER.length;
   ORDER.forEach((name, i) => {
-    const cx = i % 2 === 0 ? margin * 0.5 : w - margin * 0.5;
-    place(name, cx, h * (0.08 + span * (i + 0.5)) + (rand() - 0.5) * h * 0.03);
+    place(name, i % 2 === 0 ? left : right,
+      h * (0.08 + span * (i + 0.5)) + (rand() - 0.5) * h * 0.03);
   });
 
   return out;
