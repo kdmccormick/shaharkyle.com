@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grain &amp; Ink — background</title>
+<style>
+  /* ---------- tune here ---------- */
+  :root{
+    --paper:        #ece1c8;   /* aged page */
+    --paper-deep:   #d9c9a6;   /* foxing / edges */
+    --ink:          #171410;   /* tattoo black */
+    --print:        #5c5044;   /* old letterpress text */
+    --accent:       #c9354e;   /* one zine-marker pink, used sparingly */
+    --text-opacity: .35;       /* faint printed text behind everything */
+    --ink-opacity:  .92;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    overflow-x:hidden;
+  }
+
+  /* ---------- the background stack ---------- */
+  .bg{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none}
+
+  /* paper: base colour + vignette + subtle foxing spots */
+  .bg .paper{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 20% 15%, transparent 55%, rgba(0,0,0,.05) 100%),
+      radial-gradient(ellipse at 80% 90%, transparent 55%, rgba(0,0,0,.06) 100%),
+      radial-gradient(circle at 12% 70%, rgba(150,110,60,.15) 0 2px, transparent 3px),
+      radial-gradient(circle at 63% 22%, rgba(150,110,60,.13) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 87% 48%, rgba(150,110,60,.12) 0 2.5px, transparent 4px),
+      radial-gradient(circle at 40% 88%, rgba(150,110,60,.11) 0 1.5px, transparent 3px),
+      linear-gradient(var(--paper), var(--paper));
+  }
+  /* paper grain via SVG turbulence filter */
+  .bg .grain{position:absolute; inset:0; opacity:.55; mix-blend-mode:multiply}
+
+  /* printed text layer */
+  .bg .print{
+    position:absolute; inset:-4vh -3vw;
+    columns: 22rem; column-gap: 3rem;
+    padding: 6vh 6vw;
+    color:var(--print);
+    opacity:var(--text-opacity);
+    font-size: 15px; line-height:1.55;
+    text-align:justify; hyphens:auto;
+    filter: blur(.15px);
+    user-select:none;
+  }
+  .bg .print p{margin:0 0 1em; break-inside:avoid}
+  .bg .print .runhead{
+    font-variant:small-caps; letter-spacing:.18em; font-size:13px;
+    display:flex; justify-content:space-between; margin-bottom:1.5em;
+  }
+
+  /* ink layer (generated in JS) */
+  .bg .ink{position:absolute; inset:0; width:100%; height:100%; opacity:var(--ink-opacity)}
+
+  /* ---------- demo content on top (delete or replace) ---------- */
+  .demo{
+    min-height:100vh; display:grid; place-items:center; padding:8vh 6vw;
+  }
+  .card{
+    max-width:34rem;
+    background:rgba(236,225,200,.78);
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+    padding:2.4rem 2.6rem;
+    border:2px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .card h1{
+    font-family: "Impact","Haettenschweiler","Arial Narrow Bold",sans-serif;
+    font-weight:400; text-transform:uppercase; letter-spacing:.02em;
+    font-size:clamp(2.6rem,7vw,4.6rem); line-height:.92; margin-bottom:1rem;
+  }
+  .card h1 mark{background:none; color:var(--accent)}
+  .card p{font-size:1.05rem; line-height:1.55; color:#2a241d}
+  .card p + p{margin-top:.8em}
+  .card .box{ /* blackout-poetry style highlight */
+    display:inline; padding:0 .3em; margin:0 .1em;
+    background:var(--paper); border:2px solid var(--ink); border-radius:2px;
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .ink path{stroke-dasharray:1; stroke-dashoffset:1;
+      animation:draw 2.4s ease-out forwards; animation-delay:calc(var(--i)*.06s)}
+    @keyframes draw{to{stroke-dashoffset:0}}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="paper"></div>
+
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="paperNoise">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" seed="7" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 .45  0 0 0 0 .38  0 0 0 0 .28  0 0 0 .55 0"/>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#paperNoise)"/>
+  </svg>
+
+  <div class="print" id="print"></div>
+
+  <svg class="ink" id="ink" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"></svg>
+</div>
+
+<main class="demo">
+  <section class="card">
+    <h1>Grain <mark>&amp;</mark> Ink</h1>
+    <p>Wood-grain contours drawn like tattoo linework, laid over an old
+      book page. Every visit grows a slightly different tree ring.</p>
+    <p>Words to keep: <span class="box">what</span> would it take to
+      <span class="box">provoke</span> the page into <span class="box">flowing</span>?</p>
+  </section>
+</main>
+
+<script>
+(() => {
+  /* ---------- 1. faint printed text (original filler prose, no real book) ---------- */
+  const paras = [
+    "The grain of a plank is a diary of weather. Wet years swell the rings wide and pale; hard winters press them thin and dark, and the whole record bends where a branch once reached for light.",
+    "She kept the pages she could not throw away in a shoebox under the stairs, each one crossed with pencil until only a few words remained standing, like posts after a flood.",
+    "Nobody agreed on where the river had run before the road. The old maps showed a wandering line; the new ones showed a straight one; the field itself showed a memory of both in the way the crops leaned.",
+    "A ring is not a circle. Look closely and it wavers, splits around a knot, folds back on itself, and rejoins a little further on, as if it had lost the thread and found it again.",
+    "He said the tattoo was not a picture of anything. It was the shape the skin would have made on its own if it had been allowed to grow for a hundred years in one place.",
+    "The printer's apprentice learned to read type upside down and backwards before he could read it forwards, and afterwards said every page looked to him like a mirror held to a stranger.",
+    "Contour lines never touch. That is the whole rule. Where they crowd, the ground is steep; where they wander apart, you could lie down and sleep.",
+    "The margins filled first: small flowers, then vines, then whole weather systems of ink drifting inward until the printed words seemed to be peering out from behind a hedge.",
+  ];
+  const print = document.getElementById('print');
+  const head = `<div class="runhead"><span>chapter v</span><span>counterpoints</span></div>`;
+  let html = head;
+  for (let i = 0; i < 40; i++) html += `<p>${paras[i % paras.length]}</p>`;
+  print.innerHTML = html;
+
+  /* ---------- 2. procedural wood-grain / contour ink ---------- */
+  const svg = document.getElementById('ink');
+  const NS = 'http://www.w3.org/2000/svg';
+  const W = 1400, H = 900;                       // design space; slice-scaled to viewport
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  // seeded random so a page reload gives a *slightly* different tree, but stable per session
+  let seed = (Math.random() * 1e9) | 0;
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+
+  // cheap layered sine "noise"
+  const freqs = Array.from({length: 5}, () => ({
+    a: rnd() * 6.283, b: rnd() * 6.283, k: 1 + (rnd() * 4) | 0, k2: 1 + (rnd() * 3) | 0
+  }));
+  const noise = (t, r) => freqs.reduce((s, f, i) =>
+    s + Math.sin(t * f.k + f.a + r * .012 * f.k2) * (1 / (i + 1)), 0) / 2.3;
+
+  // ink pattern filter: ragged tattoo edge
+  svg.innerHTML = `
+    <defs>
+      <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>`;
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('filter', 'url(#rough)');
+  g.setAttribute('fill', 'none');
+  g.setAttribute('stroke', getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#171410');
+  g.setAttribute('stroke-linecap', 'round');
+  g.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(g);
+
+  // two "knots" (ring centres) — one big off-canvas so rings sweep across like a plank,
+  // one small on-canvas eye like the calf tattoo
+  const knots = [
+    { cx: W * (0.15 + rnd() * .2), cy: H * (0.3 + rnd() * .4), rings: 34, gap: 26, stretch: 1.9, rot: -.35 + rnd() * .7 },
+    { cx: W * (0.72 + rnd() * .15), cy: H * (0.55 + rnd() * .35), rings: 16, gap: 22, stretch: 1.25, rot: .5 + rnd() * .6 },
+  ];
+
+  let idx = 0;
+  knots.forEach(kn => {
+    for (let i = 1; i <= kn.rings; i++) {
+      const base = i * kn.gap * (1 + i * .012);
+      const pts = [];
+      const steps = 180;
+      for (let s = 0; s <= steps; s++) {
+        const t = (s / steps) * Math.PI * 2;
+        const r = base + noise(t, base) * (18 + i * 2.2);
+        // stretch along one axis, then rotate: elongated grain rather than target rings
+        let x = Math.cos(t) * r * kn.stretch, y = Math.sin(t) * r;
+        const cs = Math.cos(kn.rot), sn = Math.sin(kn.rot);
+        pts.push([kn.cx + x * cs - y * sn, kn.cy + x * sn + y * cs]);
+      }
+      // smooth closed path
+      let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+      for (let s = 1; s < pts.length - 1; s++) {
+        const [x0, y0] = pts[s], [x1, y1] = pts[s + 1];
+        d += `Q${x0.toFixed(1)},${y0.toFixed(1)} ${((x0 + x1) / 2).toFixed(1)},${((y0 + y1) / 2).toFixed(1)}`;
+      }
+      d += 'Z';
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', d);
+      // rhythm of thick bands and hairlines, like the tattoo: every 4th–5th ring is heavy
+      const heavy = (i % 5 === 0) || (i % 7 === 3);
+      const w = heavy ? 5 + rnd() * 6 : (rnd() < .3 ? .6 : 1.4 + rnd() * 1.2);
+      p.setAttribute('stroke-width', w.toFixed(2));
+      p.setAttribute('pathLength', '1');
+      p.style.setProperty('--i', idx++);
+      // occasional broken ring — a gap, like the ink skipped
+      if (!heavy && rnd() < .28) p.setAttribute('stroke-dasharray', `${(.3 + rnd() * .5).toFixed(2)} ${(.02 + rnd() * .08).toFixed(2)}`);
+      g.appendChild(p);
+    }
+  });
+
+  // a few blackout-poetry blobs, tucked into the text, joined by a thin ink vein
+  const blobs = document.createElementNS(NS, 'g');
+  blobs.setAttribute('fill', g.getAttribute('stroke'));
+  blobs.setAttribute('filter', 'url(#rough)');
+  const bx = W * .48, by = H * .12;
+  const spots = [[bx, by], [bx + 60, by + 90], [bx - 20, by + 170], [bx + 45, by + 260]];
+  let vein = `M${spots[0]}`;
+  spots.forEach(([x, y], i) => {
+    const e = document.createElementNS(NS, 'ellipse');
+    e.setAttribute('cx', x); e.setAttribute('cy', y);
+    e.setAttribute('rx', 30 + rnd() * 26); e.setAttribute('ry', 11 + rnd() * 3);
+    e.setAttribute('fill', 'none'); e.setAttribute('stroke', g.getAttribute('stroke'));
+    e.setAttribute('stroke-width', 3.5);
+    blobs.appendChild(e);
+    if (i) vein += ` Q${x + 30},${y - 40} ${x},${y}`;
+  });
+  const v = document.createElementNS(NS, 'path');
+  v.setAttribute('d', vein); v.setAttribute('fill', 'none');
+  v.setAttribute('stroke', g.getAttribute('stroke')); v.setAttribute('stroke-width', 5);
+  v.setAttribute('stroke-linecap', 'round');
+  blobs.appendChild(v);
+  svg.appendChild(blobs);
+})();
+</script>
+</body>
+</html>
