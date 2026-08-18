@@ -70,6 +70,9 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
 
   <!-- the grain fills this box entirely and parts around every [data-clearing] -->
   <canvas id="grain" aria-hidden="true"></canvas>
+  <!-- just the flares on the bright chart stars, so they can twinkle without
+       the grain underneath being repainted every frame -->
+  <canvas id="twinkle" aria-hidden="true"></canvas>
 
   <main>
 
@@ -90,7 +93,7 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
 
     <!-- ═══ THE TWO OF US ═══════════════════════════════ -->
     <section class="strip-wrap" data-clearing>
-      <div class="marquee" id="marquee">
+      <div class="marquee">
         <!--
           One set of photos, twice, so there is something to look at before
           the script runs. It clones this further at runtime until the row is
@@ -255,6 +258,10 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
   --accent:     #1f5561;   /* deep teal, the one spot of colour */
   --rule:       rgba(20,17,15,0.3);
 
+  --dusk:       #3b4a61;   /* the blue the edges fall away to */
+  --dusk-0:     rgba(59,74,97,0);   /* same colour, no alpha - see below */
+  --chart:      #efece1;   /* off-white; the star chart is drawn in this */
+
   --font-hand:  'Permanent Marker', 'Comic Sans MS', cursive;
   --font-type:  'Special Elite', 'Courier New', Courier, monospace;
 }
@@ -268,12 +275,28 @@ html {
      gradient to the viewport and leaves everything below the first screenful
      with no background at all. */
   background-color: var(--sky-low);
-  background-image: linear-gradient(
-    180deg,
-    var(--sky-top) 0%,
-    var(--sky-mid) 45%,
-    var(--sky-low) 100%
-  );
+  /*
+   * Paper in the middle, falling away to dusk at every edge. The side fades
+   * stop where the content column starts - `(100% - 820px) / 2` is the margin
+   * either side of it - so the blue only ever covers the empty space the star
+   * chart is drawn in, and never creeps under the text. On a narrow window
+   * that margin goes negative, so `max()` holds it at a thin 22px band.
+   *
+   * The stops fade to --dusk-0 rather than `transparent`: they are the same
+   * blue at zero alpha, and interpolating towards a colourless transparent
+   * would pass through grey on the way.
+   */
+  background-image:
+    linear-gradient(to right,  var(--dusk) 0, var(--dusk-0) max(22px, calc((100% - 820px) / 2))),
+    linear-gradient(to left,   var(--dusk) 0, var(--dusk-0) max(22px, calc((100% - 820px) / 2))),
+    linear-gradient(to bottom, var(--dusk) 0, var(--dusk-0) 190px),
+    linear-gradient(to top,    var(--dusk) 0, var(--dusk-0) 260px),
+    linear-gradient(
+      180deg,
+      var(--sky-top) 0%,
+      var(--sky-mid) 45%,
+      var(--sky-low) 100%
+    );
   background-repeat: no-repeat;
 }
 
@@ -378,8 +401,9 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .page { position: relative; overflow-x: clip; }
 
 /* The grain covers the whole page box and sits under everything. It is painted
-   at the element's own pixel size, so it needs no background of its own. */
-#grain {
+   at the element's own pixel size, so it needs no background of its own.
+   #twinkle is the same box, holding only the animated star flares. */
+#grain, #twinkle {
   position: absolute;
   top: 0;
   left: 0;
@@ -766,7 +790,6 @@ main {
   margin-top: clamp(2rem, 5vw, 3rem);
 }
 .marquee {
-  position: relative;
   width: 100%;
   height: clamp(200px, 28vh, 310px);
   overflow: hidden;
@@ -800,7 +823,6 @@ main {
   from { transform: translate3d(0, 0, 0); }
   to   { transform: translate3d(calc(-1 * var(--shift, 0px)), 0, 0); }
 }
-.marquee:hover .marquee-track { animation-play-state: paused; }
 
 /* ══ FOOTER ═══════════════════════════════════════════════ */
 footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft); }
@@ -852,12 +874,30 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
 <script>
 import { installWoodGrain } from '../woodgrain.js';
 import { installMarcy } from '../marcy.js';
+import { installTwinkle } from '../twinkle.js';
 
 // ── THE BACKGROUND ────────────────────────────────────────
+// The grain is graphite; the star chart on top of it is off-white, so it only
+// shows where the page has fallen away to dusk at the edges. Every repaint
+// hands the bright stars' flares to the twinkle layer, which owns them.
+//
+// Both inks come from the stylesheet so the chart's colour is stated once.
+const css = getComputedStyle(document.documentElement);
+const pick = (name, fallback) =>
+  css.getPropertyValue(name).trim() || fallback;
+
+const INK   = pick('--ink', '#14110f');
+const CHART = pick('--chart', '#efece1');
+
+const twinkle = installTwinkle(document.getElementById('twinkle'), { ink: CHART });
+
 const repaintGrain = installWoodGrain(document.getElementById('grain'), {
   seed: 20270605,
-  ink: '#14110f',
+  ink: INK,
   alpha: 0.78,
+  skyInk: CHART,
+  skyAlpha: 1,
+  onSky: (flares, geom) => twinkle.set(flares, geom),
 });
 
 // ── THE CAT ───────────────────────────────────────────────

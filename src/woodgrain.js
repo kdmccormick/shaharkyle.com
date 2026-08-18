@@ -301,12 +301,17 @@ export function paintWoodGrain(canvas, opts = {}) {
   ctx.globalCompositeOperation = 'source-over';
 
   // The chart goes on last, onto the windows just cleared for it, so the stars
-  // read at full strength instead of competing with the grain.
-  drawSky(ctx, w, h, sky, {
+  // read at full strength instead of competing with the grain. It is drawn in
+  // its own ink: the chart is off-white, the grain is graphite.
+  const flares = drawSky(ctx, w, h, sky, {
     seed: (seed ^ 0x5eed) >>> 0,
-    ink,
-    alpha: Math.min(1, alpha * 1.15),
+    ink: opts.skyInk ?? ink,
+    alpha: opts.skyAlpha ?? Math.min(1, alpha * 1.15),
   });
+
+  // The flares are left undrawn above; hand them to whoever animates them,
+  // along with the geometry they were measured in.
+  opts.onSky?.(flares, { w, h, dpr });
 }
 
 /*

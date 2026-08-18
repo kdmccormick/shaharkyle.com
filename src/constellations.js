@@ -9,16 +9,17 @@
  * for stars, hairlines between them, the way one is engraved in the endpapers
  * of an old atlas. It sits beside the grain in the same ink.
  *
- * The figures are ours: a zebrafish, a neuron, a bicycle and a cup of coffee.
+ * The figures are ours. They are deliberately unlabelled: working out what
+ * each one is meant to be is the point.
  *
  * Each is defined in its own unit square - x and y both 0..1 - with a list of
  * stars and a list of edges indexing into them, so a figure can be dropped
- * anywhere at any size without rewriting its geometry.
+ * anywhere at any size without rewriting its geometry. `bright` lists the
+ * stars that carry a flare; those are the ones that twinkle.
  */
 
 const FIGURES = {
   zebrafish: {
-    label: 'zebrafish',
     stars: [
       [0.03, 0.47], [0.18, 0.28], [0.42, 0.22], [0.57, 0.10],
       [0.71, 0.27], [0.86, 0.06], [1.00, 0.44], [0.86, 0.80],
@@ -32,7 +33,6 @@ const FIGURES = {
   },
 
   neuron: {
-    label: 'neuron',
     stars: [
       [0.30, 0.50],                                   // 0 soma
       [0.14, 0.28], [0.05, 0.50], [0.16, 0.74],       // dendrites
@@ -49,7 +49,6 @@ const FIGURES = {
   },
 
   bicycle: {
-    label: 'bicycle',
     stars: [
       [0.17, 0.74], [0.83, 0.74],                     // 0,1 hubs
       [0.45, 0.74], [0.42, 0.34], [0.68, 0.36], [0.70, 0.52],  // 2..5 frame
@@ -67,7 +66,6 @@ const FIGURES = {
   },
 
   coffee: {
-    label: 'coffee',
     stars: [
       [0.24, 0.36], [0.64, 0.36], [0.58, 0.74], [0.30, 0.74],  // 0..3 cup
       [0.72, 0.44], [0.80, 0.55], [0.70, 0.66],                // 4..6 handle
@@ -82,6 +80,40 @@ const FIGURES = {
     ],
     bright: [0, 1, 10],
   },
+
+  // a snare from the side, sitting on its tripod
+  drum: {
+    stars: [
+      [0.15, 0.30], [0.50, 0.25], [0.85, 0.30],       // 0..2 top hoop
+      [0.87, 0.52], [0.50, 0.57], [0.13, 0.52],       // 3..5 bottom hoop
+      [0.50, 0.74],                                   // 6 stand collar
+      [0.24, 0.94], [0.50, 0.97], [0.76, 0.94],       // 7..9 tripod feet
+      [0.28, 0.41], [0.72, 0.41],                     // 10,11 tension rods
+    ],
+    edges: [
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],   // the shell
+      [4, 6], [6, 7], [6, 8], [6, 9],                   // the stand
+      [10, 11],                                         // rods across the shell
+    ],
+    bright: [1, 6, 8],
+  },
+
+  headphones: {
+    stars: [
+      [0.16, 0.26], [0.34, 0.10], [0.50, 0.06],       // 0..2 band
+      [0.66, 0.10], [0.84, 0.26],                     // 3,4 band
+      [0.10, 0.44], [0.04, 0.58], [0.11, 0.77],       // 5..7 left cup
+      [0.25, 0.79], [0.30, 0.60],                     // 8,9 left cup
+      [0.90, 0.44], [0.96, 0.58], [0.89, 0.77],       // 10..12 right cup
+      [0.75, 0.79], [0.70, 0.60],                     // 13,14 right cup
+    ],
+    edges: [
+      [0, 1], [1, 2], [2, 3], [3, 4],                   // the headband
+      [0, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 5],   // left earcup
+      [4, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 10],
+    ],
+    bright: [2, 7, 12],
+  },
 };
 
 function mulberry32(a) {
@@ -94,24 +126,16 @@ function mulberry32(a) {
   };
 }
 
-function star(ctx, x, y, r, bright) {
+function dot(ctx, x, y, r) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.fill();
-  if (!bright) return;
-  // the four-point flare that marks the brighter stars on an engraved chart
-  ctx.save();
-  ctx.lineWidth = Math.max(0.6, r * 0.34);
-  ctx.beginPath();
-  const s = r * 3.4;
-  ctx.moveTo(x - s, y); ctx.lineTo(x + s, y);
-  ctx.moveTo(x, y - s); ctx.lineTo(x, y + s);
-  ctx.stroke();
-  ctx.restore();
 }
 
+const ORDER = ['zebrafish', 'neuron', 'bicycle', 'coffee', 'drum', 'headphones'];
+
 /*
- * Decide where the four figures go, before anything is drawn.
+ * Decide where the figures go, before anything is drawn.
  *
  * They are placed in the margin beside the content column, alternating sides.
  * The caller feeds these back in as clearings in the grain field, so each
@@ -135,14 +159,15 @@ export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) 
   };
 
   const out = [];
-  ['zebrafish', 'neuron', 'bicycle', 'coffee'].forEach((name, i) => {
+  const span = 0.86 / ORDER.length;
+  ORDER.forEach((name, i) => {
     const cx = i % 2 === 0 ? margin * 0.5 : w - margin * 0.5;
-    const ideal = h * (0.12 + 0.245 * i) + (rand() - 0.5) * h * 0.04;
+    const ideal = h * (0.08 + span * (i + 0.5)) + (rand() - 0.5) * h * 0.03;
 
     // Full-bleed blocks - the photo strip especially - leave no margin at all
-    // at their height, so a figure placed there ends up behind them with only
-    // its label showing. Walk up and down from the ideal spot for a gap, and
-    // give up on the figure rather than draw it somewhere it cannot be seen.
+    // at their height, so a figure placed there ends up hidden behind them.
+    // Walk up and down from the ideal spot for a gap, and give up on the
+    // figure rather than draw it somewhere it cannot be seen.
     let cy = null;
     for (let step = 0; step <= 26 && cy === null; step++) {
       for (const dir of step === 0 ? [0] : [-1, 1]) {
@@ -159,6 +184,12 @@ export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) 
  * Draw the chart: loose stars everywhere, then the figures in their windows.
  * Runs after the grain and after the clearings have been punched, so the
  * figures land on clean paper and read at full strength.
+ *
+ * Everything here is painted once and left alone. The four-point flares on the
+ * brighter stars are the exception - they twinkle - so they are not drawn:
+ * their positions are returned instead, for the twinkle layer to animate on a
+ * canvas of its own. Repainting this one every frame would mean re-running the
+ * marching squares over the whole page sixty times a second.
  */
 export function drawSky(ctx, w, h, placements, opts = {}) {
   const rand = mulberry32((opts.seed ?? 987654321) ^ 0x1234);
@@ -169,13 +200,14 @@ export function drawSky(ctx, w, h, placements, opts = {}) {
   ctx.fillStyle = ink;
   ctx.strokeStyle = ink;
 
+  const flares = [];
+
   // ── loose stars everywhere ────────────────────────────────────────────
   ctx.globalAlpha = alpha * 0.5;
   const n = Math.round((w * h) / 6500);
   for (let i = 0; i < n; i++) {
     const u = rand();
-    star(ctx, rand() * w, rand() * h,
-         u > 0.94 ? 1.7 : u > 0.72 ? 1.1 : 0.7, false);
+    dot(ctx, rand() * w, rand() * h, u > 0.94 ? 1.7 : u > 0.72 ? 1.1 : 0.7);
   }
 
   // ── the figures ───────────────────────────────────────────────────────
@@ -200,18 +232,11 @@ export function drawSky(ctx, w, h, placements, opts = {}) {
     fig.stars.forEach((p, k) => {
       const [sx, sy] = px(p);
       const isBright = fig.bright.includes(k);
-      star(ctx, sx, sy, isBright ? 3.1 : 2.0, isBright);
+      dot(ctx, sx, sy, isBright ? 3.1 : 2.0);
+      if (isBright) flares.push({ x: sx, y: sy, r: 3.1 });
     });
-
-    if (opts.labels !== false) {
-      ctx.globalAlpha = alpha * 0.9;
-      ctx.font = '11px "Special Elite", ui-monospace, monospace';
-      ctx.textAlign = 'center';
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '3px';
-      ctx.fillText(fig.label.toUpperCase(), cx, y0 + size + 24);
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-    }
   }
 
   ctx.restore();
+  return flares;
 }
