@@ -165,7 +165,7 @@ import marcySleepSvg from '../marcy-sleep.svg?raw';
           <input type="email" name="email" autocomplete="email" />
         </label>
 
-        <button type="submit">send it over</button>
+        <button type="submit">Submit</button>
         <p class="ask-status" id="rsvp-status" role="status" aria-live="polite"></p>
       </form>
     </section>
@@ -249,6 +249,8 @@ import marcySleepSvg from '../marcy-sleep.svg?raw';
   --glow-core:  rgba(246,236,212,0.94);
   --glow-mid:   rgba(242,222,178,0.5);
   --glow-halo:  rgba(233,196,126,0.26);
+  /* the same tan as the core of the light, opaque, for ink-on-dark text */
+  --tan:        #f6ecd4;
 
   --font-hand:  'Permanent Marker', 'Comic Sans MS', cursive;
   --font-type:  'Special Elite', 'Courier New', Courier, monospace;
@@ -707,7 +709,7 @@ main {
   padding: 0.6rem 2rem;
   font-family: var(--font-hand);
   font-size: 1.1rem;
-  color: var(--sky-mid);
+  color: var(--tan);
   background: var(--ink);
   border: 2px solid var(--ink);
   border-radius: 2px;
