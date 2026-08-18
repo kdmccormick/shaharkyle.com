@@ -26,7 +26,6 @@ const MAPS = 'https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+S
 // her tail and paws can be animated from the stylesheet.
 import marcySvg from '../marcy-run.svg?raw';
 import marcySleepSvg from '../marcy-sleep.svg?raw';
-import marcyPeekSvg from '../marcy-peek.svg?raw';
 
 // 5pm-11pm Eastern on the day, as UTC
 const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
@@ -188,36 +187,35 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
   </main>
 
   <footer data-clearing>
-    <!--
-      Marcy's bed. Empty while she is out running; the sleeping loaf appears
-      here once you let her catch the banana. Only ever one cat on the page.
-    -->
-    <div class="marcy-bed" id="marcy-bed" aria-hidden="true" set:html={marcySleepSvg}></div>
-
-    <p class="foot-line">Shahar &amp; Kyle <span class="dot">&middot;</span> 5 June 2027</p>
+    <p class="foot-line">
+      Made with &lt;3 by Shahar and Kyle, with supervision from Marcy
+    </p>
     <a class="foot-src" href="https://github.com/kdmccormick/shaharkyle.com" target="_blank" rel="noopener">source code on github</a>
   </footer>
 
 </div>
 
-<!-- ═══ MARCY, CHASING A BANANA ═════════════════════════
-  Fixed to the viewport and sitting under the content, so she runs round the
-  screen you are looking at and passes behind the flyer and the text. The flyer
-  is transparent, so you can watch her go by through the drawing.
+<!-- ═══ MARCY, AND A BANANA ═════════════════════════════
+  Fixed to the viewport, so she keeps to the screen you are looking at rather
+  than being 4000px up the page. Both of them ride a hidden loop; see
+  src/marcy.js. She carries both poses and the state class picks one.
   ═══════════════════════════════════════════════════════ -->
-<div class="critters" id="critters" aria-hidden="true">
+<div class="critters" id="critters">
 
-  <!-- where she waits, until the banana is thrown -->
-  <div class="marcy-hide" id="marcy-hide" set:html={marcyPeekSvg}></div>
+  <div class="critter" data-marcy role="button" tabindex="0" aria-label="Marcy, asleep. Wake her up.">
+    <div class="pose pose-sleep" set:html={marcySleepSvg}></div>
+    <div class="pose pose-wake"  set:html={marcySvg}></div>
+  </div>
 
-  <div class="critter" data-marcy set:html={marcySvg}></div>
-
-  <div class="critter" data-banana>
-    <svg class="banana-fly" viewBox="0 0 44 30">
+  <div class="critter" data-banana role="button" tabindex="0" aria-label="Throw the banana">
+    <svg class="banana-fly" viewBox="0 0 44 30" aria-hidden="true">
       <path d="M6,21 Q17,3 36,9 Q20,12 9,25 Z" />
       <path class="stem" d="M36,9 l5,-3" />
     </svg>
   </div>
+
+  <!-- her noises. Placed by JS above whichever pose is showing. -->
+  <p class="marcy-say" data-say aria-live="polite"><span></span></p>
 
 </div>
 
@@ -426,7 +424,10 @@ main {
 .critters {
   position: fixed;
   inset: 0;
-  z-index: 1;              /* over the grain, under everything readable */
+  /* Above the content rather than behind it. She used to pass behind the
+     flyer, which was prettier, but you now have to be able to click her and
+     she cannot be under the text to do that. */
+  z-index: 3;
   pointer-events: none;
   overflow: hidden;
 }
@@ -437,9 +438,89 @@ main {
   top: 0;
   left: 0;
   will-change: transform;
+  pointer-events: auto;    /* the two things you can actually click */
+  cursor: pointer;
 }
-.marcy-run  { width: 120px; height: auto; margin: -52px 0 0 -60px; overflow: visible; }
-.banana-fly { width: 30px;  height: auto; margin: -10px 0 0 -15px; overflow: visible; }
+.critter:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* Both poses are in the DOM; the state class on the layer picks one. */
+.pose { display: none; }
+.critters.is-snoozing .pose-sleep { display: block; }
+.critters.is-waiting  .pose-wake,
+.critters.is-chasing  .pose-wake  { display: block; }
+
+.marcy-run   { width: 120px; height: auto; margin: -52px 0 0 -60px; overflow: visible; }
+.marcy-sleep { width: 150px; height: auto; margin: -56px 0 0 -75px; overflow: visible; }
+.banana-fly  { width: 60px;  height: auto; margin: -20px 0 0 -30px; overflow: visible; }
+/* the banana arcs across when thrown, and tumbles on the way */
+.critter[data-banana] { transition: transform 0.55s cubic-bezier(.3,.9,.4,1); }
+
+/* she already has one in the sleeping drawing; the loose one is the real prop */
+.marcy-sleep .m-banana,
+.marcy-sleep .m-banana-stem { display: none; }
+
+/* the snoozing pose, in the same black as the rest of her */
+.marcy-sleep .m-fur-fill { fill: #17140f; }
+.marcy-sleep .m-fur      { fill: #17140f; stroke: #17140f; }
+.marcy-sleep .m-tuft     { fill: #4a4139; }
+.marcy-sleep .m-bib      { fill: #e6e0d2; }
+.marcy-sleep .m-nose     { fill: #7d5a5e; }
+.marcy-sleep .m-shut {
+  fill: none;
+  stroke: #d8d2c4;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+.marcy-sleep .m-mouth {
+  fill: none;
+  stroke: #4a4139;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.marcy-sleep .m-whisk path {
+  fill: none;
+  stroke: #f2ede0;
+  stroke-width: 1.2;
+  opacity: 0.7;
+  stroke-linecap: round;
+}
+.marcy-sleep .m-zzz {
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  animation: zzz-float 4.2s ease-in-out infinite;
+}
+@keyframes zzz-float {
+  0%, 100% { opacity: 0.25; transform: translateY(2px); }
+  50%      { opacity: 0.7;  transform: translateY(-4px); }
+}
+
+/* ── her noises ──────────────────────────────────────── */
+/* A zero-size box at the point JS puts it, so the text centres on her head
+   however long it is. */
+.marcy-say {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+  will-change: transform;
+}
+.marcy-say span {
+  white-space: nowrap;
+  font-family: var(--font-hand);
+  font-size: 1.1rem;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(6px) rotate(-3deg);
+  transition: opacity 0.18s ease, transform 0.22s cubic-bezier(.2,1.5,.5,1);
+}
+.marcy-say.is-on span { opacity: 1; transform: translateY(0) rotate(-3deg); }
 
 /* She is almost entirely silhouette, so nearly everything is the one black. */
 .marcy-run .m-fur-fill { fill: #17140f; }
@@ -474,13 +555,13 @@ main {
  * `transform-box: fill-box` is what makes transform-origin resolve against each
  * shape's own box rather than the whole SVG viewport.
  */
-.marcy-run { animation: marcy-bob 0.42s ease-in-out infinite; }
+.is-chasing .marcy-run { animation: marcy-bob 0.42s ease-in-out infinite; }
 @keyframes marcy-bob {
   0%, 100% { transform: translateY(0)     scaleY(1); }
   50%      { transform: translateY(-3.5px) scaleY(0.97); }
 }
 
-.marcy-run .m-tail {
+.is-chasing .marcy-run .m-tail {
   transform-box: fill-box;
   transform-origin: 88% 82%;
   animation: marcy-swish 1.15s ease-in-out infinite;
@@ -490,114 +571,36 @@ main {
   50%      { transform: rotate(9deg); }
 }
 
-.marcy-run .m-leg {
+.is-chasing .marcy-run .m-leg {
   transform-box: fill-box;
   transform-origin: 50% 10%;
   animation: marcy-step 0.42s ease-in-out infinite;
 }
-.marcy-run .m-leg-a { animation-delay: 0s; }
-.marcy-run .m-leg-b { animation-delay: -0.105s; }
-.marcy-run .m-leg-c { animation-delay: -0.21s; }
-.marcy-run .m-leg-d { animation-delay: -0.315s; }
+.is-chasing .marcy-run .m-leg-a { animation-delay: 0s; }
+.is-chasing .marcy-run .m-leg-b { animation-delay: -0.105s; }
+.is-chasing .marcy-run .m-leg-c { animation-delay: -0.21s; }
+.is-chasing .marcy-run .m-leg-d { animation-delay: -0.315s; }
 @keyframes marcy-step {
   0%, 100% { transform: translateY(0)   rotate(0deg); }
   50%      { transform: translateY(-4px) rotate(-7deg); }
 }
 
-/* mid-pounce she stretches out a little */
-.critter.is-airborne .marcy-run { animation-play-state: paused; }
-.critter.is-airborne .m-leg     { animation-play-state: paused; }
-
-/* once she is in her bed the runners are done with */
-.critters.is-asleep { display: none; }
-
-/* ══ MARCY IN HIDING ══════════════════════════════════════
-   Before the banana is thrown the runners are parked off-screen and all you
-   get is a paw and a tail round the edge of the window. */
-.critter { opacity: 0; }
-.critters.is-out .critter { opacity: 1; }
-
-.marcy-hide {
-  position: absolute;
-  left: 0;
-  top: 58%;
-  width: 96px;
-  transform: translateY(-50%);
-  /* peeks out, thinks better of it, peeks again */
-  animation: peek 7s ease-in-out infinite;
+/*
+ * Waiting: sitting still, blinking now and then. step-end so the lid snaps
+ * shut and open rather than easing, which reads as a blink instead of a
+ * slow squint. The two eyes share one animation - a cat winking at you is a
+ * different message entirely.
+ */
+.is-waiting .marcy-run .m-eye,
+.is-waiting .marcy-run .m-pupil,
+.is-waiting .marcy-run .m-glint {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: marcy-blink 5.2s step-end infinite;
 }
-.critters.is-out .marcy-hide { display: none; }
-.marcy-hide svg { display: block; width: 100%; height: auto; overflow: visible; }
-.marcy-peek .m-fur-fill { fill: #17140f; }
-.marcy-peek .m-fur      { fill: #17140f; stroke: #17140f; }
-.marcy-peek .m-toe      { fill: #3a332c; }
-.marcy-peek .m-whisk path {
-  fill: none;
-  stroke: #f2ede0;
-  stroke-width: 1.2;
-  opacity: 0.7;
-  stroke-linecap: round;
-}
-@keyframes peek {
-  0%, 62%, 100% { transform: translate(-14%, -50%); }
-  70%, 86%      { transform: translate(14%, -50%); }
-}
-
-/* ══ MARCY'S BED ══════════════════════════════════════════
-   Empty until you catch her, then the loaf fades in. Reserving the height
-   either way keeps the footer from jumping when she arrives. */
-.marcy-bed {
-  height: 118px;
-  margin-bottom: 0.4rem;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-.marcy-bed svg {
-  width: 172px;
-  height: auto;
-  opacity: 0;
-  transform: translateY(10px) scale(0.9);
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(.2,1.4,.5,1);
-}
-.marcy-bed.is-asleep svg { opacity: 1; transform: none; }
-
-.marcy-sleep .m-fur-fill { fill: #17140f; }
-.marcy-sleep .m-fur      { fill: #17140f; stroke: #17140f; }
-.marcy-sleep .m-tuft     { fill: #4a4139; }
-.marcy-sleep .m-bib      { fill: #e6e0d2; }
-.marcy-sleep .m-nose     { fill: #7d5a5e; }
-.marcy-sleep .m-shut {
-  fill: none;
-  stroke: #d8d2c4;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-}
-.marcy-sleep .m-mouth {
-  fill: none;
-  stroke: #4a4139;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-}
-.marcy-sleep .m-whisk path {
-  fill: none;
-  stroke: #f2ede0;
-  stroke-width: 1.2;
-  opacity: 0.7;
-  stroke-linecap: round;
-}
-.marcy-sleep .m-banana      { fill: #e8c33f; stroke: #7d6a1c; stroke-width: 1.4; }
-.marcy-sleep .m-banana-stem { stroke: #5f5015; stroke-width: 2.2; fill: none; }
-.marcy-sleep .m-zzz {
-  fill: none;
-  stroke: var(--ink-soft);
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  animation: zzz-float 4.2s ease-in-out infinite;
-}
-@keyframes zzz-float {
-  0%,100% { opacity: 0.25; transform: translateY(2px); }
-  50%     { opacity: 0.7;  transform: translateY(-4px); }
+@keyframes marcy-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  94%, 97%      { transform: scaleY(0.08); }
 }
 
 /* ══ THE FLYER ════════════════════════════════════════════ */
@@ -792,18 +795,6 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
   margin: 0 auto 1rem;
   color: var(--ink-soft);
 }
-.cat-fill    { fill: #26231e; }
-.cat-lash    { stroke: #b7c76d; }
-.cat-bib     { fill: #ece7db; stroke: none; }
-.cat-whisker { stroke: #ece7db; opacity: 0.55; }
-.banana      { fill: #d4bb4e; stroke: #8a7420; }
-.banana-line { stroke: #8a7420; opacity: 0.5; }
-.banana-stem { stroke: #6f5c1c; }
-.zzz { animation: zzz-float 4.2s ease-in-out infinite; }
-@keyframes zzz-float {
-  0%,100% { opacity: 0.25; transform: translateY(2px); }
-  50%     { opacity: 0.65; transform: translateY(-3px); }
-}
 .foot-line { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; }
 .foot-src {
   display: inline-block;
@@ -868,25 +859,12 @@ const repaintGrain = installWoodGrain(document.getElementById('grain'), {
 });
 
 /* ── THE CAT ───────────────────────────────────────────────
- * She is installed and waiting, hiding off the left edge of the screen with
- * one paw and her tail showing. Nothing triggers her at the moment: the
- * throw/catch buttons have been taken out while we work out a better way to
- * interact with her.
- *
- * Everything she needs is still wired up and working. To set her running:
- *
- *   marcy.release(el)  - lob the banana from `el` and bring her out
- *   marcy.settle()     - let her catch it and curl up in the footer bed
- *   marcy.isAsleep(), marcy.isHiding()
- *
- * Whatever ends up calling those should also call repaintGrain() afterwards
- * if it changes the size of a block, since the clearings are measured from
- * where the content actually landed.
+ * Snoozing at the bottom of the screen. Click her to wake her, click the
+ * banana to throw it, and if she is awake when it lands she will go and get
+ * it. She handles her own states; nothing else on the page drives her.
+ * See src/marcy.js.
  */
-const bed = document.getElementById('marcy-bed');
-const hide = document.getElementById('marcy-hide');
-const marcy = installMarcy(document.getElementById('critters'), { bed, hide });
-void marcy;   // parked until there is something to trigger her
+installMarcy(document.getElementById('critters'));
 
 // ── PASSWORD WALL ─────────────────────────────────────────
 const KEY  = 'sk-auth-v1';
