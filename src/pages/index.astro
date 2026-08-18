@@ -108,41 +108,26 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
       </div>
     </section>
 
-    <!-- ═══ WHO, AND WHY ════════════════════════════════ -->
-    <header class="titles" data-clearing>
-      <h1>Shahar <span class="amp">&amp;</span> Kyle</h1>
-      <p class="are">are getting married</p>
-    </header>
-
     <!--
-      The banana sits here twitching until somebody throws it. That is what
-      brings Marcy out - she is hiding off the left edge of the screen with one
-      paw and her tail showing.
+      Everything the flyer says, in text a screen reader and a phone can use.
+      One block, so the grain parts around it once and it sits in a single
+      pool of light rather than three.
     -->
-    <p class="throw-row" id="throw-row">
-      <button type="button" class="throw" id="throw-btn">throw the banana</button>
-      <svg class="throw-banana" viewBox="0 0 44 30" aria-hidden="true">
-        <path d="M6,21 Q17,3 36,9 Q20,12 9,25 Z" />
-        <path class="stem" d="M36,9 l5,-3" />
-      </svg>
-    </p>
+    <section class="bubble" data-clearing>
+      <h1>Shahar <span class="amp">&amp;</span> Kyle</h1>
+      <p class="line">are getting married</p>
 
-    <!-- the same facts, in text a screen reader and a phone can use -->
-    <section class="facts" data-clearing>
-      <p class="fact">
-        <span class="circled">
-          Saturday, June 5, 2027
-          <img src="/images/orn-ring.svg" alt="" aria-hidden="true" />
-        </span>
-        <span class="fact-sub">around 5 in the afternoon</span>
-      </p>
+      <p class="fact">Saturday, June 5, 2027</p>
+      <p class="line">around 5 in the afternoon</p>
 
       <p class="fact">
-        <a href={MAPS} target="_blank" rel="noopener">Arts at the Armory</a>
-        <span class="fact-sub">191 Highland Ave &middot; Somerville, MA</span>
+        <a href="https://artsatthearmory.org/" target="_blank" rel="noopener">Arts at the Armory</a>
+      </p>
+      <p class="line">
+        <a href={MAPS} target="_blank" rel="noopener">191 Highland Ave &middot; Somerville, MA</a>
       </p>
 
-      <p class="fact-note">
+      <p class="bubble-note">
         <a class="cal" href={CAL} target="_blank" rel="noopener">put it in your calendar</a>
       </p>
     </section>
@@ -208,8 +193,6 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
       here once you let her catch the banana. Only ever one cat on the page.
     -->
     <div class="marcy-bed" id="marcy-bed" aria-hidden="true" set:html={marcySleepSvg}></div>
-
-    <button type="button" class="catch" id="catch-btn">catch it</button>
 
     <p class="foot-line">Shahar &amp; Kyle <span class="dot">&middot;</span> 5 June 2027</p>
     <a class="foot-src" href="https://github.com/kdmccormick/shaharkyle.com" target="_blank" rel="noopener">source code on github</a>
@@ -437,7 +420,7 @@ main {
 
 /* Everything the grain has to flow around also has to sit on top of it - and
    on top of Marcy, so she passes behind the drawing and the text. */
-.flyer, .titles, .facts, .ask, .strip-wrap, footer { position: relative; z-index: 2; }
+.flyer, .bubble, .ask, .strip-wrap, footer { position: relative; z-index: 2; }
 
 /* ══ MARCY AND THE BANANA ═════════════════════════════════ */
 .critters {
@@ -560,46 +543,6 @@ main {
   70%, 86%      { transform: translate(14%, -50%); }
 }
 
-/* ══ THROW THE BANANA ═════════════════════════════════════ */
-.throw-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.7rem;
-  margin-top: 1.4rem;
-}
-.throw-row.is-spent { display: none; }
-.throw {
-  padding: 0.4rem 1.2rem;
-  font-family: var(--font-hand);
-  font-size: 0.92rem;
-  color: var(--ink);
-  background: transparent;
-  border: 2px solid var(--ink);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.throw:hover { background: var(--ink); color: var(--sky-mid); }
-
-/* the banana fidgets every few seconds, to be noticed */
-.throw-banana {
-  width: 30px;
-  height: auto;
-  fill: #e8c33f;
-  stroke: #7d6a1c;
-  stroke-width: 1.4;
-  transform-origin: 50% 60%;
-  animation: banana-fidget 4.5s ease-in-out infinite;
-}
-.throw-banana .stem { stroke: #5f5015; stroke-width: 2.2; fill: none; }
-@keyframes banana-fidget {
-  0%, 72%, 100% { transform: rotate(0) translateY(0); }
-  78%           { transform: rotate(-16deg) translateY(-5px); }
-  84%           { transform: rotate(13deg)  translateY(-2px); }
-  90%           { transform: rotate(-6deg)  translateY(0); }
-}
-
 /* ══ MARCY'S BED ══════════════════════════════════════════
    Empty until you catch her, then the loaf fades in. Reserving the height
    either way keeps the footer from jumping when she arrives. */
@@ -657,22 +600,6 @@ main {
   50%     { opacity: 0.7;  transform: translateY(-4px); }
 }
 
-/* ══ THE CATCH BUTTON ═════════════════════════════════════ */
-.catch {
-  display: inline-block;
-  margin-bottom: 1.4rem;
-  padding: 0.4rem 1.3rem;
-  font-family: var(--font-hand);
-  font-size: 0.92rem;
-  color: var(--ink);
-  background: transparent;
-  border: 2px solid var(--ink);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.catch:hover { background: var(--ink); color: var(--sky-mid); }
-
 /* ══ THE FLYER ════════════════════════════════════════════ */
 /* The section carries the width, not the image: it is the [data-clearing] the
    grain parts around, so if the two disagree the light lands in the wrong
@@ -681,49 +608,43 @@ main {
 .flyer { width: 75%; margin-inline: auto; }
 .flyer img { display: block; width: 100%; height: auto; }
 
-/* ══ TITLES ═══════════════════════════════════════════════ */
-.titles { text-align: center; margin-top: clamp(1.5rem, 4vw, 2.5rem); }
-.titles h1 {
+/* ══ THE BUBBLE ═══════════════════════════════════════════
+   Names, date, time, venue, address - one block, alternating between the
+   hand for the things you need to remember and the typewriter for the
+   things that qualify them. */
+.bubble { text-align: center; margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+.bubble h1 {
   font-family: var(--font-hand);
   font-weight: 400;
   font-size: clamp(2.4rem, 8vw, 4rem);
   line-height: 1.05;
 }
-.are {
-  margin-top: 0.7rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
 
-/* ══ THE FACTS, IN WORDS ══════════════════════════════════ */
-.facts { text-align: center; margin-top: clamp(1.75rem, 4vw, 2.5rem); }
+/* the marker lines: date, venue */
 .fact {
   font-family: var(--font-hand);
   font-size: 1.45rem;
   line-height: 1.3;
-  margin-bottom: 1.6rem;
+  margin-top: 1.5rem;
 }
 .fact a { color: var(--ink); border-bottom: 2px solid rgba(31,85,97,0.45); }
 .fact a:hover { color: var(--accent); text-decoration: none; }
-.fact-sub {
-  display: block;
-  margin-top: 0.5rem;
+
+/* the typed lines under them. The tracking leaves a gap after the last
+   letter that centring counts as text, so it is nudged back by the same
+   amount. */
+.line {
+  margin-top: 0.55rem;
   font-family: var(--font-type);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
   color: var(--ink-soft);
 }
-/* the date gets a pen circled round it */
-.circled { position: relative; display: inline-block; padding: 0.3em 0.75em; }
-.circled img {
-  position: absolute;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  opacity: 0.85;
-  pointer-events: none;
-}
-.fact-note { margin-top: 1.75rem; }
+.line a { color: inherit; border-bottom: 1px solid rgba(31,85,97,0.4); }
+.line a:hover { color: var(--accent); text-decoration: none; }
+
+.bubble-note { margin-top: 1.9rem; }
 .cal {
   font-family: var(--font-type);
   font-size: 0.68rem;
@@ -928,38 +849,26 @@ const repaintGrain = installWoodGrain(document.getElementById('grain'), {
   onSky: (flares, geom) => twinkle.set(flares, geom),
 });
 
-// ── THE CAT ───────────────────────────────────────────────
-// She starts hidden. Throwing the banana brings her out; "catch it" in the
-// footer puts her to bed, and the same button wakes her again.
+/* ── THE CAT ───────────────────────────────────────────────
+ * She is installed and waiting, hiding off the left edge of the screen with
+ * one paw and her tail showing. Nothing triggers her at the moment: the
+ * throw/catch buttons have been taken out while we work out a better way to
+ * interact with her.
+ *
+ * Everything she needs is still wired up and working. To set her running:
+ *
+ *   marcy.release(el)  - lob the banana from `el` and bring her out
+ *   marcy.settle()     - let her catch it and curl up in the footer bed
+ *   marcy.isAsleep(), marcy.isHiding()
+ *
+ * Whatever ends up calling those should also call repaintGrain() afterwards
+ * if it changes the size of a block, since the clearings are measured from
+ * where the content actually landed.
+ */
 const bed = document.getElementById('marcy-bed');
 const hide = document.getElementById('marcy-hide');
 const marcy = installMarcy(document.getElementById('critters'), { bed, hide });
-
-const throwRow = document.getElementById('throw-row');
-const throwBtn = document.getElementById('throw-btn');
-const catchBtn = document.getElementById('catch-btn');
-
-throwBtn.addEventListener('click', () => {
-  marcy.release(throwBtn);
-  throwRow.classList.add('is-spent');   // it is thrown; she has it now
-  repaintGrain();                       // the row is gone, so the block shrank
-});
-
-catchBtn.addEventListener('click', () => {
-  if (marcy.isAsleep()) {
-    marcy.release();
-    catchBtn.textContent = 'catch it';
-  } else if (!marcy.isHiding()) {
-    marcy.settle();
-    catchBtn.textContent = 'wake her up';
-    // She takes a moment to get there; the footer grows by her height when she
-    // lands, so the grain's clearings need recomputing once she has settled.
-    setTimeout(repaintGrain, 2400);
-  }
-});
-// nothing to catch until she is out
-catchBtn.hidden = true;
-throwBtn.addEventListener('click', () => { catchBtn.hidden = false; });
+void marcy;   // parked until there is something to trigger her
 
 // ── PASSWORD WALL ─────────────────────────────────────────
 const KEY  = 'sk-auth-v1';
