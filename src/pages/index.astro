@@ -141,7 +141,8 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
       POST if the script never runs.
     -->
     <section class="ask" data-clearing>
-      <p class="ask-sub">Leave your address and we'll post you a real invitation.</p>
+      <p class="ask-sub">Let us know where to send your invitation</p>
+      <p class="ask-note">this is not an RSVP</p>
 
       <form
         class="ask-form"
@@ -161,24 +162,23 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
           <input type="text" name="name" required autocomplete="name" />
         </label>
 
-        <label class="field">
-          <span>Email</span>
-          <input type="email" name="email" required autocomplete="email" />
-        </label>
-
+        <!--
+          Neither of these is `required` on its own: one or the other will do,
+          and `required` cannot say that. The rule is enforced on submit, and
+          the hint below spells it out rather than leaving people to discover
+          it by being rejected.
+        -->
         <label class="field">
           <span>Mailing address</span>
-          <textarea name="address" rows="3" required autocomplete="street-address"></textarea>
+          <textarea name="address" rows="3" autocomplete="street-address"></textarea>
         </label>
 
         <label class="field">
-          <span>Anything else</span>
-          <textarea
-            name="extras"
-            rows="3"
-            placeholder="Advice, a story about us, or the one song that will get you on the dance floor."
-          ></textarea>
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="email" />
         </label>
+
+        <p class="field-hint" id="contact-hint">whichever you prefer &mdash; we just need one of them</p>
 
         <button type="submit">send it over</button>
         <p class="ask-status" id="rsvp-status" role="status" aria-live="polite"></p>
@@ -655,11 +655,19 @@ main {
 /* ══ THE FORM ═════════════════════════════════════════════ */
 .ask { text-align: center; margin-top: clamp(2.5rem, 7vw, 4.5rem); }
 .ask-sub {
-  margin: 0 auto 1.9rem;
+  margin: 0 auto;
   max-width: 36ch;
   font-family: var(--font-hand);
   font-size: 1.2rem;
   line-height: 1.3;
+}
+.ask-note {
+  margin: 0.5rem auto 1.9rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 .ask-form { max-width: 430px; margin: 0 auto; text-align: left; }
 .hp { position: absolute; left: -9999px; }   /* honeypot, for bots only */
@@ -692,6 +700,16 @@ main {
   background: rgba(255,255,255,0.62);
 }
 .field textarea::placeholder { color: var(--ink-faint); line-height: 1.45; }
+
+/* sits under the address and email pair, and turns red if you skip both */
+.field-hint {
+  margin: -0.5rem 0 0;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--ink-faint);
+  transition: color 0.15s ease;
+}
+.field-hint.is-error { color: #8f2f22; font-style: normal; }
 
 .ask-form button {
   display: block;
@@ -893,14 +911,41 @@ inp.addEventListener('keydown', e => {
 });
 if (wall.style.display !== 'none') inp.focus();
 
-// ── THE FORM ──────────────────────────────────────────────
-// Posted over fetch so the page can answer inline instead of bouncing to
-// Netlify's own success page. Without JS the form still submits normally.
+/* ── THE FORM ──────────────────────────────────────────────
+ * Posted over fetch so the page can answer inline instead of bouncing to
+ * Netlify's own success page. Without JS the form still submits normally.
+ *
+ * A name is required, plus at least one way to reach them. `required` can
+ * only demand a field outright, not one-of-two, so that half is checked here.
+ * The browser handles the name and runs first: this listener does not fire
+ * until the built-in validation has passed.
+ * ───────────────────────────────────────────────────────── */
 const form   = document.getElementById('rsvp-form');
 const status = document.getElementById('rsvp-status');
+const hint   = document.getElementById('contact-hint');
+const email  = form.querySelector('[name="email"]');
+const addr   = form.querySelector('[name="address"]');
+
+const hasContact = () => Boolean(email.value.trim() || addr.value.trim());
+
+// Stop nagging the moment they start filling one in.
+for (const el of [email, addr]) {
+  el.addEventListener('input', () => {
+    if (hasContact()) hint.classList.remove('is-error');
+  });
+}
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
+
+  if (!hasContact()) {
+    hint.classList.add('is-error');
+    status.textContent = 'We need an address or an email to send it to.';
+    addr.focus();
+    return;
+  }
+  hint.classList.remove('is-error');
+
   const btn = form.querySelector('button');
   btn.disabled = true;
   status.textContent = 'sending…';
