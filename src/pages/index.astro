@@ -795,6 +795,21 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
 .foot-src:hover { color: var(--accent); text-decoration: none; }
 
 /* ══ RESPONSIVE ═══════════════════════════════════════════ */
+/*
+ * Narrow screens have no side margin at all - the content is the width - so
+ * the only place the sky can show is between the blocks. Give it somewhere to
+ * be: the gaps roughly double, the page ends in open sky at both ends, and
+ * each block reads as floating in it rather than the whole page being lit.
+ * The glow pads shrink to match; see paintGlow in woodgrain.js.
+ */
+@media (max-width: 760px) {
+  .page { padding: clamp(3rem, 12vw, 5rem) 0; }
+  .strip-wrap { margin-top: clamp(4rem, 12vw, 5.5rem); }
+  .bubble { margin-top: clamp(4rem, 12vw, 5.5rem); }
+  .ask { margin-top: clamp(4.5rem, 14vw, 6rem); }
+  footer { padding-top: clamp(4rem, 12vw, 5.5rem); }
+}
+
 @media (max-width: 620px) {
   html { font-size: 17px; }
   main { padding: 1.25rem 1rem 1.5rem; }

@@ -362,13 +362,25 @@ function paintGlow(canvas, w, h, dpr, clearings, opts = {}) {
     ...c, x: c.x - pad, y: c.y - pad, w: c.w + pad * 2, h: c.h + pad * 2,
   });
 
+  /*
+   * The pads are in pixels, which is right on a wide screen and far too much
+   * on a narrow one: at 390px across, a 168px halo runs 182px off each edge,
+   * so one block floods the whole screen and there is no sky left anywhere.
+   * Scaling them with the width keeps the light close to its block instead,
+   * which is what lets the page show between the blocks on a phone.
+   *
+   * Both pad and blur scale together, so the core still covers its clearing:
+   * that only needs pad > blur, which the ratio preserves.
+   */
+  const tight = Math.min(1, Math.max(0.3, (w - 360) / 640));
+
   for (const pass of GLOW_PASSES) {
     ctx.fillStyle = opts[pass.key] || pass.fallback;
     // Without filter support the shape is drawn hard-edged; it still lights
     // the text, it just does not feather.
-    if (soft) ctx.filter = `blur(${pass.blur}px)`;
+    if (soft) ctx.filter = `blur(${pass.blur * tight}px)`;
     for (const c of clearings) {
-      organicBlob(ctx, inflate(c, pass.pad));
+      organicBlob(ctx, inflate(c, pass.pad * tight));
       ctx.fill();
     }
     if (soft) ctx.filter = 'none';
