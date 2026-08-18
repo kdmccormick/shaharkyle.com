@@ -225,20 +225,25 @@ export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) 
   const rand = mulberry32(seed);
 
   /*
-   * The lane is the clear strip beside the content - measured from the
-   * clearings rather than from contentWidth, because the clearings are what a
-   * figure actually has to keep out of, and they are wider than the content by
-   * however much padding the grain leaves round it. The full-bleed blocks reach
-   * both edges, so the most inset left edge is the one that matters.
+   * The lane is the clear strip beside the content, measured from the
+   * clearings rather than assumed from contentWidth - the clearings are what a
+   * figure has to keep out of, and they are wider than the content by whatever
+   * padding the grain leaves round it.
    *
-   * Sizing off the content width instead is what made figures collide with it:
-   * at 1100px the margin is 170px, but a figure sized margin * 0.78 has a
-   * bounding radius of 82px sitting at x = 85, so it reached 167px into a
-   * clearing that began at 166px - overlapping by a pixel at every height, and
-   * so failing at all of them. Nothing appeared between 1026 and about 1362px.
+   * It has to be the *widest* block that decides, so take the smallest inset
+   * of the centred ones. Full-bleed blocks are skipped: they reach both edges
+   * and leave no lane at all, which is a question of where a figure goes, not
+   * how big it is - the placement walk moves away from them.
+   *
+   * Getting this backwards is why figures bunched at the top of the page. The
+   * flyer is only 75% of the column, so the most inset clearing was the
+   * flyer's, and sizing off that made every figure too wide for the blocks
+   * below it. They fitted beside the flyer and collided with everything else,
+   * so only the topmost few were ever drawn.
    */
-  const lane = avoid.length
-    ? Math.max(0, ...avoid.map((a) => a.x))
+  const columns = avoid.filter((a) => a.x > 4 && a.x + a.w < w - 4);
+  const lane = columns.length
+    ? Math.min(...columns.map((a) => a.x))
     : Math.max(0, (w - contentWidth) / 2);
 
   const size = Math.min(lane * 0.742, 220);   // 0.742 leaves 8% either side
