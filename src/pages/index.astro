@@ -88,6 +88,21 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
       </picture>
     </section>
 
+    <!-- ═══ THE TWO OF US ═══════════════════════════════ -->
+    <section class="strip-wrap" data-clearing>
+      <div class="marquee" id="marquee">
+        <!--
+          One set of photos, twice, so there is something to look at before
+          the script runs. It clones this further at runtime until the row is
+          wider than the screen - see PHOTO MARQUEE below for why.
+        -->
+        <div class="marquee-track" id="marquee-track" data-count={photos.length}>
+          {photos.map(p => <img src={p.src} alt={p.alt} />)}
+          {photos.map(p => <img src={p.src} alt="" aria-hidden="true" />)}
+        </div>
+      </div>
+    </section>
+
     <!-- ═══ WHO, AND WHY ════════════════════════════════ -->
     <header class="titles" data-clearing>
       <h1>Shahar <span class="amp">&amp;</span> Kyle</h1>
@@ -181,16 +196,6 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
     </section>
 
   </main>
-
-  <!-- ═══ THE TWO OF US ═════════════════════════════════ -->
-  <section class="strip-wrap" data-clearing>
-    <div class="marquee" id="marquee">
-      <div class="marquee-track" id="marquee-track">
-        {photos.map(p => <img src={p.src} alt={p.alt} />)}
-        {photos.map(p => <img src={p.src} alt="" aria-hidden="true" />)}
-      </div>
-    </div>
-  </section>
 
   <footer data-clearing>
     <!--
@@ -749,10 +754,17 @@ main {
 
 /* ══ PHOTO STRIP ══════════════════════════════════════════
  * Every photo renders at the same height, tiled flush, drifting left.
- * The list is duplicated in the markup so the loop is seamless: the track
- * animates to -50%, which lands exactly on the start of the second copy.
+ * The track is shifted by exactly the width of one set of photos, so the
+ * next set lands where the last one started and the seam never shows.
+ * That width is measured at runtime - see PHOTO MARQUEE in the script.
  * ═════════════════════════════════════════════════════════ */
-.strip-wrap { width: 100%; margin-top: clamp(2.5rem, 7vw, 4rem); }
+/* It sits inside `main` for ordering, but breaks out of its 760px column to
+   run the full width of the page the way it did before. */
+.strip-wrap {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-top: clamp(2rem, 5vw, 3rem);
+}
 .marquee {
   position: relative;
   width: 100%;
@@ -782,9 +794,11 @@ main {
   margin-right: 6px;
   filter: saturate(0.9) contrast(1.02);
 }
+/* --shift is one set's width in px, set by the script. Until it lands the
+   strip simply holds still rather than drifting by a wrong amount. */
 @keyframes marquee-drift {
   from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(calc(-1 * var(--shift, 0px)), 0, 0); }
 }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 
@@ -929,21 +943,49 @@ form.addEventListener('submit', async e => {
   }
 });
 
-// ── PHOTO MARQUEE ─────────────────────────────────────────
-// Duration is derived from the track width so the strip drifts at a fixed
-// px/sec no matter how many photos are in the list.
+/* ── PHOTO MARQUEE ─────────────────────────────────────────
+ * The strip is shifted left by exactly one set of photos, so the following
+ * set arrives where the last one began and the loop is invisible.
+ *
+ * For that to hold, the track has to stay wider than the screen for the whole
+ * shift - it needs viewport + one set. Two sets of four photos come to about
+ * 1000px each, which is fine on a phone but leaves bare paper trailing the
+ * last photo on a wide window: the very thing that made the strip look only
+ * as long as the page. So the set is cloned until there is enough of it, which
+ * depends on the window and on how wide the photos turn out to be once loaded.
+ * ───────────────────────────────────────────────────────── */
 const track = document.getElementById('marquee-track');
 const PX_PER_SEC = 22;
+const perSet = Number(track.dataset.count) || 1;
+const baseSet = [...track.children].slice(0, perSet);
 
-function setMarqueeSpeed() {
-  const half = track.scrollWidth / 2;
-  if (half > 0) track.style.setProperty('--dur', `${half / PX_PER_SEC}s`);
+function layoutMarquee() {
+  // width of one set, margins included
+  const setWidth = baseSet.reduce((w, img) =>
+    w + img.getBoundingClientRect().width
+      + parseFloat(getComputedStyle(img).marginRight || 0), 0);
+
+  // images have no size yet; a later load event brings us back
+  if (setWidth < 1) return;
+
+  const need = Math.max(2, Math.ceil(window.innerWidth / setWidth) + 1);
+  for (let have = track.children.length / perSet; have < need; have++) {
+    for (const img of baseSet) {
+      const copy = img.cloneNode(true);
+      copy.alt = '';
+      copy.setAttribute('aria-hidden', 'true');
+      track.appendChild(copy);
+    }
+  }
+
+  track.style.setProperty('--shift', `${setWidth}px`);
+  track.style.setProperty('--dur', `${setWidth / PX_PER_SEC}s`);
 }
 
-setMarqueeSpeed();
-window.addEventListener('load', setMarqueeSpeed);
-window.addEventListener('resize', setMarqueeSpeed, { passive: true });
-track.querySelectorAll('img').forEach(img => {
-  if (!img.complete) img.addEventListener('load', setMarqueeSpeed, { once: true });
-});
+layoutMarquee();
+window.addEventListener('load', layoutMarquee);
+window.addEventListener('resize', layoutMarquee, { passive: true });
+for (const img of baseSet) {
+  if (!img.complete) img.addEventListener('load', layoutMarquee, { once: true });
+}
 </script>
