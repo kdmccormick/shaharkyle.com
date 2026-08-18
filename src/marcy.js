@@ -77,9 +77,14 @@ export function installMarcy(layer, opts = {}) {
 
   /* ── the railway ──────────────────────────────────────────────────── */
 
+  /*
+   * The loop is measured from the layer, which spans the whole document -
+   * not from the window. That is what puts her on the page rather than on
+   * the screen: she keeps her place as you scroll past.
+   */
   function build() {
-    const W = window.innerWidth;
-    const H = window.innerHeight;
+    const W = layer.clientWidth || window.innerWidth;
+    const H = layer.clientHeight || window.innerHeight;
     const cx = W / 2;
     const cy = H / 2;
     const rx = Math.max(120, W / 2 - 70);
@@ -234,9 +239,14 @@ export function installMarcy(layer, opts = {}) {
    * she was awake to watch it go.
    */
   function toss() {
-    // Somewhere between a fifth and four fifths of the way round from her, so
-    // it never lands on top of her and never needs a full lap to reach.
-    const away = total * (0.2 + Math.random() * 0.6);
+    /*
+     * Distance is in pixels, not a fraction of the loop. The loop is as tall
+     * as the page, so a fraction of it would be a minute's jog on a long page
+     * and a hop on a short one; a few hundred pixels is a few seconds either
+     * way. Far enough to be a chase, near enough to stay on screen.
+     */
+    const reach = Math.min(total * 0.45, 380 + Math.random() * 620);
+    const away = Math.random() < 0.5 ? reach : total - reach;
     bananaD = (marcyD + away) % total;
     spin += 360 + Math.round(Math.random() * 180);
     placeBanana();
@@ -299,9 +309,19 @@ export function installMarcy(layer, opts = {}) {
   placeBanana();
   setState('snoozing');
 
-  window.addEventListener('resize', () => {
-    // Keep both of them where they were proportionally, or a resize teleports
-    // her across the screen.
+  /*
+   * Rebuild whenever the page box changes. A ResizeObserver rather than a
+   * resize listener: the page also grows and shrinks on its own as images
+   * land and the form collapses on submit, and the loop is measured from it.
+   */
+  let lastW = layer.clientWidth;
+  let lastH = layer.clientHeight;
+  const ro = new ResizeObserver(() => {
+    if (layer.clientWidth === lastW && layer.clientHeight === lastH) return;
+    lastW = layer.clientWidth;
+    lastH = layer.clientHeight;
+
+    // Keep them where they were proportionally, or a reflow teleports her.
     const mf = total ? marcyD / total : 0;
     const bf = total ? bananaD / total : 0;
     build();
@@ -309,7 +329,8 @@ export function installMarcy(layer, opts = {}) {
     bananaD = bf * total;
     placeCat();
     placeBanana();
-  }, { passive: true });
+  });
+  ro.observe(layer);
 
   // Nothing to animate while the tab is hidden; also stops the clock handing
   // her a huge dt and teleporting her when you come back.

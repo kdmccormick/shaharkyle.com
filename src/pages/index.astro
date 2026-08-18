@@ -193,29 +193,30 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
     <a class="foot-src" href="https://github.com/kdmccormick/shaharkyle.com" target="_blank" rel="noopener">source code on github</a>
   </footer>
 
-</div>
+  <!-- ═══ MARCY, AND A BANANA ═════════════════════════════
+    Inside .page and absolutely positioned, so the two of them belong to the
+    document and scroll with it. Both ride a hidden loop drawn over the whole
+    page; see src/marcy.js. She carries both poses and the state class picks
+    one.
+    ═══════════════════════════════════════════════════════ -->
+  <div class="critters" id="critters">
 
-<!-- ═══ MARCY, AND A BANANA ═════════════════════════════
-  Fixed to the viewport, so she keeps to the screen you are looking at rather
-  than being 4000px up the page. Both of them ride a hidden loop; see
-  src/marcy.js. She carries both poses and the state class picks one.
-  ═══════════════════════════════════════════════════════ -->
-<div class="critters" id="critters">
+    <div class="critter" data-marcy role="button" tabindex="0" aria-label="Marcy, asleep. Wake her up.">
+      <div class="pose pose-sleep" set:html={marcySleepSvg}></div>
+      <div class="pose pose-wake"  set:html={marcySvg}></div>
+    </div>
 
-  <div class="critter" data-marcy role="button" tabindex="0" aria-label="Marcy, asleep. Wake her up.">
-    <div class="pose pose-sleep" set:html={marcySleepSvg}></div>
-    <div class="pose pose-wake"  set:html={marcySvg}></div>
+    <div class="critter" data-banana role="button" tabindex="0" aria-label="Throw the banana">
+      <svg class="banana-fly" viewBox="0 0 44 30" aria-hidden="true">
+        <path d="M6,21 Q17,3 36,9 Q20,12 9,25 Z" />
+        <path class="stem" d="M36,9 l5,-3" />
+      </svg>
+    </div>
+
+    <!-- her noises. Placed by JS above whichever pose is showing. -->
+    <p class="marcy-say" data-say aria-live="polite"><span></span></p>
+
   </div>
-
-  <div class="critter" data-banana role="button" tabindex="0" aria-label="Throw the banana">
-    <svg class="banana-fly" viewBox="0 0 44 30" aria-hidden="true">
-      <path d="M6,21 Q17,3 36,9 Q20,12 9,25 Z" />
-      <path class="stem" d="M36,9 l5,-3" />
-    </svg>
-  </div>
-
-  <!-- her noises. Placed by JS above whichever pose is showing. -->
-  <p class="marcy-say" data-say aria-live="polite"><span></span></p>
 
 </div>
 
@@ -421,8 +422,11 @@ main {
 .flyer, .bubble, .ask, .strip-wrap, footer { position: relative; z-index: 2; }
 
 /* ══ MARCY AND THE BANANA ═════════════════════════════════ */
+/* Absolute inside .page, not fixed to the viewport: she is part of the
+   document and scrolls with it, so she stays where she was on the page
+   rather than following you down it. */
 .critters {
-  position: fixed;
+  position: absolute;
   inset: 0;
   /* Above the content rather than behind it. She used to pass behind the
      flyer, which was prettier, but you now have to be able to click her and
