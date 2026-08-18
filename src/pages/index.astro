@@ -68,6 +68,8 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
 
 <div class="page">
 
+  <!-- the pools of dawn light the text is read by, under the grain -->
+  <canvas id="glow" aria-hidden="true"></canvas>
   <!-- the grain fills this box entirely and parts around every [data-clearing] -->
   <canvas id="grain" aria-hidden="true"></canvas>
   <!-- just the flares on the bright chart stars, so they can twinkle without
@@ -247,20 +249,28 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
    the drawing - everything else is tuned to it.
    ═════════════════════════════════════════════════════════ */
 :root {
-  --sky-top:    #dae1e3;   /* pale slate, the light before the sun */
-  --sky-mid:    #eae6da;   /* soft ivory */
-  --sky-low:    #f1e8d1;   /* warm straw, down at the horizon */
+  /* Shahar means dawn. The page is the sky just before one: deep overhead,
+     going lighter and warmer down at the horizon. */
+  --sky-top:    #202d40;
+  --sky-mid:    #33455c;
+  --sky-low:    #4d5f75;
+  --sky-edge:   #161f2d;   /* deeper still, right at the margins */
+  --sky-edge-0: rgba(22,31,45,0);   /* the same, no alpha - see below */
 
+  /* Text sits in a pool of light, never straight on the sky. */
   --ink:        #14110f;
   --ink-soft:   #423b34;
-  --ink-faint:  #7d7366;
+  --ink-faint:  #655c50;   /* 5.3:1 on the lit surface; #7d7366 fell under AA */
 
   --accent:     #1f5561;   /* deep teal, the one spot of colour */
   --rule:       rgba(20,17,15,0.3);
 
-  --dusk:       #3b4a61;   /* the blue the edges fall away to */
-  --dusk-0:     rgba(59,74,97,0);   /* same colour, no alpha - see below */
   --chart:      #efece1;   /* off-white; the star chart is drawn in this */
+
+  /* The light behind each block. The core is what the text is actually read
+     against, so it is nearly opaque; the halo is the spill around it. */
+  --glow-core:  rgba(246,236,212,0.96);
+  --glow-halo:  rgba(233,196,126,0.36);
 
   --font-hand:  'Permanent Marker', 'Comic Sans MS', cursive;
   --font-type:  'Special Elite', 'Courier New', Courier, monospace;
@@ -274,27 +284,22 @@ html {
      overhead down to warm at the foot of the page. Not `fixed`: that pins the
      gradient to the viewport and leaves everything below the first screenful
      with no background at all. */
-  background-color: var(--sky-low);
+  background-color: var(--sky-mid);
   /*
-   * Paper in the middle, falling away to dusk at every edge. The side fades
-   * stop where the content column starts - `(100% - 820px) / 2` is the margin
-   * either side of it - so the blue only ever covers the empty space the star
-   * chart is drawn in, and never creeps under the text. On a narrow window
-   * that margin goes negative, so `max()` holds it at a thin 22px band.
-   *
-   * The stops fade to --dusk-0 rather than `transparent`: they are the same
-   * blue at zero alpha, and interpolating towards a colourless transparent
-   * would pass through grey on the way.
+   * The sky is the whole page now, with the margins falling away darker still
+   * so the middle reads as the open part of it. The stops fade to
+   * --sky-edge-0 rather than `transparent`: it is the same blue at zero alpha,
+   * and interpolating towards a colourless transparent passes through grey.
    */
   background-image:
-    linear-gradient(to right,  var(--dusk) 0, var(--dusk-0) max(22px, calc((100% - 820px) / 2))),
-    linear-gradient(to left,   var(--dusk) 0, var(--dusk-0) max(22px, calc((100% - 820px) / 2))),
-    linear-gradient(to bottom, var(--dusk) 0, var(--dusk-0) 190px),
-    linear-gradient(to top,    var(--dusk) 0, var(--dusk-0) 260px),
+    linear-gradient(to right,  var(--sky-edge) 0, var(--sky-edge-0) max(22px, calc((100% - 900px) / 2))),
+    linear-gradient(to left,   var(--sky-edge) 0, var(--sky-edge-0) max(22px, calc((100% - 900px) / 2))),
+    linear-gradient(to bottom, var(--sky-edge) 0, var(--sky-edge-0) 220px),
+    linear-gradient(to top,    var(--sky-edge) 0, var(--sky-edge-0) 300px),
     linear-gradient(
       180deg,
       var(--sky-top) 0%,
-      var(--sky-mid) 45%,
+      var(--sky-mid) 52%,
       var(--sky-low) 100%
     );
   background-repeat: no-repeat;
@@ -400,10 +405,10 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* ══ LAYOUT ═══════════════════════════════════════════════ */
 .page { position: relative; overflow-x: clip; }
 
-/* The grain covers the whole page box and sits under everything. It is painted
-   at the element's own pixel size, so it needs no background of its own.
-   #twinkle is the same box, holding only the animated star flares. */
-#grain, #twinkle {
+/* Three layers filling the same box, all under the content and painted at the
+   element's own pixel size: the light, then the grain over it, then the star
+   flares on top. Stacked by document order - they all sit at z-index 0. */
+#glow, #grain, #twinkle {
   position: absolute;
   top: 0;
   left: 0;
@@ -888,6 +893,8 @@ const pick = (name, fallback) =>
 
 const INK   = pick('--ink', '#14110f');
 const CHART = pick('--chart', '#efece1');
+const GLOW  = pick('--glow-core', 'rgba(244,233,206,0.95)');
+const HALO  = pick('--glow-halo', 'rgba(232,201,138,0.38)');
 
 const twinkle = installTwinkle(document.getElementById('twinkle'), { ink: CHART });
 
@@ -897,6 +904,9 @@ const repaintGrain = installWoodGrain(document.getElementById('grain'), {
   alpha: 0.78,
   skyInk: CHART,
   skyAlpha: 1,
+  glowCanvas: document.getElementById('glow'),
+  glowCore: GLOW,
+  glowHalo: HALO,
   onSky: (flares, geom) => twinkle.set(flares, geom),
 });
 

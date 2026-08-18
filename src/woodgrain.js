@@ -32,6 +32,21 @@ const CLEAR_PAD = 14;     // px of clear paper around each block of content
 const CLEAR_FEATHER = 9;  // px of soft edge on the clearing
 const MAX_DPR = 2;
 
+/*
+ * The pool of dawn light behind each block of content.
+ *
+ * Two passes. The core has to cover its clearing outright - the text above it
+ * is near-black and the page behind it is night, so any corner the light misses
+ * is a corner you cannot read. It is inflated well past the clearing and then
+ * blurred, so the blur's soft edge falls outside the clearing rather than
+ * across it: GLOW_CORE_PAD is comfortably more than GLOW_CORE_BLUR. The halo is
+ * only atmosphere - it spills onto the surrounding grain and carries no text.
+ */
+const GLOW_CORE_PAD = 42;
+const GLOW_CORE_BLUR = 22;
+const GLOW_HALO_PAD = 108;
+const GLOW_HALO_BLUR = 62;
+
 /* ── a small seeded RNG, so the grain is the same on every reload ─────── */
 function mulberry32(a) {
   return function () {
@@ -218,6 +233,11 @@ export function paintWoodGrain(canvas, opts = {}) {
     });
   }
 
+  // Light the content blocks, on the layer underneath this one. Only these -
+  // the constellation windows below stay dark, or the off-white chart drawn in
+  // them would have nothing to show up against.
+  paintGlow(opts.glowCanvas, w, h, dpr, clearings, opts);
+
   // Each constellation gets a clearing too, so the grain parts round it and the
   // figure sits in its own window of open paper. Rounder and shallower than a
   // content clearing - it should look like a gap in the wood, not a hole.
@@ -312,6 +332,51 @@ export function paintWoodGrain(canvas, opts = {}) {
   // The flares are left undrawn above; hand them to whoever animates them,
   // along with the geometry they were measured in.
   opts.onSky?.(flares, { w, h, dpr });
+}
+
+/*
+ * Paint the dawn light behind the content, on its own canvas under the grain.
+ *
+ * It cannot share the grain's canvas: the clearings there are punched out with
+ * destination-out, which would take the light with them. Underneath, the light
+ * shows through those punched holes exactly where the content sits, and is
+ * crossed by grain everywhere the halo spills past them.
+ */
+function paintGlow(canvas, w, h, dpr, clearings, opts = {}) {
+  if (!canvas) return;
+
+  canvas.width = Math.ceil(w * dpr);
+  canvas.height = Math.ceil(h * dpr);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const soft = typeof ctx.filter === 'string';
+  const inflate = (c, pad) => ({
+    ...c, x: c.x - pad, y: c.y - pad, w: c.w + pad * 2, h: c.h + pad * 2,
+  });
+
+  const passes = [
+    { pad: GLOW_HALO_PAD, blur: GLOW_HALO_BLUR,
+      fill: opts.glowHalo ?? 'rgba(232,201,138,0.38)' },
+    { pad: GLOW_CORE_PAD, blur: GLOW_CORE_BLUR,
+      fill: opts.glowCore ?? 'rgba(244,233,206,0.95)' },
+  ];
+
+  for (const pass of passes) {
+    ctx.fillStyle = pass.fill;
+    // Without filter support the shape is drawn hard-edged; it still lights
+    // the text, it just does not feather.
+    if (soft) ctx.filter = `blur(${pass.blur}px)`;
+    for (const c of clearings) {
+      organicBlob(ctx, inflate(c, pass.pad));
+      ctx.fill();
+    }
+    if (soft) ctx.filter = 'none';
+  }
 }
 
 /*
