@@ -27,6 +27,7 @@ const SPEED = 260;        // px per second, chasing
 const WAIT_MS = 10000;    // how long she stays up before nodding off
 const SAY_MS = 1600;      // how long a noise stays on screen
 const ARRIVE = 6;         // px from the banana that counts as caught
+const BLINK_MS = 340;     // the one-shot blink, when you say hello
 
 function catmullRom(pts, per = 26) {
   const out = [];
@@ -74,6 +75,7 @@ export function installMarcy(layer, opts = {}) {
   let last = 0;
   let waitTimer = 0;
   let sayTimer = 0;
+  let blinkTimer = 0;
 
   /* ── the railway ──────────────────────────────────────────────────── */
 
@@ -224,12 +226,32 @@ export function installMarcy(layer, opts = {}) {
     setState('snoozing');
   }
 
+  /*
+   * One-shot blink. The ambient one is on a five-second loop, so it cannot be
+   * asked for on demand; this is a separate, more specific rule that has to be
+   * taken off again afterwards or it would sit there finished and outrank the
+   * loop, leaving her unable to blink at all.
+   */
+  function blink() {
+    cat.classList.remove('is-blinking');
+    void cat.offsetWidth;                 // reflow, so the animation restarts
+    cat.classList.add('is-blinking');
+    clearTimeout(blinkTimer);
+    blinkTimer = setTimeout(() => cat.classList.remove('is-blinking'), BLINK_MS);
+  }
+
   function wake() {
-    if (state !== 'snoozing') {
-      // already up - just buy her another ten seconds
-      if (state === 'waiting') setState('waiting');
+    if (state === 'chasing') return;      // busy
+
+    if (state === 'waiting') {
+      // already up. A blink and a purr for the attention, and another ten
+      // seconds before she nods off.
+      blink();
+      speak('prrr');
+      setState('waiting');
       return;
     }
+
     speak('mrrrp?');
     setState('waiting');
   }
@@ -305,7 +327,7 @@ export function installMarcy(layer, opts = {}) {
 
   build();
   marcyD = bottomOfLoop();
-  bananaD = (marcyD + total * 0.3) % total;
+  bananaD = (marcyD + Math.min(total * 0.12, 165)) % total;   // just there, at her feet
   placeBanana();
   setState('snoozing');
 

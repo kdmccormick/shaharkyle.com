@@ -81,21 +81,23 @@ const FIGURES = {
     bright: [0, 1, 10],
   },
 
-  // a snare from the side, sitting on its tripod
+  // a snare seen from above the rim, sticks crossed over the head
   drum: {
     stars: [
-      [0.15, 0.30], [0.50, 0.25], [0.85, 0.30],       // 0..2 top hoop
-      [0.87, 0.52], [0.50, 0.57], [0.13, 0.52],       // 3..5 bottom hoop
-      [0.50, 0.74],                                   // 6 stand collar
-      [0.24, 0.94], [0.50, 0.97], [0.76, 0.94],       // 7..9 tripod feet
-      [0.28, 0.41], [0.72, 0.41],                     // 10,11 tension rods
+      [0.08, 0.50], [0.28, 0.40], [0.72, 0.40],       // 0..2 head, back edge
+      [0.92, 0.50], [0.72, 0.60], [0.28, 0.60],       // 3..5 head, front edge
+      [0.10, 0.72], [0.30, 0.84],                     // 6,7 shell, left and front
+      [0.70, 0.84], [0.90, 0.72],                     // 8,9 shell, front and right
+      [0.14, 0.10], [0.62, 0.45],                     // 10,11 one stick
+      [0.86, 0.10], [0.38, 0.45],                     // 12,13 the other
     ],
     edges: [
-      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],   // the shell
-      [4, 6], [6, 7], [6, 8], [6, 9],                   // the stand
-      [10, 11],                                         // rods across the shell
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],   // the head
+      [0, 6], [3, 9],                                   // down the sides
+      [6, 7], [7, 8], [8, 9],                           // round the shell
+      [10, 11], [12, 13],                               // the sticks, crossed
     ],
-    bright: [1, 6, 8],
+    bright: [8, 10, 12],
   },
 
   headphones: {
@@ -113,6 +115,21 @@ const FIGURES = {
       [4, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 10],
     ],
     bright: [2, 7, 12],
+  },
+
+  heart: {
+    stars: [
+      [0.50, 0.26],                                   // 0 the dip
+      [0.32, 0.08], [0.12, 0.20], [0.06, 0.44],       // 1..3 left lobe
+      [0.28, 0.72], [0.50, 0.94],                     // 4,5 down to the point
+      [0.72, 0.72], [0.94, 0.44],                     // 6,7 back up the right
+      [0.88, 0.20], [0.68, 0.08],                     // 8,9 right lobe
+    ],
+    edges: [
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5],
+      [5, 6], [6, 7], [7, 8], [8, 9], [9, 0],
+    ],
+    bright: [0, 5],
   },
 };
 
@@ -152,31 +169,44 @@ export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) 
   const size = Math.min(margin * 0.78, 220);
   if (size < 104) return [];
 
+  const out = [];
+
+  // Content blocks to keep off, plus every figure already placed.
   const hits = (cx, cy) => {
     const r = size * 0.62;
-    return avoid.some((a) =>
-      cx + r > a.x && cx - r < a.x + a.w && cy + r > a.y && cy - r < a.y + a.h);
+    if (avoid.some((a) =>
+      cx + r > a.x && cx - r < a.x + a.w && cy + r > a.y && cy - r < a.y + a.h)) return true;
+    return out.some((o) =>
+      Math.abs(o.cx - cx) < size * 1.05 && Math.abs(o.cy - cy) < size * 1.05);
   };
 
-  const out = [];
+  /*
+   * Walk up and down from the ideal height looking for a gap. Full-bleed
+   * blocks - the photo strip especially - leave no margin at all at their
+   * height, so a figure placed there ends up hidden behind them. Give up on
+   * the figure rather than draw it somewhere it cannot be seen.
+   */
+  const place = (name, cx, ideal) => {
+    for (let step = 0; step <= 26; step++) {
+      for (const dir of step === 0 ? [0] : [-1, 1]) {
+        const cy = ideal + dir * step * (h * 0.012);
+        if (cy > size * 0.6 && cy < h - size * 0.6 && !hits(cx, cy)) {
+          out.push({ name, cx, cy, size });
+          return;
+        }
+      }
+    }
+  };
+
+  // The heart is pinned to the top right; the rest fall in around it.
+  place('heart', w - margin * 0.5, size * 0.75);
+
   const span = 0.86 / ORDER.length;
   ORDER.forEach((name, i) => {
     const cx = i % 2 === 0 ? margin * 0.5 : w - margin * 0.5;
-    const ideal = h * (0.08 + span * (i + 0.5)) + (rand() - 0.5) * h * 0.03;
-
-    // Full-bleed blocks - the photo strip especially - leave no margin at all
-    // at their height, so a figure placed there ends up hidden behind them.
-    // Walk up and down from the ideal spot for a gap, and give up on the
-    // figure rather than draw it somewhere it cannot be seen.
-    let cy = null;
-    for (let step = 0; step <= 26 && cy === null; step++) {
-      for (const dir of step === 0 ? [0] : [-1, 1]) {
-        const t = ideal + dir * step * (h * 0.012);
-        if (t > size * 0.6 && t < h - size * 0.6 && !hits(cx, t)) { cy = t; break; }
-      }
-    }
-    if (cy !== null) out.push({ name, cx, cy, size });
+    place(name, cx, h * (0.08 + span * (i + 0.5)) + (rand() - 0.5) * h * 0.03);
   });
+
   return out;
 }
 

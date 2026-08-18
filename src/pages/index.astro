@@ -27,12 +27,6 @@ const MAPS = 'https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+S
 import marcySvg from '../marcy-run.svg?raw';
 import marcySleepSvg from '../marcy-sleep.svg?raw';
 
-// 5pm-11pm Eastern on the day, as UTC
-const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-  + '&text=' + encodeURIComponent('Shahar & Kyle are getting married')
-  + '&dates=20270605T210000Z/20270606T030000Z'
-  + '&location=' + encodeURIComponent('Arts at the Armory, 191 Highland Ave, Somerville, MA 02143')
-  + '&details=' + encodeURIComponent('Save the date. Details to follow.');
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -125,10 +119,6 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
       <p class="line">
         <a href={MAPS} target="_blank" rel="noopener">191 Highland Ave &middot; Somerville, MA</a>
       </p>
-
-      <p class="bubble-note">
-        <a class="cal" href={CAL} target="_blank" rel="noopener">put it in your calendar</a>
-      </p>
     </section>
 
     <!-- ═══ TELL US WHERE TO SEND THE REAL ONE ══════════ -->
@@ -141,7 +131,6 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
     -->
     <section class="ask" data-clearing>
       <p class="ask-sub">Let us know where to send your invitation</p>
-      <p class="ask-note">this is not an RSVP</p>
 
       <form
         class="ask-form"
@@ -164,8 +153,7 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
         <!--
           Neither of these is `required` on its own: one or the other will do,
           and `required` cannot say that. The rule is enforced on submit, and
-          the hint below spells it out rather than leaving people to discover
-          it by being rejected.
+          the status line below the button carries the message.
         -->
         <label class="field">
           <span>Mailing address</span>
@@ -176,8 +164,6 @@ const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
           <span>Email</span>
           <input type="email" name="email" autocomplete="email" />
         </label>
-
-        <p class="field-hint" id="contact-hint">whichever you prefer &mdash; we just need one of them</p>
 
         <button type="submit">send it over</button>
         <p class="ask-status" id="rsvp-status" role="status" aria-live="polite"></p>
@@ -607,6 +593,20 @@ main {
   94%, 97%      { transform: scaleY(0.08); }
 }
 
+/* A blink on demand, when you click her. Outranks the ambient loop above by
+   being one class more specific, and the script takes it off again when it
+   has run - left on, a finished animation would win and she would never
+   blink on her own again. */
+.critters.is-waiting .critter.is-blinking .marcy-run .m-eye,
+.critters.is-waiting .critter.is-blinking .marcy-run .m-pupil,
+.critters.is-waiting .critter.is-blinking .marcy-run .m-glint {
+  animation: marcy-wink 0.34s step-end 1;
+}
+@keyframes marcy-wink {
+  0%, 100%  { transform: scaleY(1); }
+  15%, 70%  { transform: scaleY(0.08); }
+}
+
 /* ══ THE FLYER ════════════════════════════════════════════ */
 /* The section carries the width, not the image: it is the [data-clearing] the
    grain parts around, so if the two disagree the light lands in the wrong
@@ -651,30 +651,22 @@ main {
 .line a { color: inherit; border-bottom: 1px solid rgba(31,85,97,0.4); }
 .line a:hover { color: var(--accent); text-decoration: none; }
 
-.bubble-note { margin-top: 1.9rem; }
-.cal {
-  font-family: var(--font-type);
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
 
 /* ══ THE FORM ═════════════════════════════════════════════ */
-.ask { text-align: center; margin-top: clamp(2.5rem, 7vw, 4.5rem); }
+/* The padding is doing real work: the clearing is measured from this box, so
+   padding pushes the heading further inside it and out of the grain's
+   feathered edge. A margin would move the clearing along with the text. */
+.ask {
+  text-align: center;
+  margin-top: clamp(2.5rem, 7vw, 4.5rem);
+  padding-top: 1.1rem;
+}
 .ask-sub {
-  margin: 0 auto;
+  margin: 0 auto 1.9rem;
   max-width: 36ch;
   font-family: var(--font-hand);
   font-size: 1.2rem;
   line-height: 1.3;
-}
-.ask-note {
-  margin: 0.5rem auto 1.9rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  text-indent: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
 }
 .ask-form { max-width: 430px; margin: 0 auto; text-align: left; }
 .hp { position: absolute; left: -9999px; }   /* honeypot, for bots only */
@@ -708,15 +700,6 @@ main {
 }
 .field textarea::placeholder { color: var(--ink-faint); line-height: 1.45; }
 
-/* sits under the address and email pair, and turns red if you skip both */
-.field-hint {
-  margin: -0.5rem 0 0;
-  font-size: 0.72rem;
-  font-style: italic;
-  color: var(--ink-faint);
-  transition: color 0.15s ease;
-}
-.field-hint.is-error { color: #8f2f22; font-style: normal; }
 
 .ask-form button {
   display: block;
@@ -741,6 +724,7 @@ main {
   font-size: 0.8rem;
   color: var(--accent);
 }
+.ask-status.is-error { color: #8f2f22; }
 
 /* ══ PHOTO STRIP ══════════════════════════════════════════
  * Every photo renders at the same height, tiled flush, drifting left.
@@ -904,7 +888,6 @@ if (wall.style.display !== 'none') inp.focus();
  * ───────────────────────────────────────────────────────── */
 const form   = document.getElementById('rsvp-form');
 const status = document.getElementById('rsvp-status');
-const hint   = document.getElementById('contact-hint');
 const email  = form.querySelector('[name="email"]');
 const addr   = form.querySelector('[name="address"]');
 
@@ -913,7 +896,10 @@ const hasContact = () => Boolean(email.value.trim() || addr.value.trim());
 // Stop nagging the moment they start filling one in.
 for (const el of [email, addr]) {
   el.addEventListener('input', () => {
-    if (hasContact()) hint.classList.remove('is-error');
+    if (hasContact() && status.classList.contains('is-error')) {
+      status.classList.remove('is-error');
+      status.textContent = '';
+    }
   });
 }
 
@@ -921,12 +907,12 @@ form.addEventListener('submit', async e => {
   e.preventDefault();
 
   if (!hasContact()) {
-    hint.classList.add('is-error');
+    status.classList.add('is-error');
     status.textContent = 'We need an address or an email to send it to.';
     addr.focus();
     return;
   }
-  hint.classList.remove('is-error');
+  status.classList.remove('is-error');
 
   const btn = form.querySelector('button');
   btn.disabled = true;
