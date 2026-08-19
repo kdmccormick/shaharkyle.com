@@ -531,13 +531,18 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
     to   { transform: scale(1); opacity: 1; }
   }
 
+  /*
+   * One segment at a time, in a shuffled order across every figure, each
+   * fading up and staying put. `both` is what makes it stay: with `backwards`
+   * alone the segment reverted to the stylesheet's own opacity the instant it
+   * finished, so they flashed on and vanished, then all reappeared together
+   * when .is-settled dropped the rule.
+   */
   .sky:not(.is-settled) .s-edge {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: sky-draw 0.45s ease-out backwards;
+    animation: edge-in 0.5s ease-out both;
     animation-delay: var(--d, 0s);
   }
-  @keyframes sky-draw { to { stroke-dashoffset: 0; } }
+  @keyframes edge-in { from { opacity: 0; } to { opacity: 0.85; } }
 
   /*
    * The flares fade in with their star and then sparkle on, each with its own

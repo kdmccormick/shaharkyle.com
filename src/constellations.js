@@ -307,8 +307,8 @@ export function planSky(w, h, contentWidth = 760, seed = 987654321, avoid = []) 
 const NS = 'http://www.w3.org/2000/svg';
 
 const STAR_WINDOW = 1.0;   // s, over which every star pops in
-const EDGE_STEP = 0.06;    // s between one segment of a figure and the next
-const FIGURE_STEP = 0.1;   // s between one figure starting and the next
+const EDGE_FADE = 0.5;     // s for one segment to fade up
+const EDGE_STEP = 0.5;     // s between one segment starting and the next
 
 function el(tag, attrs) {
   const node = document.createElementNS(NS, tag);
@@ -333,7 +333,9 @@ function mark(x, y, r, delay, phase, cls) {
 
 /*
  * Build the chart into `svg`. Returns when the whole intro finishes, so the
- * caller knows when it is safe to rebuild without replaying it.
+ * caller knows when it is safe to rebuild without replaying it, and how many
+ * segments there were - the reveal is one at a time, so that is what sets how
+ * long it runs.
  */
 export function buildSky(svg, w, h, placements, opts = {}) {
   const rand = mulberry32((opts.seed ?? 987654321) ^ 0x1234);
@@ -375,12 +377,13 @@ export function buildSky(svg, w, h, placements, opts = {}) {
   }
 
   // ── the figures ───────────────────────────────────────────────────────
-  // Every star is in before any line is drawn, which is the whole effect:
-  // the chart appears as dots, then joins itself up.
+  // Every star is in before any line appears, which is the whole effect: the
+  // chart arrives as loose dots, then joins itself up.
   const linesAt = begin + STAR_WINDOW + 0.2;
-  let longest = 0;
+  const edges = el('g', { class: 's-edges' });
+  const segments = [];
 
-  placements.forEach(({ name, cx, cy, size }, fi) => {
+  placements.forEach(({ name, cx, cy, size }) => {
     const fig = FIGURES[name];
     const x0 = cx - size / 2;
     const y0 = cy - size / 2;
@@ -388,19 +391,12 @@ export function buildSky(svg, w, h, placements, opts = {}) {
 
     const g = el('g', { class: 's-figure' });
 
-    fig.edges.forEach(([a, b], ei) => {
+    // gathered, not drawn - every figure's segments go into one pile below
+    for (const [a, b] of fig.edges) {
       const [ax, ay] = px(fig.stars[a]);
       const [bx, by] = px(fig.stars[b]);
-      const d = linesAt + fi * FIGURE_STEP + ei * EDGE_STEP;
-      longest = Math.max(longest, d + 0.45);
-      g.append(el('line', {
-        class: 's-edge',
-        x1: ax.toFixed(1), y1: ay.toFixed(1),
-        x2: bx.toFixed(1), y2: by.toFixed(1),
-        pathLength: '1',
-        style: `--d:${d.toFixed(2)}s`,
-      }));
-    });
+      segments.push([ax, ay, bx, by]);
+    }
 
     fig.stars.forEach((p, k) => {
       const [sx, sy] = px(p);
@@ -419,6 +415,32 @@ export function buildSky(svg, w, h, placements, opts = {}) {
     figures.append(g);
   });
 
-  svg.replaceChildren(loose, figures);
-  return { settleAt: Math.max(longest, begin + STAR_WINDOW) };
+  /*
+   * One pile, shuffled across every figure, and one segment at a time. Drawing
+   * each figure through in order made seven lines race off at once and read as
+   * a flicker; taken in a random order the whole chart joins itself up slowly
+   * and in no particular place, which is the bit worth watching.
+   *
+   * Fisher-Yates on the same seeded rand, so the order holds across a reload.
+   */
+  for (let i = segments.length - 1; i > 0; i--) {
+    const j = (rand() * (i + 1)) | 0;
+    [segments[i], segments[j]] = [segments[j], segments[i]];
+  }
+
+  segments.forEach(([ax, ay, bx, by], i) => {
+    edges.append(el('line', {
+      class: 's-edge',
+      x1: ax.toFixed(1), y1: ay.toFixed(1),
+      x2: bx.toFixed(1), y2: by.toFixed(1),
+      style: `--d:${(linesAt + i * EDGE_STEP).toFixed(2)}s`,
+    }));
+  });
+
+  // edges under the dots, so a star always sits on top of its own lines
+  svg.replaceChildren(edges, loose, figures);
+  return {
+    settleAt: linesAt + segments.length * EDGE_STEP + EDGE_FADE,
+    segments: segments.length,
+  };
 }
