@@ -308,7 +308,7 @@ const NS = 'http://www.w3.org/2000/svg';
 
 const STAR_WINDOW = 1.0;   // s, over which every star pops in
 const EDGE_FADE = 0.5;     // s for one segment to fade up
-const EDGE_STEP = 0.5;     // s between one segment starting and the next
+const EDGE_STEP = 0.1;     // s between one segment starting and the next
 
 function el(tag, attrs) {
   const node = document.createElementNS(NS, tag);
