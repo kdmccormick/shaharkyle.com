@@ -1,0 +1,1 @@
+<svg class="banana-fly" viewBox="0 0 64 44" xmlns="http://www.w3.org/2000/svg"><path class="m-banana" d="M10,10 C9,25 18,36 32,38 C43,39 51,34 55,26 C49,31 41,33 33,32 C21,30 14,22 14,8 Z"/><path class="m-banana-line" d="M17,13 C19,24 26,30 36,31"/><path class="m-banana-stem" d="M12,9 L10,2"/><circle class="m-banana-tip" cx="55" cy="26" r="2.6"/></svg>

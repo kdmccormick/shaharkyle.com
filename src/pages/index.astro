@@ -7,11 +7,13 @@
  * directly on the page's own paper - not a white card floating on a
  * background. It is left at the angle it was shot at, on purpose.
  *
- * The background is wood grain, painted on a canvas at runtime by
- * src/woodgrain.js. Every block marked `data-clearing` becomes a plateau in
- * the field the grain contours, so the grain parts and flows around it. That
- * has to happen in the browser: the clearings need the positions the content
- * actually landed at, which depend on viewport width and font loading.
+ * The background is an aged page carrying wood-grain contours drawn like
+ * tattoo linework - see grain-and-ink-background.html, which is where the look
+ * comes from. src/inkgrain.js grows the rings; src/glow.js lays a pool of
+ * clean paper over them behind every block marked `data-clearing`, so the
+ * grain runs behind the page but not through the words. The pools have to be
+ * measured in the browser: they need the positions the content actually landed
+ * at, which depend on viewport width and font loading.
  */
 const photos = [
   { src: '/images/seine.jpg',    alt: 'On a bridge over the Seine at sunset' },
@@ -26,6 +28,7 @@ const MAPS = 'https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+S
 // her tail and paws can be animated from the stylesheet.
 import marcySvg from '../marcy-run.svg?raw';
 import marcySleepSvg from '../marcy-sleep.svg?raw';
+import bananaSvg from '../banana.svg?raw';
 
 ---
 <!DOCTYPE html>
@@ -42,6 +45,20 @@ import marcySleepSvg from '../marcy-sleep.svg?raw';
 </head>
 
 <body>
+
+<!--
+  Filter definitions. Kept out of the flow in a zero-size svg; they are
+  referenced from CSS by id, never rendered here.
+-->
+<svg class="defs-only" aria-hidden="true" focusable="false">
+  <filter id="roughInk" x="-4%" y="-4%" width="108%" height="108%"
+          color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2"
+                  seed="3" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="5"
+                       xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
 
 <!-- ═══ PASSWORD WALL ═══════════════════════════════════ -->
 <div id="pw-wall">
@@ -61,13 +78,30 @@ import marcySleepSvg from '../marcy-sleep.svg?raw';
 
 <div class="page">
 
-  <!-- the pools of dawn light the text is read by, under the grain -->
+  <!--
+    The background, bottom to top: aged paper with its vignette and foxing,
+    the fractal-noise tooth over it, then the wood-grain ink. All three are
+    fixed to the viewport - the drawing is a window onto a plank, and the noise
+    is scale-free, so there is nothing to gain from stretching either down a
+    page thousands of pixels tall.
+  -->
+  <div class="bg" aria-hidden="true">
+    <div class="paper-age"></div>
+    <div class="paper-tooth">
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <filter id="paperNoise">
+          <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3"
+                        seed="7" stitchTiles="stitch"/>
+          <feColorMatrix values="0 0 0 0 .45  0 0 0 0 .38  0 0 0 0 .28  0 0 0 .5 0"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#paperNoise)"/>
+      </svg>
+    </div>
+    <svg class="ink" id="ink" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+  <!-- the pools of clean paper the text is read on, over the grain -->
   <canvas id="glow" aria-hidden="true"></canvas>
-  <!-- the grain fills this box entirely and parts around every [data-clearing] -->
-  <canvas id="grain" aria-hidden="true"></canvas>
-  <!-- just the flares on the bright chart stars, so they can twinkle without
-       the grain underneath being repainted every frame -->
-  <canvas id="twinkle" aria-hidden="true"></canvas>
 
   <main>
 
@@ -193,10 +227,7 @@ import marcySleepSvg from '../marcy-sleep.svg?raw';
     </div>
 
     <div class="critter" data-banana role="button" tabindex="0" aria-label="Throw the banana">
-      <svg class="banana-fly" viewBox="0 0 44 30" aria-hidden="true">
-        <path d="M6,21 Q17,3 36,9 Q20,12 9,25 Z" />
-        <path class="stem" d="M36,9 l5,-3" />
-      </svg>
+      <Fragment set:html={bananaSvg} />
     </div>
 
     <!-- her noises. Placed by JS above whichever pose is showing. -->
@@ -227,29 +258,30 @@ import marcySleepSvg from '../marcy-sleep.svg?raw';
    * here the grain reads at ~2.8:1, the chart at ~4.7:1, and the sky sits
    * ~4.5:1 off the lit surface instead of the 8:1 cliff it was.
    */
-  --sky-top:    #3f5474;
-  --sky-mid:    #536a8a;
-  --sky-low:    #6b809d;
-  --sky-edge:   #33445f;   /* deeper, right at the margins */
-  --sky-edge-0: rgba(51,68,95,0);   /* the same, no alpha - see below */
+  /*
+   * Shahar means dawn. The page is the sky just before one - deep overhead,
+   * lightening towards the horizon - with the wood grain inked over it and
+   * pools of warm dawn light where the content sits.
+   */
+  --sky-top:    #3a4d6d;
+  --sky-mid:    #4c6183;
+  --sky-low:    #667b98;
+  --sky-edge:   #2e3f59;   /* deeper, right at the margins */
 
-  /* Text sits in a pool of light, never straight on the sky. */
-  --ink:        #14110f;
+  --ink:        #171410;   /* tattoo black; the grain is drawn in this */
   --ink-soft:   #423b34;
-  --ink-faint:  #655c50;   /* 5.3:1 on the lit surface; #7d7366 fell under AA */
+  --ink-faint:  #655c50;
 
   --accent:     #1f5561;   /* deep teal, the one spot of colour */
-  --rule:       rgba(20,17,15,0.3);
+  --rule:       rgba(23,20,16,0.3);
 
-  --chart:      #efece1;   /* off-white; the star chart is drawn in this */
-
-  /* The light behind each block, in three stacked passes so it fades out over
-     a distance rather than in a step. The core is what the text is actually
-     read against, so it stays nearly opaque; the other two are the spill. */
-  --glow-core:  rgba(246,236,212,0.94);
-  --glow-mid:   rgba(242,222,178,0.5);
+  /* The dawn light behind each block, in three stacked passes so it fades out
+     over a distance rather than in a step. The core is what the text actually
+     sits on, so it is nearly opaque; the other two are the spill. */
+  --glow-core:  rgba(246,236,212,0.95);
+  --glow-mid:   rgba(242,222,178,0.55);
   --glow-halo:  rgba(233,196,126,0.26);
-  /* the same tan as the core of the light, opaque, for ink-on-dark text */
+  /* the same tan as the core of the light, opaque, for solid fills */
   --tan:        #f6ecd4;
 
   --font-hand:  'Permanent Marker', 'Comic Sans MS', cursive;
@@ -260,29 +292,18 @@ import marcySleepSvg from '../marcy-sleep.svg?raw';
 
 html {
   font-size: 18px;
-  /* The sky lives on <html> so it spans the whole document as one wash, cool
-     overhead down to warm at the foot of the page. Not `fixed`: that pins the
-     gradient to the viewport and leaves everything below the first screenful
-     with no background at all. */
-  background-color: var(--sky-mid);
   /*
-   * The sky is the whole page now, with the margins falling away darker still
-   * so the middle reads as the open part of it. The stops fade to
-   * --sky-edge-0 rather than `transparent`: it is the same blue at zero alpha,
-   * and interpolating towards a colourless transparent passes through grey.
+   * The dawn sky, deeper overhead and at the margins. Everything that gives it
+   * depth and texture - the tooth, the grain, the pools of light - is in the
+   * layers on top of it.
    */
+  background-color: var(--sky-mid);
   background-image:
-    linear-gradient(to right,  var(--sky-edge) 0, var(--sky-edge-0) max(22px, calc((100% - 900px) / 2))),
-    linear-gradient(to left,   var(--sky-edge) 0, var(--sky-edge-0) max(22px, calc((100% - 900px) / 2))),
-    linear-gradient(to bottom, var(--sky-edge) 0, var(--sky-edge-0) 220px),
-    linear-gradient(to top,    var(--sky-edge) 0, var(--sky-edge-0) 300px),
-    linear-gradient(
-      180deg,
-      var(--sky-top) 0%,
-      var(--sky-mid) 52%,
-      var(--sky-low) 100%
-    );
+    linear-gradient(to right,  var(--sky-edge) 0, transparent max(22px, calc((100% - 900px) / 2))),
+    linear-gradient(to left,   var(--sky-edge) 0, transparent max(22px, calc((100% - 900px) / 2))),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 52%, var(--sky-low) 100%);
   background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 body {
@@ -290,11 +311,8 @@ body {
   line-height: 1.6;
   color: var(--ink);
   background-color: transparent;
-  /* a faint tooth, so the page reads as stock rather than a flat wash */
-  background-image:
-    repeating-linear-gradient(0deg,  rgba(20,17,15,0.014) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgba(20,17,15,0.011) 0 1px, transparent 1px 4px);
   min-height: 100vh;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -385,10 +403,71 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* ══ LAYOUT ═══════════════════════════════════════════════ */
 .page { position: relative; overflow-x: clip; }
 
+.defs-only { position: absolute; width: 0; height: 0; overflow: hidden; }
+
 /* Three layers filling the same box, all under the content and painted at the
    element's own pixel size: the light, then the grain over it, then the star
    flares on top. Stacked by document order - they all sit at z-index 0. */
-#glow, #grain, #twinkle {
+/* ══ THE BACKGROUND STACK ═════════════════════════════════
+   Fixed behind everything: paper, then its tooth, then the ink. */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bg > * { position: absolute; inset: 0; }
+
+/* Vignette into the corners, and a scatter of pale motes. On the aged-paper
+   version these were warm brown foxing spots; over a night sky the same brown
+   reads as dirt, so they are cool and light here instead - specks of dust
+   caught in the last of the dark. */
+.paper-age {
+  background:
+    radial-gradient(circle at 12% 68%, rgba(226,236,255,.20) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 63% 22%, rgba(226,236,255,.17) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 87% 47%, rgba(226,236,255,.15) 0 2px, transparent 4px),
+    radial-gradient(circle at 41% 88%, rgba(226,236,255,.14) 0 1.5px, transparent 3px),
+    radial-gradient(circle at 29% 36%, rgba(226,236,255,.12) 0 1.5px, transparent 3px),
+    radial-gradient(ellipse at 20% 15%, transparent 55%, rgba(0,0,0,.10) 100%),
+    radial-gradient(ellipse at 80% 90%, transparent 55%, rgba(0,0,0,.12) 100%);
+}
+
+.paper-tooth {
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+}
+.paper-tooth svg { display: block; width: 100%; height: 100%; }
+
+.bg .ink { width: 100%; height: 100%; opacity: 0.9; }
+
+/*
+ * The lines draw themselves on, staggered by ring index so the tree grows from
+ * the middle out. pathLength="1" on every path is what lets one dash rule cover
+ * rings of wildly different circumference.
+ *
+ * The broken rings are excluded: their dasharray is the gap pattern that makes
+ * them look like skipped ink, and overwriting it to animate them would erase
+ * the effect.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .ink path:not(.is-broken) {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: ink-draw 2.4s ease-out forwards;
+    animation-delay: calc(var(--i) * 0.045s);
+  }
+  @keyframes ink-draw { to { stroke-dashoffset: 0; } }
+
+  .ink path.is-broken { opacity: 0; animation: ink-fade .9s ease-out forwards;
+                        animation-delay: calc(var(--i) * 0.045s); }
+  @keyframes ink-fade { to { opacity: 1; } }
+}
+
+/* The pools of clean paper the content is read on. Over the ink, under the
+   text - the grain runs behind the page but not through the words. */
+#glow {
   position: absolute;
   top: 0;
   left: 0;
@@ -443,7 +522,7 @@ main {
 
 .marcy-run   { width: 120px; height: auto; margin: -52px 0 0 -60px; overflow: visible; }
 .marcy-sleep { width: 150px; height: auto; margin: -56px 0 0 -75px; overflow: visible; }
-.banana-fly  { width: 60px;  height: auto; margin: -20px 0 0 -30px; overflow: visible; }
+.banana-fly  { width: 62px;  height: auto; margin: -21px 0 0 -31px; overflow: visible; }
 /* the banana arcs across when thrown, and tumbles on the way */
 .critter[data-banana] { transition: transform 0.55s cubic-bezier(.3,.9,.4,1); }
 
@@ -537,8 +616,13 @@ main {
   stroke-linecap: round;
 }
 
-.banana-fly       { fill: #e8c33f; stroke: #7d6a1c; stroke-width: 1.4; }
-.banana-fly .stem { stroke: #5f5015; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+.m-banana      { fill: #e8c33f; stroke: #8a7526; stroke-width: 1.6; stroke-linejoin: round; }
+.m-banana-line { fill: none; stroke: #c9a833; stroke-width: 1.6; stroke-linecap: round; }
+.m-banana-stem { fill: none; stroke: #6b5a1e; stroke-width: 3; stroke-linecap: round; }
+.m-banana-tip  { fill: #6b5a1e; }
+
+/* the splits between her toes, scored into the pad */
+.m-toe { fill: none; stroke: #38302a; stroke-width: 1.3; stroke-linecap: round; }
 
 /*
  * A deliberately simple trot: the whole cat bobs, the tail sways, and the paws
@@ -799,18 +883,10 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
 /* ══ RESPONSIVE ═══════════════════════════════════════════ */
 /*
  * Narrow screens have no side margin at all - the content is the width - so
- * the only place the sky can show is between the blocks. Give it somewhere to
- * be: the gaps roughly double, the page ends in open sky at both ends, and
- * each block reads as floating in it rather than the whole page being lit.
- * The glow pads shrink to match; see paintGlow in woodgrain.js.
- */
-/*
- * This is what makes the bands planSky falls back to exist, so it has to be
- * set above the width where planSky gives up on the side margins - around
- * 1060px, depending on where the content actually lands. Too low and there is
- * a range asking for bands that were never made, and the chart comes out
- * empty; too high only costs a little extra sky. See planBands in
- * constellations.js.
+ * the only place the grain can show is between the blocks. Give it somewhere
+ * to be: the gaps roughly double and the page ends in open paper at both ends,
+ * so each block reads as sitting on the plank rather than covering it. The
+ * pools of paper shrink to match; see the `tight` factor in glow.js.
  */
 @media (max-width: 1100px) {
   /* The head holds the heart; the foot holds a row of three, so it is
@@ -848,39 +924,27 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
 </style>
 
 <script>
-import { installWoodGrain } from '../woodgrain.js';
+import { installInkGrain } from '../inkgrain.js';
+import { installGlow } from '../glow.js';
 import { installMarcy } from '../marcy.js';
-import { installTwinkle } from '../twinkle.js';
 
 // ── THE BACKGROUND ────────────────────────────────────────
-// The grain is graphite; the star chart on top of it is off-white, so it only
-// shows where the page has fallen away to dusk at the edges. Every repaint
-// hands the bright stars' flares to the twinkle layer, which owns them.
-//
-// Both inks come from the stylesheet so the chart's colour is stated once.
+// Wood-grain rings over an aged page, and pools of clean paper over those for
+// the content to be read on. Colours come from the stylesheet so they are
+// stated once.
 const css = getComputedStyle(document.documentElement);
 const pick = (name, fallback) =>
   css.getPropertyValue(name).trim() || fallback;
 
-const INK   = pick('--ink', '#14110f');
-const CHART = pick('--chart', '#efece1');
-const GLOW  = pick('--glow-core', '');
-const GMID  = pick('--glow-mid',  '');
-const HALO  = pick('--glow-halo', '');
-
-const twinkle = installTwinkle(document.getElementById('twinkle'), { ink: CHART });
-
-const repaintGrain = installWoodGrain(document.getElementById('grain'), {
+installInkGrain(document.getElementById('ink'), {
   seed: 20270605,
-  ink: INK,
-  alpha: 0.78,
-  skyInk: CHART,
-  skyAlpha: 1,
-  glowCanvas: document.getElementById('glow'),
-  glowCore: GLOW,
-  glowMid: GMID,
-  glowHalo: HALO,
-  onSky: (flares, geom) => twinkle.set(flares, geom),
+  ink: pick('--ink', '#171410'),
+});
+
+const repaintGrain = installGlow(document.getElementById('glow'), {
+  core: pick('--glow-core', ''),
+  mid:  pick('--glow-mid',  ''),
+  halo: pick('--glow-halo', ''),
 });
 
 /* ── THE CAT ───────────────────────────────────────────────
