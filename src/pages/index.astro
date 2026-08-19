@@ -100,6 +100,13 @@ import bananaSvg from '../banana.svg?raw';
     <svg class="ink" id="ink" xmlns="http://www.w3.org/2000/svg"></svg>
   </div>
 
+  <!--
+    The star chart. Scrolls with the page, unlike the grain behind it: the
+    figures are placed in the margins beside the content, so they have to know
+    where the content is, and the pools below scroll too.
+  -->
+  <svg class="sky" id="sky" aria-hidden="true"></svg>
+
   <!-- the pools of clean paper the text is read on, over the grain -->
   <canvas id="glow" aria-hidden="true"></canvas>
 
@@ -284,6 +291,10 @@ import bananaSvg from '../banana.svg?raw';
   /* the same tan as the core of the light, opaque, for solid fills */
   --tan:        #f6ecd4;
 
+  /* the star chart: off-white, so it shows on the open sky and disappears
+     into the pools of light wherever there is text over it */
+  --chart:      #efece1;
+
   --font-hand:  'Permanent Marker', 'Comic Sans MS', cursive;
   --font-type:  'Special Elite', 'Courier New', Courier, monospace;
 }
@@ -463,6 +474,92 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
   .ink path.is-broken { opacity: 0; animation: ink-fade .9s ease-out forwards;
                         animation-delay: calc(var(--i) * 0.045s); }
   @keyframes ink-fade { to { opacity: 1; } }
+}
+
+/* ══ THE STAR CHART ═══════════════════════════════════════
+ * Over the grain, under the pools - so the pools cover the stars wherever
+ * there is text, and the chart is only ever seen in the open.
+ *
+ * Every element carries its own delay as --d, worked out in
+ * constellations.js where the counts are known. The rules here only say what
+ * happens, never when.
+ * ═════════════════════════════════════════════════════════ */
+.sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.s-dot   { fill: var(--chart); }
+.s-core  { fill: var(--chart); }
+.s-edge  { stroke: var(--chart); stroke-width: 1.3; fill: none; opacity: 0.85; }
+.s-loose .s-dot,
+.s-loose .s-core { opacity: 0.72; }
+
+/* The resting state here is deliberately the sparkle's own 0% frame, so the
+   loop can start without the flare jumping when it takes over. */
+.s-flare {
+  stroke: var(--chart);
+  stroke-width: 1;
+  fill: none;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  opacity: 0.42;
+  transform: scale(0.86);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /*
+   * The stars pop in first, scattered rather than swept, then every figure
+   * joins itself up a segment at a time. `backwards` matters: without it each
+   * element sits at full size through its delay and the whole chart is simply
+   * there from the start.
+   */
+  .sky:not(.is-settled) .s-dot,
+  .sky:not(.is-settled) .s-core {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: star-pop 0.5s cubic-bezier(.2,1.6,.4,1) backwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes star-pop {
+    from { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.35); opacity: 1; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .sky:not(.is-settled) .s-edge {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: sky-draw 0.45s ease-out backwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes sky-draw { to { stroke-dashoffset: 0; } }
+
+  /*
+   * The flares fade in with their star and then sparkle on, each with its own
+   * phase from --t so they wander rather than pulsing together. Two animations
+   * on the one element: the fade, then the loop handed the baton 0.6s later.
+   * flare-in ends exactly on the sparkle's 0% frame, which is why the loop can
+   * pick up without a jump.
+   */
+  .s-flare {
+    animation: sparkle 5.5s ease-in-out infinite;
+    animation-delay: var(--t, 0s);
+  }
+  .sky:not(.is-settled) .s-flare {
+    animation: flare-in 0.6s ease-out backwards,
+               sparkle 5.5s ease-in-out infinite;
+    animation-delay: var(--d, 0s), calc(var(--d, 0s) + 0.6s + var(--t, 0s));
+  }
+  @keyframes flare-in { from { opacity: 0; } to { opacity: 0.42; } }
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.42; transform: scale(0.86); }
+    50%      { opacity: 0.9;  transform: scale(1.12); }
+  }
 }
 
 /* The pools of clean paper the content is read on. Over the ink, under the
@@ -926,6 +1023,7 @@ footer { text-align: center; padding: 2.5rem 1.5rem 3rem; color: var(--ink-soft)
 <script>
 import { installInkGrain } from '../inkgrain.js';
 import { installGlow } from '../glow.js';
+import { installSky } from '../sky.js';
 import { installMarcy } from '../marcy.js';
 
 // ── THE BACKGROUND ────────────────────────────────────────
@@ -936,9 +1034,24 @@ const css = getComputedStyle(document.documentElement);
 const pick = (name, fallback) =>
   css.getPropertyValue(name).trim() || fallback;
 
-installInkGrain(document.getElementById('ink'), {
+const grain = installInkGrain(document.getElementById('ink'), {
   seed: 20270605,
   ink: pick('--ink', '#171410'),
+});
+
+/*
+ * The chart waits for the grain to finish drawing itself on. That moment is
+ * derived rather than guessed: the rings are staggered by index and each takes
+ * a fixed time, both set in the stylesheet, so the last one lands at
+ * delay x (count - 1) + duration. Retuning the grain moves the chart with it.
+ */
+const INK_STAGGER = 0.045;
+const INK_DRAW = 2.4;
+const inkDone = INK_DRAW + (grain.count - 1) * INK_STAGGER;
+
+installSky(document.getElementById('sky'), {
+  seed: 20270605,
+  begin: inkDone + 0.3,
 });
 
 const repaintGrain = installGlow(document.getElementById('glow'), {
