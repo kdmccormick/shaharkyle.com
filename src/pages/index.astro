@@ -147,7 +147,7 @@ import bananaSvg from '../banana.svg?raw';
       One block, so the grain parts around it once and it sits in a single
       pool of light rather than three.
     -->
-    <section class="bubble" data-clearing>
+    <section class="bubble" data-clearing="snug">
       <h1>Shahar <span class="amp">&amp;</span> Kyle</h1>
       <p class="line">are getting married</p>
 
@@ -170,7 +170,7 @@ import bananaSvg from '../banana.svg?raw';
       fetch so the page can answer inline, but the form still works as a plain
       POST if the script never runs.
     -->
-    <section class="ask" data-clearing>
+    <section class="ask" data-clearing="snug">
       <p class="ask-sub">Let us know where to send your invitation</p>
 
       <form
@@ -213,7 +213,7 @@ import bananaSvg from '../banana.svg?raw';
 
   </main>
 
-  <footer data-clearing>
+  <footer data-clearing="snug">
     <p class="foot-line">
       Made with &lt;3 by Shahar and Kyle, with supervision from Marcy
     </p>
@@ -277,17 +277,24 @@ import bananaSvg from '../banana.svg?raw';
 
   --ink:        #171410;   /* tattoo black; the grain is drawn in this */
   --ink-soft:   #423b34;
-  --ink-faint:  #655c50;
+  /* darkened along with the paper going golden - at the old #655c50 it fell
+     to 4.2:1 on it, under AA. 5.2:1 here. */
+  --ink-faint:  #574e43;
 
   --accent:     #1f5561;   /* deep teal, the one spot of colour */
   --rule:       rgba(23,20,16,0.3);
 
-  /* The dawn light behind each block, in three stacked passes so it fades out
-     over a distance rather than in a step. The core is what the text actually
-     sits on, so it is nearly opaque; the other two are the spill. */
-  --glow-core:  rgba(246,236,212,0.95);
-  --glow-mid:   rgba(242,222,178,0.55);
-  --glow-halo:  rgba(233,196,126,0.26);
+  /*
+   * The dawn light behind each block, in four stacked passes so it fades out
+   * over a distance rather than in a step. The core is what the text actually
+   * sits on, so it is nearly opaque; the rest is spill, thinning and widening
+   * as it goes. Warmer and deeper than it was - low sun rather than daylight -
+   * which cost --ink-faint some contrast and is why that moved too.
+   */
+  --glow-core:  rgba(234,207,148,0.94);
+  --glow-mid:   rgba(224,188,126,0.54);
+  --glow-halo:  rgba(210,164,94,0.28);
+  --glow-outer: rgba(190,140,70,0.16);
   /* the same tan as the core of the light, opaque, for solid fills */
   --tan:        #f6ecd4;
 
@@ -1060,6 +1067,7 @@ installSky(document.getElementById('sky'), {
 });
 
 const repaintGrain = installGlow(document.getElementById('glow'), {
+  outer: pick('--glow-outer', ''),
   core: pick('--glow-core', ''),
   mid:  pick('--glow-mid',  ''),
   halo: pick('--glow-halo', ''),

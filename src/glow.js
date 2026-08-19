@@ -4,9 +4,11 @@
  * The wood grain runs across the whole page. Left alone it would run straight
  * through the words, so every block marked `data-clearing` gets a pool of
  * paper laid over the grain, and the text sits on that. It is the same idea as
- * a card behind the text, but with no edge to it: three passes, widening and
+ * a card behind the text, but with no edge to it: four passes, widening and
  * thinning as they go, so the paper fades back into the grain over a couple of
- * hundred pixels rather than stopping at a line.
+ * hundred pixels rather than stopping at a line. How far it reaches is per
+ * block - see REACH - because a narrow column of text wants a tighter pool
+ * than a full-bleed strip of photographs.
  *
  * The core has to cover its block outright - the text above it is near-black
  * and the grain behind it is heavy - so it is inflated well past the block and
@@ -18,11 +20,26 @@
 const CLEAR_PAD = 14;     // px of clear paper around each block of content
 const MAX_DPR = 2;
 
+/*
+ * Four passes rather than three, and the outer two reach further and blur
+ * harder than they used to: the light gives out over a couple of hundred
+ * pixels now instead of ending in a visible ring. The core is unchanged - it
+ * is the part the text sits on and it only has to cover the block.
+ */
 const PASSES = [
-  { pad: 168, blur: 92, key: 'halo', fallback: 'rgba(233,220,190,0.30)' },
-  { pad: 88,  blur: 46, key: 'mid',  fallback: 'rgba(238,227,201,0.62)' },
-  { pad: 42,  blur: 22, key: 'core', fallback: 'rgba(240,231,209,0.95)' },
+  { pad: 236, blur: 132, key: 'outer', fallback: 'rgba(190,140,70,0.16)' },
+  { pad: 150, blur: 84,  key: 'halo',  fallback: 'rgba(210,164,94,0.28)' },
+  { pad: 84,  blur: 46,  key: 'mid',   fallback: 'rgba(224,188,126,0.54)' },
+  { pad: 42,  blur: 22,  key: 'core',  fallback: 'rgba(234,207,148,0.94)' },
 ];
+
+/*
+ * How far a block's light reaches, as a multiple of the pads above. Blocks
+ * marked `data-clearing="snug"` get a tighter pool: the text sections sit in a
+ * narrow column, so the default reach leaves them in a pool half again as wide
+ * as they are. Pad and blur scale together, so the core still covers its block.
+ */
+const REACH = { snug: 0.6 };
 
 function mulberry32(a) {
   return function () {
@@ -94,6 +111,7 @@ export function paintGlow(canvas, opts = {}) {
       w: r.width + CLEAR_PAD * 2,
       h: r.height + CLEAR_PAD * 2,
       wob: [rand2(), rand2(), rand2()],
+      reach: REACH[el.dataset.clearing] ?? 1,
     });
   }
 
@@ -113,13 +131,19 @@ export function paintGlow(canvas, opts = {}) {
    */
   const tight = Math.min(1, Math.max(0.3, (w - 360) / 640));
 
+  /*
+   * Each block is painted on its own rather than the whole pass at once,
+   * because the blur has to change per block now that they reach different
+   * distances. Setting ctx.filter is cheap next to the blur itself.
+   */
   for (const pass of PASSES) {
     ctx.fillStyle = opts[pass.key] || pass.fallback;
-    // Without filter support the shape is drawn hard-edged; it still gives the
-    // text clean paper, it just does not feather.
-    if (soft) ctx.filter = `blur(${pass.blur * tight}px)`;
     for (const c of clearings) {
-      organicBlob(ctx, inflate(c, pass.pad * tight));
+      const k = tight * c.reach;
+      // Without filter support the shape is drawn hard-edged; it still gives
+      // the text clean paper, it just does not feather.
+      if (soft) ctx.filter = `blur(${(pass.blur * k).toFixed(1)}px)`;
+      organicBlob(ctx, inflate(c, pass.pad * k));
       ctx.fill();
     }
     if (soft) ctx.filter = 'none';
