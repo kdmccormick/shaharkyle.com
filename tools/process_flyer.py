@@ -1,10 +1,10 @@
 """Turn the phone photo of the pencil flyer into web assets.
 
-Deliberately conservative. The drawing is left at the angle it was
-photographed at - no deskewing, no perspective correction - because the tilt is
-part of how it reads as a real sheet of paper someone drew on. All this does is
-knock the table out from behind it, even out the desk lamp, crop to the
-drawing, and drop the paper so the graphite can sit on the page's own stock.
+Deliberately conservative. The drawing is left exactly as photographed - no
+deskewing, no perspective correction - because any wobble in it is part of how
+it reads as a real sheet of paper someone drew on. All this does is even out
+what is left of the lighting, crop to the drawing, and drop the paper so the
+graphite can sit on the page's own stock.
 
 No vectorising and no posterising: every smudge and paper fibre survives, which
 is the whole point.
@@ -26,10 +26,9 @@ import numpy as np
 from PIL import Image, ImageFilter
 
 HERE = os.path.dirname(__file__)
-SRC = os.path.join(HERE, "..", "PXL_20260817_030859046.jpg")
+SRC = os.path.join(HERE, "..", "PXL_20260819_125700004-EDIT.jpg")
 OUT = os.path.join(HERE, "..", "public", "images")
 
-EDGE_INSET = 26       # px pulled back from each paper edge, to lose its shadow
 BG_BLUR = 90          # radius used to model the uneven lighting
 PAPER_PCT = 80        # luminance percentile treated as bare paper
 PAPER_KNEE = 0.86     # anything lighter than this is called bare paper
@@ -39,66 +38,27 @@ MARGIN = 90           # px of paper left around the drawing
 WIDTH = 1500          # widest output
 
 
-def fit_edge(a: np.ndarray, thr: float, from_top: bool):
-    """Fit a straight line to one edge of the sheet.
-
-    The table is far darker than the paper, so walking in from the frame until
-    the brightness crosses `thr` finds the edge. Fitted robustly, because a few
-    columns land on a shadow or a fold."""
-    xs, ys = [], []
-    for x in range(0, a.shape[1], 12):
-        idx = np.nonzero(a[:, x] > thr)[0]
-        if idx.size:
-            xs.append(x)
-            ys.append(idx[0] if from_top else idx[-1])
-    xs = np.asarray(xs, float)
-    ys = np.asarray(ys, float)
-    for _ in range(3):                       # refit without the outliers
-        m, b = np.polyfit(xs, ys, 1)
-        keep = np.abs(ys - (m * xs + b)) < max(8.0, 2.5 * (ys - (m * xs + b)).std())
-        xs, ys = xs[keep], ys[keep]
-    return np.polyfit(xs, ys, 1)
-
-
 def main() -> None:
     src = Image.open(SRC).convert("RGB")
     g = np.asarray(src.convert("L"), dtype=np.float32)
     H, W = g.shape
     print(f"source {W}x{H}")
 
-    # ── 1. find the sheet, leave it where it lies ────────────────────────
-    dark = np.percentile(g[:200, :], 50)
-    light = np.percentile(g[H // 2 : H // 2 + 400, :], 50)
-    thr = (dark + light) / 2
-    mt, bt = fit_edge(g, thr, from_top=True)
-    mb, bb = fit_edge(g, thr, from_top=False)
-    print(f"top edge    y = {mt:.5f}x + {bt:.0f}")
-    print(f"bottom edge y = {mb:.5f}x + {bb:.0f}")
-
-    xx = np.arange(W)[None, :]
-    yy = np.arange(H)[:, None]
-    valid = (yy > (mt * xx + bt) + EDGE_INSET) & (yy < (mb * xx + bb) - EDGE_INSET)
-    print(f"sheet is {valid.mean():.0%} of the frame")
-
-    # ── 2. even out the lamp gradient ────────────────────────────────────
+    # ── 1. even out what is left of the lighting ─────────────────────────
     # Model the illumination as a heavily blurred copy of the page and divide
-    # it out. Cheap flat-field correction: kills the shadow across the corner
-    # without touching the fine graphite texture. Off-sheet pixels are filled
-    # with the page median first so the table cannot drag the model down.
-    fill = np.where(valid, g, np.median(g[valid]))
+    # it out. Cheap flat-field correction: evens up the last of the falloff
+    # without touching the fine graphite texture.
     bg = np.asarray(
-        Image.fromarray(fill.astype(np.uint8)).filter(ImageFilter.GaussianBlur(BG_BLUR)),
+        Image.fromarray(g.astype(np.uint8)).filter(ImageFilter.GaussianBlur(BG_BLUR)),
         dtype=np.float32,
     )
-    flat = fill / np.maximum(bg, 1.0)        # ~1.0 on bare paper, <1 on the ink
-    norm = np.clip(flat / np.percentile(flat[valid], PAPER_PCT), 0.0, 1.4)
-    norm[~valid] = 1.0                       # off-sheet is "paper", i.e. nothing
+    flat = g / np.maximum(bg, 1.0)           # ~1.0 on bare paper, <1 on the ink
+    norm = np.clip(flat / np.percentile(flat, PAPER_PCT), 0.0, 1.4)
 
-    # ── 3. crop to the drawing ───────────────────────────────────────────
-    # Taking the outermost inked line would catch the shadow along the sheet's
-    # own edge, so group the inked lines into runs and keep the longest: the
-    # drawing is one big block, an edge is a thin stripe beyond blank paper.
-    inked = (norm < 0.60) & valid
+    # ── 2. crop to the drawing ───────────────────────────────────────────
+    # Group the inked lines into runs and keep the longest, so a stray mark or
+    # a scanner artefact out at the edge cannot stretch the box.
+    inked = norm < 0.60
 
     def span(counts, gap=120):
         hits = np.nonzero(counts > 20)[0]
@@ -118,7 +78,7 @@ def main() -> None:
     print(f"content box x {x0}..{x1}  y {y0}..{y1}")
     norm = norm[y0 : y1 + 1, x0 : x1 + 1]
 
-    # ── 4. ink on transparency ───────────────────────────────────────────
+    # ── 3. ink on transparency ───────────────────────────────────────────
     # Luminance becomes alpha, so a light pencil stroke stays a light pencil
     # stroke - it just sits on the page's paper instead of the photo's. The
     # knee clamps the shadow haze to nothing while leaving graphite alone.
