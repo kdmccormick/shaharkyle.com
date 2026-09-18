@@ -8,21 +8,22 @@ before the site goes public.
 
 ## The photo strip
 
-The rest feed the scrolling strip at the top of the page.
+`marquee/` holds the photos that feed the scrolling strip at the top of the
+page.
 
 ### Adding a photo
 
 1. Resize it to 900px tall (any aspect ratio is fine — the strip tiles them
-   at equal height and lets the widths fall where they may):
+   at equal height and lets the widths fall where they may) into `marquee/`:
 
    ```sh
-   sips --resampleHeight 900 -s formatOptions 80 <original>.jpg --out <name>.jpg
+   sips --resampleHeight 900 -s formatOptions 80 <original>.jpg --out marquee/<name>.jpg
    ```
 
 2. Add a line to the `photos` array at the top of `src/pages/index.astro`:
 
    ```js
-   { src: '/images/<name>.jpg', alt: 'A short description' },
+   { src: '/images/marquee/<name>.jpg', alt: 'A short description' },
    ```
 
 Order in the array is left-to-right. Nothing else needs to change — the
