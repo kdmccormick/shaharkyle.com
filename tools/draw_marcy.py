@@ -688,19 +688,101 @@ def build_sleeping() -> str:
 
 
 def build_banana() -> str:
-    """A banana: a fat crescent with a stalk at one end and a dark tip at the
-    other. The old one was a thin sliver and read as a melon rind."""
+    """A banana.
+
+    Two goes at this read as a crescent moon rather than fruit, and the reason
+    was the same both times: a circular arc with the thickness peaking in the
+    middle and tapering symmetrically to two points *is* a lens, which is what
+    a moon is. Making it fatter only made it a fatter moon.
+
+    A banana is not that shape. It is a gently curved **tube**:
+
+      - the curve is shallow. Somewhere near a quarter turn, not the half turn
+        those had - that alone is most of the moon look.
+      - the thickness is nearly constant down the middle and only falls away
+        near the ends, so the edges run roughly parallel instead of bulging.
+      - the two ends are different. The stem end is a blunt cut with a stalk
+        on it; the blossom end narrows to a small dark point.
+      - it has flats down its length. Bananas are not round in section, and
+        the ridges are a good part of why one reads as a banana.
+
+    The centreline is a quadratic bezier, whose derivative is exact, so the
+    outline is offset along true normals and stays smooth at any size.
+    """
+    P0 = (9.0, 15.0)      # stem end
+    P1 = (31.0, 42.0)     # control: pulls the belly down
+    P2 = (58.0, 22.0)     # blossom end
+    W = 5.1                # half-width at the fattest point
+    N = 64
+
+    def point(t):
+        u = 1 - t
+        return (u * u * P0[0] + 2 * u * t * P1[0] + t * t * P2[0],
+                u * u * P0[1] + 2 * u * t * P1[1] + t * t * P2[1])
+
+    def normal(t):
+        """Unit normal, from the exact derivative of the curve."""
+        u = 1 - t
+        dx = 2 * u * (P1[0] - P0[0]) + 2 * t * (P2[0] - P1[0])
+        dy = 2 * u * (P1[1] - P0[1]) + 2 * t * (P2[1] - P1[1])
+        k = math.hypot(dx, dy) or 1.0
+        return -dy / k, dx / k
+
+    def halfwidth(t):
+        """Full through the middle, tapering away steadily towards both ends.
+
+        The exponents are the difference between a banana and a chilli. Too
+        flat a plateau and the sides run parallel almost the whole length and
+        then drop off a cliff at the tips, which is a jalapeno; too peaked and
+        it goes back to being a crescent moon. This sits between: widest
+        around the middle, but already visibly narrowing by a fifth of the way
+        in, so the ends read as ends rather than as a cut-off tube.
+        """
+        taper = (1 - abs(2 * t - 1) ** 2.2) ** 0.54
+        blunt = 0.20 * (1 - t) ** 3.0          # the cut stem end keeps a little
+        return W * (0.95 * taper + blunt)
+
+    def edge(t, side):
+        (x, y), (nx, ny) = point(t), normal(t)
+        h = halfwidth(t) * side
+        return x + nx * h, y + ny * h
+
+    ts = [i / N for i in range(N + 1)]
+    outer = [edge(t, 1) for t in ts]
+    inner = [edge(t, -1) for t in ts]
+
+    # outer edge out, inner edge back; the closing Z is the flat cut at the stem
+    body = [f"M{outer[0][0]:.1f},{outer[0][1]:.1f}"]
+    body += [f"L{x:.1f},{y:.1f}" for x, y in outer[1:]]
+    body += [f"L{x:.1f},{y:.1f}" for x, y in reversed(inner)]
+    body.append("Z")
+
+    def ridge(off, t0, t1):
+        pts = []
+        for i in range(25):
+            t = t0 + (t1 - t0) * i / 24
+            (x, y), (nx, ny) = point(t), normal(t)
+            h = halfwidth(t) * off
+            pts.append(f"{x + nx * h:.1f},{y + ny * h:.1f}")
+        return "M" + " L".join(pts)
+
+    sx, sy = point(0.0)
+    tx, ty = point(1.0)
+    # the stalk carries on the way the curve was already going
+    dx = sx - point(0.04)[0]
+    dy = sy - point(0.04)[1]
+    k = math.hypot(dx, dy) or 1.0
+    ex, ey = sx + dx / k * 6.0, sy + dy / k * 6.0
+
     p = [
-        # body, thickest in the middle and tapering to both ends
-        '<path class="m-banana" d="'
-        'M10,10 C9,25 18,36 32,38 C43,39 51,34 55,26 '
-        'C49,31 41,33 33,32 C21,30 14,22 14,8 Z"/>',
-        # the inner curve catches the light
-        '<path class="m-banana-line" d="M17,13 C19,24 26,30 36,31"/>',
-        # stalk
-        '<path class="m-banana-stem" d="M12,9 L10,2"/>',
-        # dried tip
-        '<circle class="m-banana-tip" cx="55" cy="26" r="2.6"/>',
+        f'<path class="m-banana" d="{" ".join(body)}"/>',
+        # One flat down its length. There were two, which is truer to the
+        # fruit, but the outline and the ridges are stroked at a fixed width
+        # while the body has been thinned - at this width two of them plus the
+        # outline left almost no clear yellow between.
+        f'<path class="m-banana-line" d="{ridge(-0.34, .14, .86)}"/>',
+        f'<path class="m-banana-stem" d="M{sx:.1f},{sy:.1f} L{ex:.1f},{ey:.1f}"/>',
+        f'<circle class="m-banana-tip" cx="{tx:.1f}" cy="{ty:.1f}" r="1.7"/>',
     ]
     return (f'<svg class="banana-fly" viewBox="0 0 64 44" '
             f'xmlns="http://www.w3.org/2000/svg">{"".join(p)}</svg>')
