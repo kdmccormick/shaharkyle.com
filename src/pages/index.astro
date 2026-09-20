@@ -85,22 +85,6 @@ import bananaSvg from '../banana.svg?raw';
   </filter>
 </svg>
 
-<!-- ═══ PASSWORD WALL ═══════════════════════════════════ -->
-<div id="pw-wall">
-  <div class="pw-box">
-    <img class="pw-curl tl" src="/images/orn-corner.svg" alt="" aria-hidden="true" />
-    <img class="pw-curl br" src="/images/orn-corner.svg" alt="" aria-hidden="true" />
-    <h2 class="pw-title">Shahar <span class="amp">&amp;</span> Kyle</h2>
-    <p class="pw-sub">still being drawn</p>
-    <div class="pw-prompt">
-      <span class="pw-caret">&rsaquo;</span>
-      <input type="password" id="pw-input" autocomplete="off" maxlength="12" spellcheck="false" placeholder="access code" />
-    </div>
-    <p id="pw-error" class="pw-error"></p>
-    <p class="pw-hint">press enter</p>
-  </div>
-</div>
-
 <div class="page">
 
   <!--
@@ -363,85 +347,6 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .amp { color: var(--accent); }
 .dot { color: var(--ink-faint); margin: 0 0.35rem; }
-
-/* ══ PASSWORD WALL ════════════════════════════════════════ */
-#pw-wall {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  /* opaque, so the page behind it is genuinely hidden rather than tinted */
-  background: linear-gradient(180deg, var(--sky-top), var(--sky-low));
-}
-.pw-box {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.3rem;
-  width: 100%;
-  max-width: 380px;
-  padding: 2.75rem 2.5rem;
-  /* the box's edge is a drawn line, stretched to fit */
-  border-image: url('/images/orn-frame.svg') 30 / 30px / 0 stretch;
-  border-width: 30px;
-  border-style: solid;
-}
-.pw-curl {
-  position: absolute;
-  width: 76px;
-  opacity: 0.55;
-  pointer-events: none;
-}
-.pw-curl.tl { top: -26px;    left: -26px; }
-.pw-curl.br { bottom: -26px; right: -26px; transform: rotate(180deg); }
-.pw-title {
-  font-family: var(--font-hand);
-  font-weight: 400;
-  font-size: 2.1rem;
-  line-height: 1.15;
-}
-.pw-sub { color: var(--ink-soft); font-size: 0.82rem; margin-bottom: 1.1rem; }
-.pw-prompt {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  border-bottom: 1.5px solid var(--rule);
-  padding-bottom: 0.4rem;
-}
-.pw-caret {
-  font-family: var(--font-type);
-  color: var(--accent);
-  font-size: 1.1rem;
-  animation: blink 1.1s step-end infinite;
-}
-@keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: 0 } }
-#pw-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--ink);
-  font-family: var(--font-type);
-  font-size: 0.95rem;
-  letter-spacing: 0.2em;
-  caret-color: var(--accent);
-}
-#pw-input::placeholder { color: var(--ink-faint); letter-spacing: 0.1em; }
-.pw-error {
-  font-family: var(--font-type);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  min-height: 1.3em;
-  margin-top: 0.5rem;
-}
-.pw-hint { font-size: 0.72rem; color: var(--ink-faint); }
 
 /* ══ LAYOUT ═══════════════════════════════════════════════ */
 .page { position: relative; overflow-x: clip; }
@@ -1117,29 +1022,6 @@ const repaintGrain = installGlow(document.getElementById('glow'), {
  * See src/marcy.js.
  */
 installMarcy(document.getElementById('critters'));
-
-// ── PASSWORD WALL ─────────────────────────────────────────
-const KEY  = 'sk-auth-v1';
-const PASS = '060527';
-const wall = document.getElementById('pw-wall');
-const inp  = document.getElementById('pw-input');
-const err  = document.getElementById('pw-error');
-
-const unlock = () => { wall.style.display = 'none'; };
-if (localStorage.getItem(KEY) === '1') unlock();
-
-inp.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  if (inp.value === PASS) {
-    localStorage.setItem(KEY, '1');
-    unlock();
-  } else {
-    err.textContent = '[ not quite ]';
-    inp.value = '';
-    setTimeout(() => { err.textContent = ''; }, 2000);
-  }
-});
-if (wall.style.display !== 'none') inp.focus();
 
 /* ── THE FORM ──────────────────────────────────────────────
  * Posted over fetch so the page can answer inline instead of bouncing to
