@@ -1,11 +1,5 @@
 # Images
 
-## `armory.jpg`
-
-The venue — the main hall at Arts at the Armory. Pulled from
-artsatthearmory.org, so worth replacing with your own shot (or asking them)
-before the site goes public.
-
 ## The photo strip
 
 `marquee/` holds the photos that feed the scrolling strip at the top of the

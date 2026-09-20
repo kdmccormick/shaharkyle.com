@@ -16,25 +16,25 @@
  * at, which depend on viewport width and font loading.
  */
 const photos = [
-  { src: '/images/marquee/seine.webp',       alt: 'On a bridge over the Seine at sunset' },
-  { src: '/images/marquee/tree-farm.webp',   alt: 'Hauling a Christmas tree out of the snowy tree farm' },
-  { src: '/images/marquee/badlands.webp',    alt: 'A selfie above the striped rock of Death Valley' },
-  { src: '/images/marquee/park.webp',        alt: 'A summer selfie on a bridge in the park' },
-  { src: '/images/marquee/yurt.webp',        alt: 'Bundled up outside a yurt in the snow' },
-  { src: '/images/marquee/ornament.webp',    alt: 'The two of us reflected in a gold ornament' },
-  { src: '/images/marquee/proposal.webp',    alt: 'The proposal — down on one knee in Death Valley' },
-  { src: '/images/marquee/birches.webp',     alt: 'Two cold grins among the birches on a ski day' },
-  { src: '/images/marquee/boston.webp',      alt: 'By the water with the Boston skyline behind us' },
-  { src: '/images/marquee/tree-hug.webp',    alt: 'Hugging the wrapped Christmas tree, and each other' },
-  { src: '/images/marquee/sculptures.webp',  alt: 'Grinning beside two absurd foil sculptures made of Wendy\'s wrappers' },
-  { src: '/images/marquee/dunes.webp',       alt: 'In the Death Valley sand dunes' },
-  { src: '/images/marquee/balloon.webp',     alt: 'Squeezed into the basket of a hot air balloon at dawn' },
-  { src: '/images/marquee/parents.webp',     alt: 'Both sets of parents packed onto one couch' },
-  { src: '/images/marquee/marseille.webp',   alt: 'Cheek to cheek by the old port in Marseille at sunset' },
-  { src: '/images/marquee/ski.webp',         alt: 'Selfie with Anvita while cross-country skiing' },
-  { src: '/images/marquee/living-room.webp', alt: 'Dressed up with friends in the living room' },
-  { src: '/images/marquee/cards.webp',       alt: 'A card game at a bar under a chalk octopus' },
-  { src: '/images/marquee/forest.webp',      alt: 'A kiss on the cheek in the winter woods' },
+  { src: '/images/marquee/seine.webp',        w:  719, h: 900, alt: 'On a bridge over the Seine at sunset' },
+  { src: '/images/marquee/tree-farm.webp',    w: 1276, h: 900, alt: 'Hauling a Christmas tree out of the snowy tree farm' },
+  { src: '/images/marquee/badlands.webp',     w:  723, h: 900, alt: 'A selfie above the striped rock of Death Valley' },
+  { src: '/images/marquee/park.webp',         w:  723, h: 900, alt: 'A summer selfie on a bridge in the park' },
+  { src: '/images/marquee/yurt.webp',         w: 1130, h: 849, alt: 'Bundled up outside a yurt in the snow' },
+  { src: '/images/marquee/ornament.webp',     w:  718, h: 900, alt: 'The two of us reflected in a gold ornament' },
+  { src: '/images/marquee/proposal.webp',     w:  734, h: 900, alt: 'The proposal — down on one knee in Death Valley' },
+  { src: '/images/marquee/birches.webp',      w: 1200, h: 900, alt: 'Two cold grins among the birches on a ski day' },
+  { src: '/images/marquee/boston.webp',       w:  723, h: 900, alt: 'By the water with the Boston skyline behind us' },
+  { src: '/images/marquee/tree-hug.webp',     w:  660, h: 900, alt: 'Hugging the wrapped Christmas tree, and each other' },
+  { src: '/images/marquee/sculptures.webp',   w: 1198, h: 900, alt: 'Grinning beside two absurd foil sculptures made of Wendy\'s wrappers' },
+  { src: '/images/marquee/dunes.webp',        w:  718, h: 900, alt: 'In the Death Valley sand dunes' },
+  { src: '/images/marquee/balloon.webp',      w:  675, h: 900, alt: 'Squeezed into the basket of a hot air balloon at dawn' },
+  { src: '/images/marquee/parents.webp',      w: 1268, h: 900, alt: 'Both sets of parents packed onto one couch' },
+  { src: '/images/marquee/marseille.webp',    w:  719, h: 900, alt: 'Cheek to cheek by the old port in Marseille at sunset' },
+  { src: '/images/marquee/ski.webp',          w:  718, h: 900, alt: 'Selfie with Anvita while cross-country skiing' },
+  { src: '/images/marquee/living-room.webp',  w: 1160, h: 900, alt: 'Dressed up with friends in the living room' },
+  { src: '/images/marquee/cards.webp',        w:  723, h: 900, alt: 'A card game at a bar under a chalk octopus' },
+  { src: '/images/marquee/forest.webp',       w:  723, h: 900, alt: 'A kiss on the cheek in the winter woods' },
 ];
 
 const MAPS = 'https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+Somerville,+MA+02143';
@@ -84,22 +84,6 @@ import bananaSvg from '../banana.svg?raw';
                        xChannelSelector="R" yChannelSelector="G"/>
   </filter>
 </svg>
-
-<!-- ═══ PASSWORD WALL ═══════════════════════════════════ -->
-<div id="pw-wall">
-  <div class="pw-box">
-    <img class="pw-curl tl" src="/images/orn-corner.svg" alt="" aria-hidden="true" />
-    <img class="pw-curl br" src="/images/orn-corner.svg" alt="" aria-hidden="true" />
-    <h2 class="pw-title">Shahar <span class="amp">&amp;</span> Kyle</h2>
-    <p class="pw-sub">still being drawn</p>
-    <div class="pw-prompt">
-      <span class="pw-caret">&rsaquo;</span>
-      <input type="password" id="pw-input" autocomplete="off" maxlength="12" spellcheck="false" placeholder="access code" />
-    </div>
-    <p id="pw-error" class="pw-error"></p>
-    <p class="pw-hint">press enter</p>
-  </div>
-</div>
 
 <div class="page">
 
@@ -161,8 +145,8 @@ import bananaSvg from '../banana.svg?raw';
           wider than the screen - see PHOTO MARQUEE below for why.
         -->
         <div class="marquee-track" id="marquee-track" data-count={photos.length}>
-          {photos.map(p => <img src={p.src} alt={p.alt} />)}
-          {photos.map(p => <img src={p.src} alt="" aria-hidden="true" />)}
+          {photos.map(p => <img src={p.src} width={p.w} height={p.h} alt={p.alt} />)}
+          {photos.map(p => <img src={p.src} width={p.w} height={p.h} alt="" aria-hidden="true" />)}
         </div>
       </div>
     </section>
@@ -363,85 +347,6 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .amp { color: var(--accent); }
 .dot { color: var(--ink-faint); margin: 0 0.35rem; }
-
-/* ══ PASSWORD WALL ════════════════════════════════════════ */
-#pw-wall {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  /* opaque, so the page behind it is genuinely hidden rather than tinted */
-  background: linear-gradient(180deg, var(--sky-top), var(--sky-low));
-}
-.pw-box {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.3rem;
-  width: 100%;
-  max-width: 380px;
-  padding: 2.75rem 2.5rem;
-  /* the box's edge is a drawn line, stretched to fit */
-  border-image: url('/images/orn-frame.svg') 30 / 30px / 0 stretch;
-  border-width: 30px;
-  border-style: solid;
-}
-.pw-curl {
-  position: absolute;
-  width: 76px;
-  opacity: 0.55;
-  pointer-events: none;
-}
-.pw-curl.tl { top: -26px;    left: -26px; }
-.pw-curl.br { bottom: -26px; right: -26px; transform: rotate(180deg); }
-.pw-title {
-  font-family: var(--font-hand);
-  font-weight: 400;
-  font-size: 2.1rem;
-  line-height: 1.15;
-}
-.pw-sub { color: var(--ink-soft); font-size: 0.82rem; margin-bottom: 1.1rem; }
-.pw-prompt {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  border-bottom: 1.5px solid var(--rule);
-  padding-bottom: 0.4rem;
-}
-.pw-caret {
-  font-family: var(--font-type);
-  color: var(--accent);
-  font-size: 1.1rem;
-  animation: blink 1.1s step-end infinite;
-}
-@keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: 0 } }
-#pw-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--ink);
-  font-family: var(--font-type);
-  font-size: 0.95rem;
-  letter-spacing: 0.2em;
-  caret-color: var(--accent);
-}
-#pw-input::placeholder { color: var(--ink-faint); letter-spacing: 0.1em; }
-.pw-error {
-  font-family: var(--font-type);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  min-height: 1.3em;
-  margin-top: 0.5rem;
-}
-.pw-hint { font-size: 0.72rem; color: var(--ink-faint); }
 
 /* ══ LAYOUT ═══════════════════════════════════════════════ */
 .page { position: relative; overflow-x: clip; }
@@ -1130,29 +1035,6 @@ const repaintGrain = installGlow(document.getElementById('glow'), {
  */
 installMarcy(document.getElementById('critters'));
 
-// ── PASSWORD WALL ─────────────────────────────────────────
-const KEY  = 'sk-auth-v1';
-const PASS = '060527';
-const wall = document.getElementById('pw-wall');
-const inp  = document.getElementById('pw-input');
-const err  = document.getElementById('pw-error');
-
-const unlock = () => { wall.style.display = 'none'; };
-if (localStorage.getItem(KEY) === '1') unlock();
-
-inp.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  if (inp.value === PASS) {
-    localStorage.setItem(KEY, '1');
-    unlock();
-  } else {
-    err.textContent = '[ not quite ]';
-    inp.value = '';
-    setTimeout(() => { err.textContent = ''; }, 2000);
-  }
-});
-if (wall.style.display !== 'none') inp.focus();
-
 /* ── THE FORM ──────────────────────────────────────────────
  * Posted over fetch so the page can answer inline instead of bouncing to
  * Netlify's own success page. Without JS the form still submits normally.
@@ -1201,7 +1083,7 @@ form.addEventListener('submit', async e => {
       body: new URLSearchParams(new FormData(form)).toString(),
     });
     if (!res.ok) throw new Error(res.status);
-    form.innerHTML = '<p class="ask-status">Got it — see you on June 5th.</p>';
+    form.innerHTML = '<p class="ask-status">Got it!</p>';
     repaintGrain();   // the form collapsed, so its clearing moved
   } catch {
     status.textContent = 'That did not go through. Email us instead?';
@@ -1248,9 +1130,18 @@ function layoutMarquee() {
   track.style.setProperty('--dur', `${setWidth / PX_PER_SEC}s`);
 }
 
+// Measuring means reading layout back out of the browser, so a raw resize
+// listener forces one of those per event while a window edge is being dragged.
+// Coalesce them: one measurement per frame is all the screen can show anyway.
+let layoutRaf = 0;
+const relayout = () => {
+  if (layoutRaf) return;
+  layoutRaf = requestAnimationFrame(() => { layoutRaf = 0; layoutMarquee(); });
+};
+
 layoutMarquee();
 window.addEventListener('load', layoutMarquee);
-window.addEventListener('resize', layoutMarquee, { passive: true });
+window.addEventListener('resize', relayout, { passive: true });
 for (const img of baseSet) {
   if (!img.complete) img.addEventListener('load', layoutMarquee, { once: true });
 }
