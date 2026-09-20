@@ -1189,7 +1189,7 @@ form.addEventListener('submit', async e => {
       body: new URLSearchParams(new FormData(form)).toString(),
     });
     if (!res.ok) throw new Error(res.status);
-    form.innerHTML = '<p class="ask-status">Got it — see you on June 5th.</p>';
+    form.innerHTML = '<p class="ask-status">Got it!</p>'
     repaintGrain();   // the form collapsed, so its clearing moved
   } catch {
     status.textContent = 'That did not go through. Email us instead?';
