@@ -575,8 +575,11 @@ main {
 .marcy-sleep .m-zzz {
   fill: none;
   stroke: var(--ink-soft);
-  stroke-width: 2.4;
+  stroke-width: 2.1;
   stroke-linecap: round;
+  /* miter joins on the Z's two acute corners bevel off into stubs; round
+     keeps the letter reading as a letter at this size */
+  stroke-linejoin: round;
   animation: zzz-float 4.2s ease-in-out infinite;
 }
 @keyframes zzz-float {
@@ -623,8 +626,15 @@ main {
 .pose .m-fur       { fill: #1a1611; stroke: #1a1611; }
 .pose .m-fur-tail  { fill: #201a13; stroke: #201a13; }
 .pose .m-lit       { fill: #4b3726; opacity: 0.8; }   /* sun in the coat */
-.pose .m-muzzle    { fill: #2c2317; }                 /* her whisker pads */
 .pose .m-tuft      { fill: #4a3a33; }                 /* inside the ears */
+/*
+ * Inert at the moment. The generator has dials for her shaded muzzle, the
+ * silver guard hairs off her jowls, the fur escaping her ears and the middle
+ * tone of the chest blaze, and all four are currently turned off - the
+ * simplest drawing turned out to be the cutest one. Kept so that turning any
+ * of them back on in tools/draw_marcy.py just works.
+ */
+.pose .m-muzzle    { fill: #2c2317; }                 /* her whisker pads */
 .pose .m-fuzz      { fill: #6d604e; opacity: 0.75; }  /* escaping the ears */
 .pose .m-eye       { fill: #c6b855; }
 .pose .m-pupil     { fill: #14120e; }
@@ -655,7 +665,9 @@ main {
 .pose .m-shut {
   fill: none;
   stroke: #d8d2c4;
-  stroke-width: 2.2;
+  /* thinner than it was: her head shrank, and at 2.2 the two lash lines were
+     the heaviest thing on the drawing */
+  stroke-width: 1.5;
   stroke-linecap: round;
 }
 .pose .m-whisk path {
