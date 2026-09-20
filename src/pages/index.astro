@@ -16,25 +16,25 @@
  * at, which depend on viewport width and font loading.
  */
 const photos = [
-  { src: '/images/marquee/seine.webp',       alt: 'On a bridge over the Seine at sunset' },
-  { src: '/images/marquee/tree-farm.webp',   alt: 'Hauling a Christmas tree out of the snowy tree farm' },
-  { src: '/images/marquee/badlands.webp',    alt: 'A selfie above the striped rock of Death Valley' },
-  { src: '/images/marquee/park.webp',        alt: 'A summer selfie on a bridge in the park' },
-  { src: '/images/marquee/yurt.webp',        alt: 'Bundled up outside a yurt in the snow' },
-  { src: '/images/marquee/ornament.webp',    alt: 'The two of us reflected in a gold ornament' },
-  { src: '/images/marquee/proposal.webp',    alt: 'The proposal — down on one knee in Death Valley' },
-  { src: '/images/marquee/birches.webp',     alt: 'Two cold grins among the birches on a ski day' },
-  { src: '/images/marquee/boston.webp',      alt: 'By the water with the Boston skyline behind us' },
-  { src: '/images/marquee/tree-hug.webp',    alt: 'Hugging the wrapped Christmas tree, and each other' },
-  { src: '/images/marquee/sculptures.webp',  alt: 'Grinning beside two absurd foil sculptures made of Wendy\'s wrappers' },
-  { src: '/images/marquee/dunes.webp',       alt: 'In the Death Valley sand dunes' },
-  { src: '/images/marquee/balloon.webp',     alt: 'Squeezed into the basket of a hot air balloon at dawn' },
-  { src: '/images/marquee/parents.webp',     alt: 'Both sets of parents packed onto one couch' },
-  { src: '/images/marquee/marseille.webp',   alt: 'Cheek to cheek by the old port in Marseille at sunset' },
-  { src: '/images/marquee/ski.webp',         alt: 'Selfie with Anvita while cross-country skiing' },
-  { src: '/images/marquee/living-room.webp', alt: 'Dressed up with friends in the living room' },
-  { src: '/images/marquee/cards.webp',       alt: 'A card game at a bar under a chalk octopus' },
-  { src: '/images/marquee/forest.webp',      alt: 'A kiss on the cheek in the winter woods' },
+  { src: '/images/marquee/seine.webp',        w:  719, h: 900, alt: 'On a bridge over the Seine at sunset' },
+  { src: '/images/marquee/tree-farm.webp',    w: 1276, h: 900, alt: 'Hauling a Christmas tree out of the snowy tree farm' },
+  { src: '/images/marquee/badlands.webp',     w:  723, h: 900, alt: 'A selfie above the striped rock of Death Valley' },
+  { src: '/images/marquee/park.webp',         w:  723, h: 900, alt: 'A summer selfie on a bridge in the park' },
+  { src: '/images/marquee/yurt.webp',         w: 1130, h: 849, alt: 'Bundled up outside a yurt in the snow' },
+  { src: '/images/marquee/ornament.webp',     w:  718, h: 900, alt: 'The two of us reflected in a gold ornament' },
+  { src: '/images/marquee/proposal.webp',     w:  734, h: 900, alt: 'The proposal — down on one knee in Death Valley' },
+  { src: '/images/marquee/birches.webp',      w: 1200, h: 900, alt: 'Two cold grins among the birches on a ski day' },
+  { src: '/images/marquee/boston.webp',       w:  723, h: 900, alt: 'By the water with the Boston skyline behind us' },
+  { src: '/images/marquee/tree-hug.webp',     w:  660, h: 900, alt: 'Hugging the wrapped Christmas tree, and each other' },
+  { src: '/images/marquee/sculptures.webp',   w: 1198, h: 900, alt: 'Grinning beside two absurd foil sculptures made of Wendy\'s wrappers' },
+  { src: '/images/marquee/dunes.webp',        w:  718, h: 900, alt: 'In the Death Valley sand dunes' },
+  { src: '/images/marquee/balloon.webp',      w:  675, h: 900, alt: 'Squeezed into the basket of a hot air balloon at dawn' },
+  { src: '/images/marquee/parents.webp',      w: 1268, h: 900, alt: 'Both sets of parents packed onto one couch' },
+  { src: '/images/marquee/marseille.webp',    w:  719, h: 900, alt: 'Cheek to cheek by the old port in Marseille at sunset' },
+  { src: '/images/marquee/ski.webp',          w:  718, h: 900, alt: 'Selfie with Anvita while cross-country skiing' },
+  { src: '/images/marquee/living-room.webp',  w: 1160, h: 900, alt: 'Dressed up with friends in the living room' },
+  { src: '/images/marquee/cards.webp',        w:  723, h: 900, alt: 'A card game at a bar under a chalk octopus' },
+  { src: '/images/marquee/forest.webp',       w:  723, h: 900, alt: 'A kiss on the cheek in the winter woods' },
 ];
 
 const MAPS = 'https://maps.google.com/?q=Arts+at+the+Armory,+191+Highland+Ave,+Somerville,+MA+02143';
@@ -145,8 +145,8 @@ import bananaSvg from '../banana.svg?raw';
           wider than the screen - see PHOTO MARQUEE below for why.
         -->
         <div class="marquee-track" id="marquee-track" data-count={photos.length}>
-          {photos.map(p => <img src={p.src} alt={p.alt} />)}
-          {photos.map(p => <img src={p.src} alt="" aria-hidden="true" />)}
+          {photos.map(p => <img src={p.src} width={p.w} height={p.h} alt={p.alt} />)}
+          {photos.map(p => <img src={p.src} width={p.w} height={p.h} alt="" aria-hidden="true" />)}
         </div>
       </div>
     </section>
@@ -1130,9 +1130,18 @@ function layoutMarquee() {
   track.style.setProperty('--dur', `${setWidth / PX_PER_SEC}s`);
 }
 
+// Measuring means reading layout back out of the browser, so a raw resize
+// listener forces one of those per event while a window edge is being dragged.
+// Coalesce them: one measurement per frame is all the screen can show anyway.
+let layoutRaf = 0;
+const relayout = () => {
+  if (layoutRaf) return;
+  layoutRaf = requestAnimationFrame(() => { layoutRaf = 0; layoutMarquee(); });
+};
+
 layoutMarquee();
 window.addEventListener('load', layoutMarquee);
-window.addEventListener('resize', layoutMarquee, { passive: true });
+window.addEventListener('resize', relayout, { passive: true });
 for (const img of baseSet) {
   if (!img.complete) img.addEventListener('load', layoutMarquee, { once: true });
 }
