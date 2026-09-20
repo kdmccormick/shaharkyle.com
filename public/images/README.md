@@ -43,5 +43,5 @@ many photos there are.
 
 Both knobs live in `src/pages/index.astro`:
 
-- **Speed** — `PX_PER_SEC` in the script block (currently 22 px/sec).
+- **Speed** — `PX_PER_SEC` in the script block (currently 30 px/sec).
 - **Strip height** — the `height` on `.marquee`.
