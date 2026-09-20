@@ -165,6 +165,13 @@ export function installMarcy(layer, opts = {}) {
     deg *= 0.22;
     // Standing still, she should be level and facing the way she last went.
     if (state !== 'chasing') deg = 0;
+    /*
+     * Asleep, never mirrored. She is not going anywhere, so the facing is just
+     * whatever the tangent happened to be where she settled - but the zs are
+     * drawn inside her svg, and flipping her flips them into backwards zs.
+     * Same reason the bubble below is never flipped.
+     */
+    if (state === 'snoozing') flip = 1;
     cat.style.transform =
       `translate3d(${p[0]}px, ${p[1]}px, 0) rotate(${deg}deg) scaleX(${flip})`;
 

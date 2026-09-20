@@ -58,8 +58,30 @@ W, H = 210, 168
 
 # The two settled dials. RUFF is how far the head outline swells at the jowls;
 # NARROW is how hard it pulls in to the chin.
-RUFF = 0.58
+RUFF = 0.44
 NARROW = 0.35
+
+# ── how simple she is ──────────────────────────────────────────────────────
+# Every one of these was turned down after comparing against the first version
+# of this drawing, which was cuter than anything that came after it. The
+# pattern, worth remembering: each piece of anatomical correctness added here -
+# the jowls, the shaded muzzle, the guard hairs, the layered chest spray - made
+# her more accurate and less charming. The old drawing won by leaving things
+# out.
+# SPIKE  multiplies every tuft's length. 1.0 is the pointy original.
+# BLUNT  0 leaves the tufts as spikes; 1 pushes the curve controls out to the
+#        tip so each one arcs over as a soft bump instead of a needle.
+# TIPS   multiplies how many tufts go round an outline. Fewer, blunter tufts
+#        is what "simpler" actually means here - the same coat at lower
+#        resolution rather than a smooth shape with no coat at all.
+# BLAZE  how many layers the chest spray is built from, 3 down to 1.
+# GUARDS how many silver hairs come off the jowls, 0 for none.
+SPIKE = 0.55
+BLUNT = 0.80
+TIPS = 0.72
+BLAZE = 2
+GUARDS = 0
+MUZZLE = False
 
 
 # ── fur ─────────────────────────────────────────────────────────────────────
@@ -80,6 +102,8 @@ def furry_ring(cx, cy, rx, ry, tips=34, depth=0.10, jitter=0.45, lean=0.62,
     narrows to a small chin, the torso that swells over the haunch. Without it
     every shape is an oval, and a cat built out of ovals has no jaw.
     """
+    depth *= SPIKE
+    tips = max(8, int(round(tips * TIPS)))
     w = warp or (lambda a: 1.0)
 
     def px(a, g=1.0):
@@ -104,8 +128,11 @@ def furry_ring(cx, cy, rx, ry, tips=34, depth=0.10, jitter=0.45, lean=0.62,
         tx, ty = px(at, grow)
         # controls sit just off the base ring, so the tuft rises steeply from
         # the coat and comes to a point rather than arcing over
-        c1x, c1y = px(a0 + step * 0.30, 1 + depth * 0.30)
-        c2x, c2y = px(a0 + step * 0.86, 1 + depth * 0.12)
+        # With BLUNT at 0 the controls hug the base ring and the tuft comes to
+        # a point; pushed out towards the tip radius they arc over it instead,
+        # and the coat reads as soft scallops rather than a saw edge.
+        c1x, c1y = px(a0 + step * 0.30, 1 + depth * (0.30 + 0.62 * BLUNT))
+        c2x, c2y = px(a0 + step * 0.86, 1 + depth * (0.12 + 0.72 * BLUNT))
 
         d.append(f"Q{c1x:.1f},{c1y:.1f} {tx:.1f},{ty:.1f}")
         d.append(f"Q{c2x:.1f},{c2y:.1f} {x1:.1f},{y1:.1f}")
@@ -197,6 +224,7 @@ def paw(x, y, w=9.0, h=5.5, toes=3, up=-1):
 
 
 def plume(spine, widths, tips=15, depth=0.26):
+    depth *= SPIKE
     """A tapered furry tail.
 
     The far end is closed with a curve round the tip, not a straight line
@@ -234,8 +262,9 @@ def plume(spine, widths, tips=15, depth=0.26):
             # the tip sits two thirds along and leans down the tail
             tx = x0 + (x1 - x0) * 0.62 + sign * nx[k] * g
             ty = y0 + (y1 - y0) * 0.62 + sign * ny[k] * g
-            out.append(f"Q{x0 + (x1 - x0) * 0.2 + sign * nx[k] * g * 0.35:.1f},"
-                       f"{y0 + (y1 - y0) * 0.2 + sign * ny[k] * g * 0.35:.1f} "
+            c = 0.2 + 0.42 * BLUNT
+            out.append(f"Q{x0 + (x1 - x0) * c + sign * nx[k] * g * (0.35 + 0.6 * BLUNT):.1f},"
+                       f"{y0 + (y1 - y0) * c + sign * ny[k] * g * (0.35 + 0.6 * BLUNT):.1f} "
                        f"{tx:.1f},{ty:.1f}")
             out.append(f"Q{x0 + (x1 - x0) * 0.86 + sign * nx[k] * g * 0.1:.1f},"
                        f"{y0 + (y1 - y0) * 0.86 + sign * ny[k] * g * 0.1:.1f} "
@@ -320,7 +349,7 @@ def torso_warp(swell=0.18, rear=math.pi):
 
 
 # ── the head ────────────────────────────────────────────────────────────────
-def skull_warp(narrow=NARROW, ruff=RUFF):
+def skull_warp(narrow=None, ruff=None):
     """Wide at the cheeks, fuller still at the jowls, narrowing to a small chin.
 
     The `ruff` term is where her mane lives: a swelling of the head outline
@@ -329,6 +358,9 @@ def skull_warp(narrow=NARROW, ruff=RUFF):
 
     In SVG angles +y is down, so sin(a) > 0 is the lower half of the head.
     """
+    narrow = NARROW if narrow is None else narrow
+    ruff = RUFF if ruff is None else ruff
+
     def w(a):
         down = max(0.0, math.sin(a))
         side = abs(math.cos(a))
@@ -379,6 +411,8 @@ def shut_eye(cx, cy, r=9, sx=1):
 
 
 def muzzle(hx, hy, hr):
+    if not MUZZLE:
+        return ''
     """The snout: two whisker pads, a shade off the coat.
 
     Just the pads. An earlier version added a third lobe below them for the
@@ -396,38 +430,51 @@ def face(hx, hy, hr, shut=False):
     being three different cats. The muzzle goes down before the nose so the
     nose sits on it rather than floating on the coat."""
     p = []
-    ex = hr * 0.44          # eyes sit close together, well inside the skull
-    ey = hy - hr * 0.10
-    er = hr * 0.32
+    ex = hr * 0.46          # set wide, and high on the skull
+    ey = hy - hr * 0.05
+    er = hr * 0.40          # large: it is the eye-to-head ratio that reads as
+                            # cute, and this head is deliberately small
 
     for sx in (-1, 1):
         cx = hx + sx * ex
         if shut:
             p.append(f'<path class="m-shut" d="{shut_eye(cx, ey, er, sx)}"/>')
             continue
-        p.append(f'<path class="m-eye" d="{eye(cx, ey, er, er * 0.72, sx)}"/>')
-        p.append(f'<ellipse class="m-pupil" cx="{cx:.1f}" cy="{ey + er * 0.05:.1f}" '
-                 f'rx="{er * 0.27:.1f}" ry="{er * 0.56:.1f}"/>')
-        p.append(f'<circle class="m-glint" cx="{cx - sx * er * 0.30:.1f}" '
-                 f'cy="{ey - er * 0.30:.1f}" r="{er * 0.15:.1f}"/>')
+        # Matched, and no slant. The dropped inner corner is accurate to her
+        # and reads as faintly worried, which is not what this drawing is for.
+        p.append(f'<path class="m-eye" d="{eye(cx, ey, er, er * 0.94, sx, 0.0)}"/>')
+        # The pupil fills most of the opening. A small pupil in a large iris
+        # leaves a ring of gold all round the dark, and that is how a face
+        # signals alarm - it was what made an earlier attempt at "cuter" read
+        # as terrified instead.
+        p.append(f'<ellipse class="m-pupil" cx="{cx:.1f}" cy="{ey + er * 0.04:.1f}" '
+                 f'rx="{er * 0.40:.1f}" ry="{er * 0.78:.1f}"/>')
+        p.append(f'<circle class="m-glint" cx="{cx - sx * er * 0.34:.1f}" '
+                 f'cy="{ey - er * 0.34:.1f}" r="{er * 0.20:.1f}"/>')
 
     p.append(muzzle(hx, hy, hr))
 
-    ny = hy + hr * 0.30
-    p.append(f'<path class="m-nose" d="M{hx - 3.4:.1f},{ny:.1f} '
-             f'q3.4,-1.8 6.8,0 q-3.4,4.0 -6.8,0 Z"/>')
-    p.append(f'<path class="m-mouth" d="M{hx:.1f},{ny + 2.8:.1f} '
-             f'c-2.3,2.8 -5.4,2.6 -6.6,-.4 M{hx:.1f},{ny + 2.8:.1f} '
-             f'c2.3,2.8 5.4,2.6 6.6,-.4"/>')
+    ny = hy + hr * 0.32
+    p.append(f'<path class="m-nose" d="M{hx - 3.0:.1f},{ny:.1f} '
+             f'q3.0,-1.6 6.0,0 q-3.0,3.5 -6.0,0 Z"/>')
+    p.append(f'<path class="m-mouth" d="M{hx:.1f},{ny + 2.6:.1f} '
+             f'c-2.1,2.6 -5.0,2.4 -6.1,-.4 M{hx:.1f},{ny + 2.6:.1f} '
+             f'c2.1,2.6 5.0,2.4 6.1,-.4"/>')
     return p
 
 
 def whiskers(hx, hy, hr):
-    """Off the whisker pads, not off the middle of her face."""
+    """Off the whisker pads, not off the middle of her face.
+
+    Drops to two a side once the coat is simplified: against a plain silhouette
+    three fine lines each side become the most detailed thing on her, which is
+    exactly backwards.
+    """
     ny = hy + hr * 0.40
     reach = hr * 1.46
     d = []
-    for k, dy in enumerate((-2.8, 0.4, 3.6)):
+    rows = (-2.8, 0.4, 3.6) if TIPS > 0.8 else (-2.0, 2.6)
+    for k, dy in enumerate(rows):
         drop = -3 + k * 4.0                # they fan down as they go out
         for sx in (-1, 1):
             d.append(f'<path d="M{hx + sx * hr * 0.30:.1f},{ny + dy:.1f} '
@@ -453,15 +500,17 @@ def head(hx, hy, hr, shut=False, floof=1.0):
              f'd="{ear(hx - hr * .80, hy - hr * 1.08, hx - hr * .90, hy - hr * .52, hx - hr * .34, hy - hr * .90)}"/>')
     p.append(f'<path class="m-tuft" '
              f'd="{ear(hx + hr * .80, hy - hr * 1.08, hx + hr * .34, hy - hr * .90, hx + hr * .90, hy - hr * .52)}"/>')
-    p.append(f'<path class="m-fuzz" d="{tuft(hx - hr * .70, hy - hr * .84, 4, hr * .32, 1.1, -2.5, w=1.4)}"/>')
-    p.append(f'<path class="m-fuzz" d="{tuft(hx + hr * .70, hy - hr * .84, 4, hr * .32, 1.1, -0.7, w=1.4)}"/>')
+    if GUARDS:
+        p.append(f'<path class="m-fuzz" d="{tuft(hx - hr * .70, hy - hr * .84, 4, hr * .32, 1.1, -2.5, w=1.4)}"/>')
+        p.append(f'<path class="m-fuzz" d="{tuft(hx + hr * .70, hy - hr * .84, 4, hr * .32, 1.1, -0.7, w=1.4)}"/>')
 
     # the head itself - jowls and all
     p.append(f'<path class="m-fur-fill" '
              f'd="{furry_ring(hx, hy, hr, hr * 1.02, 30, .10 * floof, .45, .45, warp=warp)}"/>')
     # her long silver hairs, growing out of the jowls where the ruff is
-    p.append(guard_hairs(hx, hy, hr, hr * 1.02, .45, math.pi - .45, 10,
-                         .13 * floof, .85, warp=warp))
+    if GUARDS:
+        p.append(guard_hairs(hx, hy, hr, hr * 1.02, .45, math.pi - .45, GUARDS,
+                             .13 * floof, .85, warp=warp))
 
     p += face(hx, hy, hr, shut)
     return p
@@ -491,18 +540,41 @@ def blaze(hx, hy, hr, dx=-0.14, dy=0.98, scale=1.0):
     # point. A single origin fans out as a starburst; hers hangs like a curtain,
     # widest at the bottom, because the hairs start across the whole width of
     # the patch and all fall the same way.
+    # Below three layers it stops being a spray of hair and becomes a patch.
+    # Simplifying it by keeping the strands and making them fewer and fatter
+    # turned each one into a triangle, and the row of them read as bared
+    # teeth - so the simple version is a soft scalloped shape instead, which
+    # is what "less detailed" actually wants.
+    if BLAZE == 0:
+        # The wisp from the earliest drawing: a small soft blob under the chin
+        # with a few strands off the bottom, and nothing else. Much less than
+        # the real cat has, and much cuter for it.
+        return (f'<path class="m-blaze" '
+                f'd="{furry_ring(bx, by - s * .06, s * .32, s * .26, 14, .22, .5, .55)}"/>'
+                f'<path class="m-blaze" d="{tuft(bx, by + s * .10, 5, s * .30, 1.5, w=2.6)}"/>')
+
+    if BLAZE <= 2:
+        out = []
+        if BLAZE == 2:
+            out.append(f'<path class="m-blaze-under" '
+                       f'd="{furry_ring(bx, by + s * .30, s * .46, s * .54, 20, .15, .45, .6)}"/>')
+        out.append(f'<path class="m-blaze" '
+                   f'd="{furry_ring(bx, by + s * .34, s * .31, s * .42, 18, .15, .45, .6)}"/>')
+        return "".join(out)
+
+    layers = [("m-blaze-under", 5, .40, .86, 1.35, 2.3),
+              ("m-blaze-mid",   4, .28, .64, 1.15, 1.8),
+              ("m-blaze",       3, .17, .46, 0.95, 1.4)]
+
     out = []
-    for cls, roots, half, length, spread, w in (
-            ("m-blaze-under", 5, .40, .86, 1.35, 2.3),
-            ("m-blaze-mid",   4, .28, .64, 1.15, 1.8),
-            ("m-blaze",       3, .17, .46, 0.95, 1.4)):
+    for cls, roots, half, length, spread, w in layers:
         d = []
         for i in range(roots):
             f = (i - (roots - 1) / 2) / max(1, roots - 1)      # -0.5 .. 0.5
             ox = bx + f * s * half * 2
             oy = by - abs(f) * s * .05          # the roots arch up at the edges
             L = s * length * (1 - .30 * abs(f) * 2)   # and their hair is shorter
-            d.append(tuft(ox, oy, 4, L, spread, w=w))
+            d.append(tuft(ox, oy, max(2, int(4 * TIPS)), L, spread, w=w))
         out.append(f'<path class="{cls}" d="{" ".join(d)}"/>')
     return "".join(out)
 
@@ -514,7 +586,7 @@ def build_waiting() -> str:
     someone to throw the banana."""
     rng_reset()
     F = 1.45
-    HX, HY, HR = 128, 64, 30
+    HX, HY, HR = 128, 66, 28
     p = []
 
     T = [(72, 144), (46, 148), (28, 136), (24, 114), (34, 96), (46, 86)]
@@ -531,7 +603,7 @@ def build_waiting() -> str:
         p.append(f'<g class="m-leg">{paw(lx, 154, 9, 5, 3, up=1)}</g>')
 
     p += head(HX, HY, HR, floof=F)
-    p.append(blaze(HX, HY, HR))
+    p.append(blaze(HX, HY, HR, -.12, .95))
     p.append(whiskers(HX, HY, HR))
 
     return svg("marcy-wait", p)
@@ -551,7 +623,7 @@ def build_running() -> str:
     # she read as a head floating above a body: out at that end the torso has
     # already curved away, so there was nothing under her. Here the chin lands
     # just inside the outline and the two masses actually meet.
-    HX, HY, HR = 128, 76, 27
+    HX, HY, HR = 128, 78, 25
     p = []
 
     T = [(44, 110), (28, 102), (20, 86), (20, 64), (28, 44), (38, 30)]
@@ -575,7 +647,7 @@ def build_running() -> str:
                  f'{paw(lx, ly + 5, 8.5, 5.2, 3, up=1)}</g>')
 
     p += head(HX, HY, HR, floof=F)
-    p.append(blaze(HX, HY, HR, -.30, 1.05))
+    p.append(blaze(HX, HY, HR, -.20, .91))
     p.append(whiskers(HX, HY, HR))
 
     return svg("marcy-run", p)
@@ -590,7 +662,7 @@ def build_sleeping() -> str:
     """
     rng_reset()
     F = 1.35
-    HX, HY, HR = 62, 88, 26
+    HX, HY, HR = 62, 90, 25
     p = []
 
     warp = torso_warp(.14, rear=0.0)
@@ -605,12 +677,12 @@ def build_sleeping() -> str:
     p.append(f'<path class="m-lit" d="{plume_lit(T, TW, side=-1)}"/>')
 
     p += head(HX, HY, HR, shut=True, floof=F)
-    p.append(blaze(HX, HY, HR, .32, .74, .85))
+    p.append(blaze(HX, HY, HR, .88, .90))
     p.append(whiskers(HX, HY, HR))
 
     p.append('<g class="m-zzz">'
-             '<path d="M120,44 L136,44 L120,62 L136,62"/>'
-             '<path d="M144,20 L156,20 L144,34 L156,34"/>'
+             '<path d="M116,48 L138,48 L116,64 L138,64"/>'
+             '<path d="M142,22 L158,22 L142,34 L158,34"/>'
              '</g>')
     return svg("marcy-sleep", p)
 
