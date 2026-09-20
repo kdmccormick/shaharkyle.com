@@ -64,9 +64,18 @@ import bananaSvg from '../banana.svg?raw';
   <meta name="description" content="Save the date for Shahar &amp; Kyle's wedding — June 5, 2027 at Arts at the Armory in Somerville, MA." />
   <title>Shahar &amp; Kyle's wedding &middot; June 5, 2027</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Special+Elite&display=swap" rel="stylesheet" />
+  <!--
+    The two fonts are served from this domain rather than Google's. Google's
+    copy costs two extra connections before any text can paint, and it hands
+    every visitor's IP to a third party on a page whose whole visitor list is
+    people we invited. Both faces are Apache-2.0 - see public/fonts/README.md.
+
+    Preloaded because the @font-face rules live in the stylesheet below, so
+    without this the browser cannot start fetching them until it has parsed
+    that far.
+  -->
+  <link rel="preload" href="/fonts/permanent-marker-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/special-elite-latin.woff2" as="font" type="font/woff2" crossorigin />
 </head>
 
 <body>
@@ -257,6 +266,36 @@ import bananaSvg from '../banana.svg?raw';
 </html>
 
 <style is:global>
+/* ══ FONTS ════════════════════════════════════════════════
+   Self-hosted copies of what Google serves, same files, same
+   unicode-ranges. swap: the fallbacks are close enough in
+   weight that showing them first beats showing nothing.
+   ═════════════════════════════════════════════════════════ */
+@font-face {
+  font-family: 'Permanent Marker';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/permanent-marker-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Special Elite';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/special-elite-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Special Elite';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/special-elite-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 /* ══ TOKENS ═══════════════════════════════════════════════
    Graphite on paper, lit like early morning: cool overhead,
    warm down at the horizon. The flyer is knocked out to

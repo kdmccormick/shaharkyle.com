@@ -1,3 +1,28 @@
 [build]
   command   = "npm run build"
   publish   = "dist"
+
+# Everything the page loads now comes from this domain, and Astro emits the
+# script and the stylesheet as files rather than inline, so the policy needs
+# no 'unsafe-inline' anywhere. astro.config.mjs pins the settings that keep
+# that true - if a future change puts a <style> or <script> back in the page,
+# this policy will block it, and the console will say so plainly.
+#
+# The outbound links (maps, the venue, github) are navigations, which CSP
+# does not restrict; only form-action does, and the form posts to this origin.
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+
+# The filenames are stable, not content-hashed, so this is a deliberate
+# tradeoff: a replaced font keeps serving stale for up to a year. Rename the
+# file when swapping one out - see public/fonts/README.md.
+[[headers]]
+  for = "/fonts/*"
+
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
